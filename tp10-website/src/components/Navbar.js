@@ -6,7 +6,7 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <nav className="bg-white shadow">
+        <nav className="fixed top-0 left-0 w-full z-50 bg-black backdrop-blur-md shadow">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
                     {/* Left side - Logo and primary links */}
@@ -19,31 +19,31 @@ export default function Navbar() {
                         <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                             <Link
                                 href="/"
-                                className="inline-flex items-center px-1 pt-1 border-b-2 border-indigo-500 text-sm font-medium text-gray-900"
+                                className="inline-flex items-center px-1 pt-1 border-b-2 border-indigo-500 text-sm font-medium text-white-900"
                             >
                                 Home
                             </Link>
                             <Link
                                 href="/Games"
-                                className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-white hover:text-gray-700 hover:border-gray-300"
                             >
                                 Games
                             </Link>
                             <Link
                                 href="/EventCalendar"
-                                className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-white hover:text-gray-700 hover:border-gray-300"
                             >
                                 Event Calendar
                             </Link>
                             <Link
                                 href="/ExchangeProgram"
-                                className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-white hover:text-gray-700 hover:border-gray-300"
                             >
                                 Exchange Program
                             </Link>
                             <Link
                                 href="/EventPlanner"
-                                className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-white hover:text-gray-700 hover:border-gray-300"
                             >
                                 Culture Event Planner
                             </Link>
