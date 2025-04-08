@@ -6,10 +6,10 @@ export default function LocationSearch({ value, onChange }) {
     const [query, setQuery] = useState(value || "");
     const [suggestions, setSuggestions] = useState([]);
 
-    // Fetch suggestions when query is longer than 2 characters
     useEffect(() => {
         if (query.length > 2) {
-            const fetchSuggestions = async () => {
+            // Function to fetch suggestions from the existing venues API
+            const fetchVenues = async () => {
                 try {
                     const endpoint =
                         "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/venues-for-event-bookings/records";
@@ -21,19 +21,58 @@ export default function LocationSearch({ value, onChange }) {
                     const url = `${endpoint}?${params.toString()}`;
                     const res = await fetch(url);
                     const data = await res.json();
-                    // The API returns an object with a "results" array
-                    setSuggestions(data.results || []);
+                    // Assuming the response contains a "results" array
+                    return data.results || [];
                 } catch (error) {
-                    console.error("Error fetching suggestions:", error);
+                    console.error("Error fetching venues:", error);
+                    return [];
                 }
             };
-            fetchSuggestions();
+
+            // Function to fetch suggestions from the new places API (autocomplete)
+            const fetchNewPlaces = async () => {
+                try {
+                    // Replace this URL with your actual new places API endpoint
+                    const endpoint = "https://new-places-api.example.com/autocomplete";
+                    const params = new URLSearchParams({
+                        query: query,
+                        limit: "10",
+                    });
+                    const url = `${endpoint}?${params.toString()}`;
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    return data.results || [];
+                } catch (error) {
+                    console.error("Error fetching new places:", error);
+                    return [];
+                }
+            };
+
+            // Fetch both APIs concurrently and merge the results
+            const fetchAllSuggestions = async () => {
+                const [venues, newPlaces] = await Promise.all([
+                    fetchVenues(),
+                    fetchNewPlaces(),
+                ]);
+                // Merge the two arrays
+                const merged = [...venues, ...newPlaces];
+                // Optional: De-duplicate suggestions by full_name
+                const unique = merged.reduce((acc, item) => {
+                    if (!acc.find((existing) => existing.full_name === item.full_name)) {
+                        acc.push(item);
+                    }
+                    return acc;
+                }, []);
+                setSuggestions(unique);
+            };
+
+            fetchAllSuggestions();
         } else {
             setSuggestions([]);
         }
     }, [query]);
 
-    // Propagate query changes to the parent component
+    // Push query changes to the parent component
     useEffect(() => {
         onChange(query);
     }, [query, onChange]);
