@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import "remixicon/fonts/remixicon.css";
 import Modal from "../../components/Modal"; // Import your Modal component
+import LocationSearch from "../../components/LocationSearch";
 
 export default function CulturalEventPlanner() {
     const router = useRouter();
@@ -43,7 +44,7 @@ export default function CulturalEventPlanner() {
     ]);
     const [agendaItems, setAgendaItems] = useState([]);
     const [logisticTasks, setLogisticTasks] = useState([]);
-
+    const [locationQuery, setLocationQuery] = useState("");
     // Modal state flags
     const [isParticipantModalOpen, setParticipantModalOpen] = useState(false);
     const [isAgendaModalOpen, setAgendaModalOpen] = useState(false);
@@ -172,10 +173,9 @@ export default function CulturalEventPlanner() {
                                 <div>
                                     <label className="block text-sm font-medium text-black mb-1">Location</label>
                                     <div className="relative">
-                                        <input
-                                            type="text"
-                                            className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-black"
-                                            placeholder="Enter location"
+                                        <LocationSearch
+                                            value={locationQuery}
+                                            onChange={(newValue) => setLocationQuery(newValue)}
                                         />
                                         <i className="ri-map-pin-line absolute left-3 top-1/2 -translate-y-1/2 text-black" />
                                     </div>
