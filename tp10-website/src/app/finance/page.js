@@ -42,7 +42,7 @@ export default function FinanceDashboardPage() {
             category: "Catering",
             title: "International Lunch Buffet",
             amount: 650,
-            description: "Food and beverages for 50 participants",
+            description: "Food and beverages for 50 participant",
         },
         {
             id: 3,

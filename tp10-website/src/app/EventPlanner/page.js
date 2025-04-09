@@ -3,13 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import "remixicon/fonts/remixicon.css";
-import Modal from "../../components/Modal"; // Your Modal component
-import LocationSearch from "../../components/LocationSearch";
+import Modal from "../../components/Modal"; // Adjust path if needed
 
 export default function CulturalEventPlanner() {
     const router = useRouter();
 
-    // --- Calendar Setup Using Today's Date ---
+    // -------------------- CALENDAR --------------------
     const today = new Date();
     const [currentYear, setCurrentYear] = useState(today.getFullYear());
     const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -20,11 +19,7 @@ export default function CulturalEventPlanner() {
     const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
     const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
     const daysInMonth = getDaysInMonth(currentYear, currentMonth);
-    const eventDate = {
-        year: today.getFullYear(),
-        month: today.getMonth(),
-        day: today.getDate(),
-    };
+    const eventDate = { year: today.getFullYear(), month: today.getMonth(), day: today.getDate() };
 
     const handlePrevMonth = () => {
         if (currentMonth === 0) {
@@ -34,7 +29,6 @@ export default function CulturalEventPlanner() {
             setCurrentMonth(currentMonth - 1);
         }
     };
-
     const handleNextMonth = () => {
         if (currentMonth === 11) {
             setCurrentMonth(0);
@@ -44,205 +38,465 @@ export default function CulturalEventPlanner() {
         }
     };
 
-    // --- Participants, Logistic Tasks, and Location Query ---
-    const [participants, setParticipants] = useState([
-        {
-            id: 1,
-            name: "Emily Thompson",
-            role: "Teacher",
-            ethnicity: "European",
-            status: "Confirmed",
-        },
-        {
-            id: 2,
-            name: "Michael Anderson",
-            role: "Guest Speaker",
-            ethnicity: "Asian",
-            status: "Pending",
-        },
-    ]);
-    const [logisticTasks, setLogisticTasks] = useState([]);
-    const [locationQuery, setLocationQuery] = useState("");
-
-    // --- Modal Flags ---
-    const [isParticipantModalOpen, setParticipantModalOpen] = useState(false);
-    const [isLogisticModalOpen, setLogisticModalOpen] = useState(false);
-    const [isAgendaModalOpen, setAgendaModalOpen] = useState(false);
-
-    // Detail modals:
-    const [isParticipantDetailsModalOpen, setParticipantDetailsModalOpen] = useState(false);
-    const [selectedParticipantDetails, setSelectedParticipantDetails] = useState(null);
-    const [isAgendaDetailsModalOpen, setAgendaDetailsModalOpen] = useState(false);
-    const [selectedAgendaDetails, setSelectedAgendaDetails] = useState(null);
-
-    // --- Event Form State & Editing Mode ---
+    // -------------------- EVENT FORM STATES --------------------
+    const [events, setEvents] = useState([]);
+    const [editingEvent, setEditingEvent] = useState(null);
     const [eventTitle, setEventTitle] = useState("");
     const [eventDateInput, setEventDateInput] = useState("");
     const [eventStartTime, setEventStartTime] = useState("");
     const [eventEndTime, setEventEndTime] = useState("");
-    const [eventDescription, setEventDescription] = useState("");
-    const [budget, setBudget] = useState(125000);
-    const [events, setEvents] = useState([]);
-    const [editingEvent, setEditingEvent] = useState(null);
 
+    // Venue search states
+    const [venueSearchQuery, setVenueSearchQuery] = useState("");
+    const [venueResults, setVenueResults] = useState([]);
+    const [selectedVenue, setSelectedVenue] = useState(null);
+
+    const [eventDescription, setEventDescription] = useState("");
+    const [eventBudget, setEventBudget] = useState(50000);
+
+    // -------------------- PARTICIPANT & LINKING STATES --------------------
+    // 'participants' here holds the search results for linking purposes.
+    const [participants, setParticipants] = useState([]);
+    const [participantSearch, setParticipantSearch] = useState("");
+
+    const [isParticipantModalOpen, setParticipantModalOpen] = useState(false);
+    const [editingParticipant, setEditingParticipant] = useState(null);
+    const [selectedParticipantDetails, setSelectedParticipantDetails] = useState(null);
+    const [isParticipantDetailsModalOpen, setParticipantDetailsModalOpen] = useState(false);
+
+    // Form for creating/updating a participant
+    const [participantForm, setParticipantForm] = useState({
+        participant_fullname: "",
+        participant_description: "",
+        ethnicity_id: "",
+        category_id: "",
+    });
+
+    // Dropdowns for ethnicity & category
+    const [ethnicities, setEthnicities] = useState([]);
+    const [participantCategories, setParticipantCategories] = useState([]);
+
+    // 'eventParticipants' holds those participants linked to the currently selected event (with RSVP)
+    const [eventParticipants, setEventParticipants] = useState([]);
+
+    // -------------------- AGENDA STATES --------------------
+    const [agendaItems, setAgendaItems] = useState([]);
+    const [isAgendaModalOpen, setAgendaModalOpen] = useState(false);
+    const [editingAgendaItem, setEditingAgendaItem] = useState(null);
+    const [selectedAgendaDetails, setSelectedAgendaDetails] = useState(null);
+    const [isAgendaDetailsModalOpen, setAgendaDetailsModalOpen] = useState(false);
+    const [agendaForm, setAgendaForm] = useState({
+        agenda_timeframe: "",
+        agenda_title: "",
+        agenda_description: "",
+        agenda_status: "Pending",
+    });
+
+    // -------------------- LOGISTIC STATES --------------------
+    const [logisticTasks, setLogisticTasks] = useState([]);
+    const [isLogisticModalOpen, setLogisticModalOpen] = useState(false);
+    const [newLogisticTask, setNewLogisticTask] = useState({
+        logistic_title: "",
+        logistic_description: "",
+    });
+    const currentExpenses = 78000;
+    const remainingBudget = eventBudget - currentExpenses;
+
+    // -------------------- DATA FETCHING --------------------
+    // 1) Load participants (for search); API must return ethnicity_name and category_name
     useEffect(() => {
-        if (!editingEvent) {
-            const now = new Date();
-            setEventDateInput(now.toISOString().split("T")[0]);
-            setEventStartTime(now.toTimeString().slice(0, 5));
-            const endTime = new Date(now.getTime() + 60 * 60 * 1000);
-            setEventEndTime(endTime.toTimeString().slice(0, 5));
+        async function loadParticipants() {
+            try {
+                let url = "/api/participant";
+                if (participantSearch) {
+                    url += `?search=${encodeURIComponent(participantSearch)}`;
+                }
+                const res = await fetch(url);
+                const data = await res.json();
+                setParticipants(data);
+            } catch (err) {
+                console.error("Failed to load participants:", err);
+            }
+        }
+        loadParticipants();
+    }, [participantSearch]);
+
+    // 2) Load events
+    useEffect(() => {
+        async function loadEvents() {
+            try {
+                const res = await fetch("/api/event");
+                const data = await res.json();
+                setEvents(data);
+            } catch (err) {
+                console.error("Failed to load events:", err);
+            }
+        }
+        loadEvents();
+    }, []);
+
+    // 3) Load agenda items
+    useEffect(() => {
+        async function loadAgenda() {
+            try {
+                const res = await fetch("/api/agenda");
+                const data = await res.json();
+                setAgendaItems(data);
+            } catch (err) {
+                console.error("Failed to load agenda items:", err);
+            }
+        }
+        loadAgenda();
+    }, []);
+
+    // 4) Load logistic tasks
+    useEffect(() => {
+        async function loadLogistics() {
+            try {
+                const res = await fetch("/api/logistic");
+                const data = await res.json();
+                setLogisticTasks(data);
+            } catch (err) {
+                console.error("Failed to load logistic tasks:", err);
+            }
+        }
+        loadLogistics();
+    }, []);
+
+    // 5) Load dropdown data for ethnicities and participant categories
+    useEffect(() => {
+        fetch("/api/ethnicity")
+            .then((res) => res.json())
+            .then((data) => setEthnicities(data))
+            .catch((err) => console.error("Failed to fetch ethnicities:", err));
+
+        fetch("/api/participant_category")
+            .then((res) => res.json())
+            .then((data) => setParticipantCategories(data))
+            .catch((err) => console.error("Failed to fetch participant categories:", err));
+    }, []);
+
+    // 6) Load linked participants for the selected event
+    useEffect(() => {
+        if (editingEvent && editingEvent.event_id) {
+            fetch(`/api/event_participant?event_id=${editingEvent.event_id}`)
+                .then((res) => res.json())
+                .then((data) => setEventParticipants(data))
+                .catch((err) => console.error("Failed to load event participants:", err));
+        } else {
+            setEventParticipants([]);
         }
     }, [editingEvent]);
 
-    const currentExpenses = 78000;
-    const remainingBudget = budget - currentExpenses;
-    const budgetUsedPercent = ((currentExpenses / budget) * 100).toFixed(0);
-
-    // --- Participant Form State & Editing Flag ---
-    const [participantForm, setParticipantForm] = useState({
-        name: "",
-        role: "",
-        ethnicity: "",
-        status: "Pending",
-    });
-    const [editingParticipant, setEditingParticipant] = useState(null);
-
-    // Editing status for participants now happens via modal select
-    const handleParticipantSubmit = (e) => {
-        e.preventDefault();
-        if (editingParticipant) {
-            setParticipants((prev) =>
-                prev.map((p) =>
-                    p.id === editingParticipant.id ? { ...p, ...participantForm } : p
-                )
-            );
-            setEditingParticipant(null);
-        } else {
-            const id = participants.length + 1;
-            setParticipants([...participants, { id, ...participantForm }]);
+    // 7) Venue search
+    useEffect(() => {
+        async function loadVenues() {
+            try {
+                let url = "/api/venue";
+                if (venueSearchQuery.length > 2) {
+                    url += `?search=${encodeURIComponent(venueSearchQuery)}`;
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    setVenueResults(data);
+                } else {
+                    setVenueResults([]);
+                }
+            } catch (err) {
+                console.error("Failed to load venues:", err);
+            }
         }
-        setParticipantForm({ name: "", role: "", ethnicity: "", status: "Pending" });
-        setParticipantModalOpen(false);
-    };
+        loadVenues();
+    }, [venueSearchQuery]);
 
-    // --- Logistic Task State ---
-    const [newLogisticTask, setNewLogisticTask] = useState({
-        title: "",
-        description: "",
-    });
-
-    const handleLogisticSubmit = (e) => {
+    // -------------------- HANDLERS --------------------
+    // Create or update an event
+    const handleEventSubmit = async (e) => {
         e.preventDefault();
-        const id = logisticTasks.length + 1;
-        setLogisticTasks([
-            ...logisticTasks,
-            { id, ...newLogisticTask, completed: false },
-        ]);
-        setNewLogisticTask({ title: "", description: "" });
-        setLogisticModalOpen(false);
-    };
-
-    const toggleLogisticTask = (id) => {
-        setLogisticTasks((prev) =>
-            prev.map((task) =>
-                task.id === id ? { ...task, completed: !task.completed } : task
-            )
-        );
-    };
-
-    // --- Agenda Items State & Modal Form ---
-    const [agendaItems, setAgendaItems] = useState([]);
-    const [agendaForm, setAgendaForm] = useState({
-        timeframe: "",
-        title: "",
-        description: "",
-        status: "Pending",
-    });
-    const [editingAgendaItem, setEditingAgendaItem] = useState(null);
-
-    const handleAgendaSubmit = (e) => {
-        e.preventDefault();
-        if (editingAgendaItem) {
-            setAgendaItems((prev) =>
-                prev.map((item) =>
-                    item.id === editingAgendaItem.id ? { ...item, ...agendaForm } : item
-                )
-            );
-            setEditingAgendaItem(null);
-        } else {
-            const id = agendaItems.length + 1;
-            setAgendaItems([...agendaItems, { id, ...agendaForm }]);
-        }
-        setAgendaForm({ timeframe: "", title: "", description: "", status: "Pending" });
-        setAgendaModalOpen(false);
-    };
-
-    // --- Event Form Submit & Select ---
-    const handleEventSubmit = (e) => {
-        e.preventDefault();
-        const eventObject = {
-            id: editingEvent ? editingEvent.id : events.length + 1,
-            title: eventTitle,
-            date: eventDateInput,
-            startTime: eventStartTime,
-            endTime: eventEndTime,
-            location: locationQuery,
-            description: eventDescription,
-            totalBudget: budget,
+        const startDateTime = eventDateInput && eventStartTime
+            ? `${eventDateInput} ${eventStartTime}:00`
+            : null;
+        const endDateTime = eventDateInput && eventEndTime
+            ? `${eventDateInput} ${eventEndTime}:00`
+            : null;
+        const eventBody = {
+            event_title: eventTitle,
+            event_description: eventDescription,
+            event_startdatetime: startDateTime,
+            event_enddatetime: endDateTime,
+            venue_id: selectedVenue ? selectedVenue.venue_id : null,
+            event_budget: eventBudget,
         };
 
-        if (editingEvent) {
-            setEvents((prev) =>
-                prev.map((ev) => (ev.id === editingEvent.id ? eventObject : ev))
-            );
+        try {
+            if (editingEvent) {
+                await fetch(`/api/event/${editingEvent.event_id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(eventBody),
+                });
+            } else {
+                await fetch("/api/event", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(eventBody),
+                });
+            }
+            const res = await fetch("/api/event");
+            const data = await res.json();
+            setEvents(data);
+
+            // Reset event form
             setEditingEvent(null);
-        } else {
-            setEvents([...events, eventObject]);
+            setEventTitle("");
+            setEventDateInput("");
+            setEventStartTime("");
+            setEventEndTime("");
+            setSelectedVenue(null);
+            setVenueSearchQuery("");
+            setVenueResults([]);
+            setEventDescription("");
+            setEventBudget(50000);
+        } catch (err) {
+            console.error("Failed to save event:", err);
         }
-        setEventTitle("");
-        setEventDateInput("");
-        setEventStartTime("");
-        setEventEndTime("");
-        setLocationQuery("");
-        setEventDescription("");
     };
 
+    // Select an event from the dropdown
     const handleSelectEvent = (e) => {
-        const eventId = parseInt(e.target.value);
-        if (!isNaN(eventId)) {
-            const eventToEdit = events.find((ev) => ev.id === eventId);
-            if (eventToEdit) {
-                setEditingEvent(eventToEdit);
-                setEventTitle(eventToEdit.title);
-                setEventDateInput(eventToEdit.date);
-                setEventStartTime(eventToEdit.startTime);
-                setEventEndTime(eventToEdit.endTime);
-                setLocationQuery(eventToEdit.location);
-                setEventDescription(eventToEdit.description);
-                setBudget(eventToEdit.totalBudget);
+        const selectedId = parseInt(e.target.value);
+        if (!isNaN(selectedId)) {
+            const found = events.find((ev) => ev.event_id === selectedId);
+            if (found) {
+                setEditingEvent(found);
+                setEventTitle(found.event_title || "");
+                if (found.event_startdatetime) {
+                    const dtStart = new Date(found.event_startdatetime);
+                    setEventDateInput(dtStart.toISOString().split("T")[0]);
+                    setEventStartTime(dtStart.toISOString().split("T")[1].slice(0, 5));
+                }
+                if (found.event_enddatetime) {
+                    const dtEnd = new Date(found.event_enddatetime);
+                    setEventEndTime(dtEnd.toISOString().split("T")[1].slice(0, 5));
+                }
+                if (found.venue_id) {
+                    const selected = {
+                        venue_id: found.venue_id,
+                        venue_name: found.venue_name,
+                        venue_category: found.venue_category,
+                        venue_long: found.venue_long,
+                        venue_lat: found.venue_lat,
+                    };
+                    setSelectedVenue(selected);
+                    setVenueSearchQuery(selected.venue_name);
+                } else {
+                    setSelectedVenue(null);
+                    setVenueSearchQuery("");
+                }
+                setEventDescription(found.event_description || "");
+                setEventBudget(found.event_budget || 50000);
             }
         } else {
+            // Reset if no event selected
             setEditingEvent(null);
+            setEventTitle("");
+            setEventDateInput("");
+            setEventStartTime("");
+            setEventEndTime("");
+            setSelectedVenue(null);
+            setVenueSearchQuery("");
+            setEventDescription("");
+            setEventBudget(50000);
         }
     };
 
+    // Remove a linked participant from the event
+    const handleRemoveParticipant = async (participantId) => {
+        if (!editingEvent) return;
+        if (!window.confirm("Are you sure you want to remove this participant from the event?"))
+            return;
+        try {
+            await fetch(
+                `/api/event_participant?event_id=${editingEvent.event_id}&participant_id=${participantId}`,
+                { method: "DELETE" }
+            );
+            const res = await fetch(`/api/event_participant?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setEventParticipants(data);
+        } catch (error) {
+            console.error("Error removing participant:", error);
+        }
+    };
+
+    // Update RSVP status
+    const handleRsvpChange = async (participantId, newStatus) => {
+        if (!editingEvent) return;
+        try {
+            await fetch(`/api/participant_rsvp`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    event_id: editingEvent.event_id,
+                    participant_id: participantId,
+                    rsvp_status: newStatus,
+                }),
+            });
+            setEventParticipants((prev) =>
+                prev.map((p) =>
+                    p.participant_id === participantId ? { ...p, rsvp_status: newStatus } : p
+                )
+            );
+        } catch (error) {
+            console.error("Error updating RSVP status:", error);
+        }
+    };
+
+    // Link a participant (from search results) to the event
+    const handleLinkParticipantFromMain = async (participantId) => {
+        if (!editingEvent || !editingEvent.event_id) {
+            alert("Please select an event first.");
+            return;
+        }
+        try {
+            await fetch("/api/event_participant", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    event_id: editingEvent.event_id,
+                    participant_id: participantId,
+                    rsvp_status: "Pending",
+                }),
+            });
+            const res = await fetch(`/api/event_participant?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setEventParticipants(data);
+        } catch (error) {
+            console.error("Error linking participant:", error);
+        }
+    };
+
+    // Create or update a participant (via modal)
+    const handleParticipantSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (editingParticipant) {
+                await fetch(`/api/participant/${editingParticipant.participant_id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(participantForm),
+                });
+            } else {
+                await fetch("/api/participant", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(participantForm),
+                });
+            }
+            let url = "/api/participant";
+            if (participantSearch) {
+                url += `?search=${encodeURIComponent(participantSearch)}`;
+            }
+            const res = await fetch(url);
+            const data = await res.json();
+            setParticipants(data);
+            setEditingParticipant(null);
+            setParticipantForm({
+                participant_fullname: "",
+                participant_description: "",
+                ethnicity_id: "",
+                category_id: "",
+            });
+            setParticipantModalOpen(false);
+        } catch (err) {
+            console.error("Failed to save participant:", err);
+        }
+    };
+
+    // Logistics
+    const handleLogisticSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await fetch("/api/logistic", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newLogisticTask),
+            });
+            const res = await fetch("/api/logistic");
+            const data = await res.json();
+            setLogisticTasks(data);
+            setNewLogisticTask({ logistic_title: "", logistic_description: "" });
+            setLogisticModalOpen(false);
+        } catch (err) {
+            console.error("Failed to create logistic task:", err);
+        }
+    };
+
+    const toggleLogisticTask = async (id) => {
+        const task = logisticTasks.find((x) => x.logistic_id === id);
+        if (!task) return;
+        const updated = { ...task, logistic_completed: !task.logistic_completed };
+        try {
+            await fetch(`/api/logistic/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updated),
+            });
+            const res = await fetch("/api/logistic");
+            const data = await res.json();
+            setLogisticTasks(data);
+        } catch (err) {
+            console.error("Failed to toggle logistic task:", err);
+        }
+    };
+
+    // Agenda
+    const handleAgendaSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (editingAgendaItem) {
+                await fetch(`/api/agenda/${editingAgendaItem.agenda_id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(agendaForm),
+                });
+            } else {
+                await fetch("/api/agenda", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(agendaForm),
+                });
+            }
+            const res = await fetch("/api/agenda");
+            const data = await res.json();
+            setAgendaItems(data);
+            setEditingAgendaItem(null);
+            setAgendaForm({
+                agenda_timeframe: "",
+                agenda_title: "",
+                agenda_description: "",
+                agenda_status: "Pending",
+            });
+            setAgendaModalOpen(false);
+        } catch (err) {
+            console.error("Failed to save agenda item:", err);
+        }
+    };
+
+    // -------------------- RENDER --------------------
     return (
         <div className="bg-gray-50 min-h-screen text-black relative">
-            {/* MAIN CONTENT */}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
                 <header className="mb-6 flex justify-between items-center">
                     <h1 className="text-2xl font-bold">Cultural Event Planner</h1>
                     <div>
                         <select
-                            value={editingEvent ? editingEvent.id : ""}
+                            value={editingEvent ? editingEvent.event_id : ""}
                             onChange={handleSelectEvent}
                             className="border rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary/20"
                         >
                             <option value="">Select event to edit</option>
                             {events.map((ev) => (
-                                <option key={ev.id} value={ev.id}>
-                                    {ev.title} - {ev.date}
+                                <option key={ev.event_id} value={ev.event_id}>
+                                    {ev.event_title}
                                 </option>
                             ))}
                         </select>
@@ -250,9 +504,9 @@ export default function CulturalEventPlanner() {
                 </header>
 
                 <div className="grid grid-cols-3 gap-8">
-                    {/* LEFT COLUMN: Event Form, Participants & Agenda */}
+                    {/* LEFT COLUMN */}
                     <div className="col-span-2">
-                        {/* Event Form */}
+                        {/* EVENT FORM */}
                         <div className="bg-white shadow rounded-lg p-6 mb-8">
                             <h2 className="text-xl font-semibold mb-4">
                                 {editingEvent ? "Edit Event Details" : "Create New Event"}
@@ -303,15 +557,41 @@ export default function CulturalEventPlanner() {
                                         </div>
                                     </div>
                                 </div>
+                                {/* VENUE SEARCH */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-1">Location</label>
-                                    <div className="relative">
-                                        <LocationSearch
-                                            value={locationQuery}
-                                            onChange={(newValue) => setLocationQuery(newValue)}
-                                        />
-                                        <i className="ri-map-pin-line absolute left-3 top-1/2 -translate-y-1/2" />
-                                    </div>
+                                    <label className="block text-sm font-medium mb-1">Venue</label>
+                                    <input
+                                        type="text"
+                                        value={venueSearchQuery}
+                                        onChange={(e) => {
+                                            setVenueSearchQuery(e.target.value);
+                                            setSelectedVenue(null);
+                                        }}
+                                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                        placeholder="Search venue by name"
+                                    />
+                                    {venueResults.length > 0 && (
+                                        <div className="border rounded-lg mt-1 max-h-40 overflow-y-auto bg-white">
+                                            {venueResults.map((venue) => (
+                                                <div
+                                                    key={venue.venue_id}
+                                                    className="p-2 cursor-pointer hover:bg-gray-200 text-black"
+                                                    onClick={() => {
+                                                        setSelectedVenue(venue);
+                                                        setVenueSearchQuery(venue.venue_name);
+                                                        setVenueResults([]);
+                                                    }}
+                                                >
+                                                    {venue.venue_name} ({venue.venue_category})
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {selectedVenue && (
+                                        <p className="text-sm text-gray-600 mt-1">
+                                            Selected Venue: {selectedVenue.venue_name}
+                                        </p>
+                                    )}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium mb-1">Description</label>
@@ -326,10 +606,11 @@ export default function CulturalEventPlanner() {
                                     <label className="block text-sm font-medium mb-1">Total Budget</label>
                                     <input
                                         type="number"
-                                        value={budget}
-                                        onChange={(e) => setBudget(Number(e.target.value))}
+                                        value={eventBudget}
+                                        onChange={(e) => setEventBudget(Number(e.target.value))}
                                         className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
                                         placeholder="Enter total budget"
+                                        required
                                     />
                                 </div>
                                 <div className="mt-4">
@@ -353,102 +634,103 @@ export default function CulturalEventPlanner() {
                             </form>
                         </div>
 
-                        {/* Participants Section */}
-                        <div className="bg-white shadow rounded-lg p-6 mb-8">
-                            <h2 className="text-xl font-semibold mb-4">Participants</h2>
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="relative flex-1 max-w-xs">
+                        {/* LINKED PARTICIPANTS SECTION (only shown if an event is selected) */}
+                        {editingEvent ? (
+                            <div className="bg-white shadow rounded-lg p-6 mb-8">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h2 className="text-xl font-semibold">
+                                        Linked Participants (Event: {editingEvent.event_title})
+                                    </h2>
+                                    <button
+                                        onClick={() => {
+                                            setEditingParticipant(null);
+                                            setParticipantForm({
+                                                participant_fullname: "",
+                                                participant_description: "",
+                                                ethnicity_id: "",
+                                                category_id: "",
+                                            });
+                                            setParticipantModalOpen(true);
+                                        }}
+                                        className="rounded bg-primary px-3 py-1.5 text-sm font-medium flex items-center hover:bg-primary/90 text-white"
+                                    >
+                                        <i className="ri-user-add-line mr-2" />
+                                        Create Participant
+                                    </button>
+                                </div>
+                                {/* Optional: Search box to link existing participants */}
+                                <div className="mb-4">
                                     <input
                                         type="text"
-                                        className="w-full border rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                        placeholder="Search participants"
+                                        value={participantSearch}
+                                        onChange={(e) => setParticipantSearch(e.target.value)}
+                                        className="w-full border rounded-lg px-4 py-2"
+                                        placeholder="Search participants to link..."
                                     />
-                                    <i className="ri-search-line absolute left-3 top-1/2 -translate-y-1/2" />
                                 </div>
-                                <button
-                                    onClick={() => {
-                                        setEditingParticipant(null);
-                                        setParticipantForm({ name: "", role: "", ethnicity: "", status: "Pending" });
-                                        setParticipantModalOpen(true);
-                                    }}
-                                    className="rounded bg-primary px-3 py-1.5 text-sm font-medium flex items-center hover:bg-primary/90"
-                                >
-                                    <i className="ri-user-add-line mr-2" />
-                                    Add Participant
-                                </button>
-                            </div>
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead>
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                                            Name
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                                            Role
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                                            Ethnicity
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                    {participants.map((p) => (
-                                        <tr key={p.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm max-w-[150px] overflow-hidden truncate">
-                                                {p.name}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm max-w-[150px] overflow-hidden truncate">
-                                                {p.role}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm max-w-[150px] overflow-hidden truncate">
-                                                {p.ethnicity}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                {p.status}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                <div className="flex space-x-2">
-                                                    <button
-                                                        onClick={() => {
-                                                            setEditingParticipant(p);
-                                                            setParticipantForm({
-                                                                name: p.name,
-                                                                role: p.role,
-                                                                ethnicity: p.ethnicity,
-                                                                status: p.status,
-                                                            });
-                                                            setParticipantModalOpen(true);
-                                                        }}
-                                                        className="text-blue-500 hover:text-blue-700"
-                                                    >
-                                                        <i className="ri-edit-line" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => {
-                                                            setSelectedParticipantDetails(p);
-                                                            setParticipantDetailsModalOpen(true);
-                                                        }}
-                                                        className="text-gray-500 hover:text-gray-700"
-                                                    >
-                                                        <i className="ri-eye-line" />
-                                                    </button>
-                                                </div>
-                                            </td>
+                                {eventParticipants.length === 0 ? (
+                                    <p className="text-sm">No participants linked yet.</p>
+                                ) : (
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                        <thead>
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                                Full Name
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                                Description
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                                RSVP Status
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                                Actions
+                                            </th>
                                         </tr>
-                                    ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                        {eventParticipants.map((p) => (
+                                            <tr key={p.participant_id}>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    {p.participant_fullname}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    {p.participant_description}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <select
+                                                        value={p.rsvp_status || "Pending"}
+                                                        onChange={(e) => handleRsvpChange(p.participant_id, e.target.value)}
+                                                        className="border rounded"
+                                                    >
+                                                        <option value="Pending">Pending</option>
+                                                        <option value="Accepted">Accepted</option>
+                                                        <option value="Rejected">Rejected</option>
+                                                    </select>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <button
+                                                        onClick={() => handleRemoveParticipant(p.participant_id)}
+                                                        className="text-red-500 hover:text-red-700"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                )}
                             </div>
-                        </div>
+                        ) : (
+                            <div className="bg-white shadow rounded-lg p-6 mb-8">
+                                <p className="text-sm">
+                                    No event selected. Please select an event above to manage linked participants.
+                                </p>
+                            </div>
+                        )}
 
-                        {/* Event Agenda Section */}
+                        {/* AGENDA SECTION */}
                         <div className="bg-white shadow rounded-lg p-6 mb-8">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-semibold">Event Agenda</h2>
@@ -456,10 +738,10 @@ export default function CulturalEventPlanner() {
                                     onClick={() => {
                                         setEditingAgendaItem(null);
                                         setAgendaForm({
-                                            timeframe: "",
-                                            title: "",
-                                            description: "",
-                                            status: "Pending",
+                                            agenda_timeframe: "",
+                                            agenda_title: "",
+                                            agenda_description: "",
+                                            agenda_status: "Pending",
                                         });
                                         setAgendaModalOpen(true);
                                     }}
@@ -495,18 +777,18 @@ export default function CulturalEventPlanner() {
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
                                         {agendaItems.map((item) => (
-                                            <tr key={item.id}>
+                                            <tr key={item.agenda_id}>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm max-w-[150px] overflow-hidden truncate">
-                                                    {item.timeframe}
+                                                    {item.agenda_timeframe}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm max-w-[150px] overflow-hidden truncate">
-                                                    {item.title}
+                                                    {item.agenda_title}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm max-w-[150px] overflow-hidden truncate">
-                                                    {item.description}
+                                                    {item.agenda_description}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                    {item.status}
+                                                    {item.agenda_status}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                     <div className="flex space-x-2">
@@ -514,10 +796,10 @@ export default function CulturalEventPlanner() {
                                                             onClick={() => {
                                                                 setEditingAgendaItem(item);
                                                                 setAgendaForm({
-                                                                    timeframe: item.timeframe,
-                                                                    title: item.title,
-                                                                    description: item.description,
-                                                                    status: item.status,
+                                                                    agenda_timeframe: item.agenda_timeframe,
+                                                                    agenda_title: item.agenda_title,
+                                                                    agenda_description: item.agenda_description,
+                                                                    agenda_status: item.agenda_status,
                                                                 });
                                                                 setAgendaModalOpen(true);
                                                             }}
@@ -545,9 +827,9 @@ export default function CulturalEventPlanner() {
                         </div>
                     </div>
 
-                    {/* RIGHT COLUMN: Calendar, Reminder, and Financial Overview */}
+                    {/* RIGHT COLUMN */}
                     <div className="space-y-8">
-                        {/* Calendar Section */}
+                        {/* CALENDAR */}
                         <div className="bg-white shadow rounded-lg p-6 mt-8">
                             <h2 className="text-xl font-semibold mb-4">Calendar</h2>
                             <div className="space-y-4">
@@ -596,7 +878,7 @@ export default function CulturalEventPlanner() {
                             </div>
                         </div>
 
-                        {/* Reminder Section */}
+                        {/* REMINDER */}
                         <div className="bg-white shadow rounded-lg p-6 mt-8">
                             <h2 className="text-xl font-semibold mb-4">Reminder</h2>
                             <div className="space-y-4">
@@ -611,19 +893,19 @@ export default function CulturalEventPlanner() {
                                         placeholder="48h Before the Event"
                                     />
                                 </div>
-                                <button className="rounded bg-gray-800 px-3 py-1.5 text-sm font-medium hover:bg-gray-700 flex items-center whitespace-nowrap">
+                                <button className="rounded bg-gray-800 px-3 py-1.5 text-sm font-medium hover:bg-gray-700 flex items-center whitespace-nowrap text-white">
                                     Schedule Reminder
                                 </button>
                             </div>
                         </div>
 
-                        {/* Financial Overview Section (Under Reminder) */}
+                        {/* FINANCIAL OVERVIEW */}
                         <div className="bg-white shadow rounded-lg p-6">
                             <h2 className="text-xl font-semibold mb-4">Financial Overview</h2>
                             <div className="grid grid-cols-3 gap-4 mb-4">
                                 <div className="bg-gray-50 rounded-lg p-4 text-black">
                                     <h3 className="text-sm font-medium mb-2">Total Budget</h3>
-                                    <p className="text-2xl font-bold">${budget.toLocaleString()}</p>
+                                    <p className="text-2xl font-bold">${eventBudget.toLocaleString()}</p>
                                 </div>
                                 <div className="bg-gray-50 rounded-lg p-4 text-black">
                                     <h3 className="text-sm font-medium mb-2">Current Expenses</h3>
@@ -637,7 +919,7 @@ export default function CulturalEventPlanner() {
                             <div>
                                 <button
                                     onClick={() => router.push("/finance")}
-                                    className="bg-primary px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-primary/90 flex items-center cursor-pointer whitespace-nowrap text-black"
+                                    className="bg-primary px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-primary/90 flex items-center cursor-pointer whitespace-nowrap text-white"
                                 >
                                     View Detailed Finance
                                 </button>
@@ -647,65 +929,100 @@ export default function CulturalEventPlanner() {
                 </div>
             </main>
 
-            {/* --- POPUP MODALS --- */}
-
-            {/* Participant Modal */}
+            {/* PARTICIPANT MODALS */}
             <Modal
                 isOpen={isParticipantModalOpen}
                 onClose={() => setParticipantModalOpen(false)}
-                title={editingParticipant ? "Edit Participant" : "Add New Participant"}
+                title={editingParticipant ? "Edit Participant" : "Create Participant"}
             >
                 <form onSubmit={handleParticipantSubmit} className="space-y-4 text-black">
                     <input
                         type="text"
-                        placeholder="Name"
-                        value={participantForm.name}
+                        placeholder="Full Name"
+                        value={participantForm.participant_fullname}
                         onChange={(e) =>
-                            setParticipantForm({ ...participantForm, name: e.target.value })
+                            setParticipantForm({
+                                ...participantForm,
+                                participant_fullname: e.target.value,
+                            })
                         }
                         className="w-full border rounded-lg px-4 py-2"
                         required
                     />
                     <input
                         type="text"
-                        placeholder="Role"
-                        value={participantForm.role}
+                        placeholder="Description"
+                        value={participantForm.participant_description}
                         onChange={(e) =>
-                            setParticipantForm({ ...participantForm, role: e.target.value })
+                            setParticipantForm({
+                                ...participantForm,
+                                participant_description: e.target.value,
+                            })
+                        }
+                        className="w-full border rounded-lg px-4 py-2"
+                    />
+                    <select
+                        value={participantForm.ethnicity_id}
+                        onChange={(e) =>
+                            setParticipantForm({ ...participantForm, ethnicity_id: e.target.value })
                         }
                         className="w-full border rounded-lg px-4 py-2"
                         required
-                    />
-                    <input
-                        type="text"
-                        placeholder="Ethnicity"
-                        value={participantForm.ethnicity}
+                    >
+                        <option value="">Select Ethnicity</option>
+                        {ethnicities.map((eth) => (
+                            <option key={eth.ethnicity_id} value={eth.ethnicity_id}>
+                                {eth.ethnicity_name}
+                            </option>
+                        ))}
+                    </select>
+                    <select
+                        value={participantForm.category_id}
                         onChange={(e) =>
-                            setParticipantForm({ ...participantForm, ethnicity: e.target.value })
+                            setParticipantForm({ ...participantForm, category_id: e.target.value })
                         }
                         className="w-full border rounded-lg px-4 py-2"
-                    />
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Status</label>
-                        <select
-                            value={participantForm.status}
-                            onChange={(e) =>
-                                setParticipantForm({ ...participantForm, status: e.target.value })
-                            }
-                            className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                        >
-                            <option value="Pending">Pending</option>
-                            <option value="Confirmed">Confirmed</option>
-                            <option value="Declined">Declined</option>
-                        </select>
-                    </div>
-                    <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-black">
-                        {editingParticipant ? "Update Participant" : "Save Participant"}
+                        required
+                    >
+                        <option value="">Select Category</option>
+                        {participantCategories.map((cat) => (
+                            <option key={cat.category_id} value={cat.category_id}>
+                                {cat.category_name}
+                            </option>
+                        ))}
+                    </select>
+                    <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-white">
+                        {editingParticipant ? "Save Changes" : "Create Participant"}
                     </button>
                 </form>
             </Modal>
 
-            {/* Agenda Item Modal */}
+            <Modal
+                isOpen={isParticipantDetailsModalOpen}
+                onClose={() => setParticipantDetailsModalOpen(false)}
+                title="Participant Details"
+            >
+                <div className="max-h-[400px] overflow-y-auto text-black">
+                    {selectedParticipantDetails && (
+                        <div className="space-y-2">
+                            <p>
+                                <strong>Full Name:</strong> {selectedParticipantDetails.participant_fullname}
+                            </p>
+                            <p>
+                                <strong>Description:</strong> {selectedParticipantDetails.participant_description}
+                            </p>
+                            <p>
+                                <strong>Ethnicity:</strong> {selectedParticipantDetails.ethnicity_name}
+                            </p>
+                            <p>
+                                <strong>Category:</strong> {selectedParticipantDetails.category_name}
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </Modal>
+
+            {/* AGENDA MODAL */}
             <Modal
                 isOpen={isAgendaModalOpen}
                 onClose={() => setAgendaModalOpen(false)}
@@ -716,9 +1033,9 @@ export default function CulturalEventPlanner() {
                         <label className="block text-sm font-medium mb-1">Timeframe</label>
                         <input
                             type="text"
-                            value={agendaForm.timeframe}
+                            value={agendaForm.agenda_timeframe}
                             onChange={(e) =>
-                                setAgendaForm({ ...agendaForm, timeframe: e.target.value })
+                                setAgendaForm({ ...agendaForm, agenda_timeframe: e.target.value })
                             }
                             className="w-full border rounded-lg px-4 py-2"
                             placeholder="e.g., 09:00 - 09:30"
@@ -729,10 +1046,8 @@ export default function CulturalEventPlanner() {
                         <label className="block text-sm font-medium mb-1">Title</label>
                         <input
                             type="text"
-                            value={agendaForm.title}
-                            onChange={(e) =>
-                                setAgendaForm({ ...agendaForm, title: e.target.value })
-                            }
+                            value={agendaForm.agenda_title}
+                            onChange={(e) => setAgendaForm({ ...agendaForm, agenda_title: e.target.value })}
                             className="w-full border rounded-lg px-4 py-2"
                             placeholder="Enter agenda title"
                             required
@@ -741,9 +1056,9 @@ export default function CulturalEventPlanner() {
                     <div>
                         <label className="block text-sm font-medium mb-1">Description</label>
                         <textarea
-                            value={agendaForm.description}
+                            value={agendaForm.agenda_description}
                             onChange={(e) =>
-                                setAgendaForm({ ...agendaForm, description: e.target.value })
+                                setAgendaForm({ ...agendaForm, agenda_description: e.target.value })
                             }
                             className="w-full border rounded-lg px-4 py-2"
                             placeholder="Enter description"
@@ -752,10 +1067,8 @@ export default function CulturalEventPlanner() {
                     <div>
                         <label className="block text-sm font-medium mb-1">Status</label>
                         <select
-                            value={agendaForm.status}
-                            onChange={(e) =>
-                                setAgendaForm({ ...agendaForm, status: e.target.value })
-                            }
+                            value={agendaForm.agenda_status}
+                            onChange={(e) => setAgendaForm({ ...agendaForm, agenda_status: e.target.value })}
                             className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
                         >
                             <option value="Pending">Pending</option>
@@ -765,14 +1078,14 @@ export default function CulturalEventPlanner() {
                     </div>
                     <button
                         type="submit"
-                        className="w-full bg-primary rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-primary/90"
+                        className="w-full bg-primary rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-primary/90 text-white"
                     >
                         {editingAgendaItem ? "Save Changes" : "Add Agenda Item"}
                     </button>
                 </form>
             </Modal>
 
-            {/* Logistic Task Modal */}
+            {/* LOGISTIC MODAL */}
             <Modal
                 isOpen={isLogisticModalOpen}
                 onClose={() => setLogisticModalOpen(false)}
@@ -782,63 +1095,25 @@ export default function CulturalEventPlanner() {
                     <input
                         type="text"
                         placeholder="Task Title"
-                        value={newLogisticTask.title}
+                        value={newLogisticTask.logistic_title}
                         onChange={(e) =>
-                            setNewLogisticTask({ ...newLogisticTask, title: e.target.value })
+                            setNewLogisticTask({ ...newLogisticTask, logistic_title: e.target.value })
                         }
                         className="w-full border rounded-lg px-4 py-2"
                         required
                     />
                     <textarea
                         placeholder="Task Description"
-                        value={newLogisticTask.description}
+                        value={newLogisticTask.logistic_description}
                         onChange={(e) =>
-                            setNewLogisticTask({ ...newLogisticTask, description: e.target.value })
+                            setNewLogisticTask({ ...newLogisticTask, logistic_description: e.target.value })
                         }
                         className="w-full border rounded-lg px-4 py-2"
                     />
-                    <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-black">
+                    <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-white">
                         Save Task
                     </button>
                 </form>
-            </Modal>
-
-            {/* Participant Details Modal */}
-            <Modal
-                isOpen={isParticipantDetailsModalOpen}
-                onClose={() => setParticipantDetailsModalOpen(false)}
-                title="Participant Details"
-            >
-                <div className="max-h-[400px] overflow-y-auto">
-                    {selectedParticipantDetails && (
-                        <div className="space-y-2 text-black">
-                            <p><strong>Name:</strong> {selectedParticipantDetails.name}</p>
-                            <p><strong>Role:</strong> {selectedParticipantDetails.role}</p>
-                            <p><strong>Ethnicity:</strong> {selectedParticipantDetails.ethnicity}</p>
-                            <p><strong>Status:</strong> {selectedParticipantDetails.status}</p>
-                        </div>
-                    )}
-                </div>
-            </Modal>
-
-            {/* Agenda Details Modal */}
-            <Modal
-                isOpen={isAgendaDetailsModalOpen}
-                onClose={() => setAgendaDetailsModalOpen(false)}
-                title="Agenda Item Details"
-            >
-                <div className="max-h-[400px] overflow-y-auto">
-                    {selectedAgendaDetails && (
-                        <div className="space-y-2 text-black">
-                            <p><strong>Timeframe:</strong> {selectedAgendaDetails.timeframe}</p>
-                            <p><strong>Title:</strong> {selectedAgendaDetails.title}</p>
-                            <p><strong>Description:</strong> {selectedAgendaDetails.description}</p>
-                            <p>
-                                <strong>Status:</strong> {selectedAgendaDetails.status}
-                            </p>
-                        </div>
-                    )}
-                </div>
             </Modal>
         </div>
     );
