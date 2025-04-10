@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import "remixicon/fonts/remixicon.css";
 import Modal from "../../components/Modal"; // Adjust the import as needed
 
+//export const dynamic = 'force-dynamic';
+
 export default function CulturalEventPlanner() {
     const router = useRouter();
-    const searchParams = useSearchParams();
+    //const searchParams = useSearchParams();
 
     // -------------------- CALENDAR --------------------
     const today = new Date();
@@ -794,6 +796,7 @@ END:VCALENDAR
 
     // -------------------- RENDER --------------------
     return (
+        <Suspense fallback={<div>Loading Event Planner...</div>}>
         <div className="bg-gray-50 min-h-screen text-black relative">
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
                 {/* HEADER: Event Selection */}
@@ -1949,5 +1952,6 @@ END:VCALENDAR
                 </form>
             </Modal>
         </div>
+        </Suspense>
     );
 }
