@@ -65,7 +65,7 @@ export default function Navbar() {
                     {/* Logo on the far left */}
                     <div className="flex items-center">
                         <Link href="/">
-                            <span className="text-xl font-bold text-black">MyLogo</span>
+                            <span className="text-xl font-bold text-black">10/10</span>
                         </Link>
                     </div>
                     {/* Desktop Navigation Links on the right */}
