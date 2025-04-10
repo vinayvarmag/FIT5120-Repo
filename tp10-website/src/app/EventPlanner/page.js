@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import "remixicon/fonts/remixicon.css";
-import Modal from "../../components/Modal"; // Adjust path if needed
+import Modal from "../../components/Modal"; // Adjust the import as needed
 
 export default function CulturalEventPlanner() {
     const router = useRouter();
@@ -29,6 +29,7 @@ export default function CulturalEventPlanner() {
             setCurrentMonth(currentMonth - 1);
         }
     };
+
     const handleNextMonth = () => {
         if (currentMonth === 11) {
             setCurrentMonth(0);
@@ -46,7 +47,7 @@ export default function CulturalEventPlanner() {
     const [eventStartTime, setEventStartTime] = useState("");
     const [eventEndTime, setEventEndTime] = useState("");
 
-    // Venue search states
+    // Venue search
     const [venueSearchQuery, setVenueSearchQuery] = useState("");
     const [venueResults, setVenueResults] = useState([]);
     const [selectedVenue, setSelectedVenue] = useState(null);
@@ -55,7 +56,6 @@ export default function CulturalEventPlanner() {
     const [eventBudget, setEventBudget] = useState(50000);
 
     // -------------------- PARTICIPANT & LINKING STATES --------------------
-    // 'participants' here holds the search results for linking purposes.
     const [participants, setParticipants] = useState([]);
     const [participantSearch, setParticipantSearch] = useState("");
 
@@ -64,7 +64,11 @@ export default function CulturalEventPlanner() {
     const [selectedParticipantDetails, setSelectedParticipantDetails] = useState(null);
     const [isParticipantDetailsModalOpen, setParticipantDetailsModalOpen] = useState(false);
 
-    // Form for creating/updating a participant
+    // "Select Participant" modal state.
+    const [isSelectParticipantModalOpen, setSelectParticipantModalOpen] = useState(false);
+    const [selectParticipantMode, setSelectParticipantMode] = useState("list");
+
+    // Form for creating/updating a participant.
     const [participantForm, setParticipantForm] = useState({
         participant_fullname: "",
         participant_description: "",
@@ -72,11 +76,11 @@ export default function CulturalEventPlanner() {
         category_id: "",
     });
 
-    // Dropdowns for ethnicity & category
+    // Dropdown data for ethnicity and participant category.
     const [ethnicities, setEthnicities] = useState([]);
     const [participantCategories, setParticipantCategories] = useState([]);
 
-    // 'eventParticipants' holds those participants linked to the currently selected event (with RSVP)
+    // Participants linked to the selected event.
     const [eventParticipants, setEventParticipants] = useState([]);
 
     // -------------------- AGENDA STATES --------------------
@@ -95,15 +99,21 @@ export default function CulturalEventPlanner() {
     // -------------------- LOGISTIC STATES --------------------
     const [logisticTasks, setLogisticTasks] = useState([]);
     const [isLogisticModalOpen, setLogisticModalOpen] = useState(false);
+    const [editingLogisticTask, setEditingLogisticTask] = useState(null);
     const [newLogisticTask, setNewLogisticTask] = useState({
         logistic_title: "",
         logistic_description: "",
+        logistic_status: "Pending",
     });
+    // New modal for quickly changing logistic status.
+    const [isLogisticStatusModalOpen, setLogisticStatusModalOpen] = useState(false);
+    const [selectedLogisticTaskForStatus, setSelectedLogisticTaskForStatus] = useState(null);
+
     const currentExpenses = 78000;
     const remainingBudget = eventBudget - currentExpenses;
 
     // -------------------- DATA FETCHING --------------------
-    // 1) Load participants (for search); API must return ethnicity_name and category_name
+    // 1) Load participants.
     useEffect(() => {
         async function loadParticipants() {
             try {
@@ -121,7 +131,7 @@ export default function CulturalEventPlanner() {
         loadParticipants();
     }, [participantSearch]);
 
-    // 2) Load events
+    // 2) Load events.
     useEffect(() => {
         async function loadEvents() {
             try {
@@ -135,35 +145,43 @@ export default function CulturalEventPlanner() {
         loadEvents();
     }, []);
 
-    // 3) Load agenda items
+    // 3) Load agenda items for the selected event.
     useEffect(() => {
         async function loadAgenda() {
-            try {
-                const res = await fetch("/api/agenda");
-                const data = await res.json();
-                setAgendaItems(data);
-            } catch (err) {
-                console.error("Failed to load agenda items:", err);
+            if (editingEvent && editingEvent.event_id) {
+                try {
+                    const res = await fetch(`/api/agenda?event_id=${editingEvent.event_id}`);
+                    const data = await res.json();
+                    setAgendaItems(data);
+                } catch (err) {
+                    console.error("Failed to load agenda items for event:", err);
+                }
+            } else {
+                setAgendaItems([]);
             }
         }
         loadAgenda();
-    }, []);
+    }, [editingEvent]);
 
-    // 4) Load logistic tasks
+    // 4) Load logistic tasks for the selected event.
     useEffect(() => {
         async function loadLogistics() {
-            try {
-                const res = await fetch("/api/logistic");
-                const data = await res.json();
-                setLogisticTasks(data);
-            } catch (err) {
-                console.error("Failed to load logistic tasks:", err);
+            if (editingEvent && editingEvent.event_id) {
+                try {
+                    const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
+                    const data = await res.json();
+                    setLogisticTasks(data);
+                } catch (err) {
+                    console.error("Failed to load logistic tasks:", err);
+                }
+            } else {
+                setLogisticTasks([]);
             }
         }
         loadLogistics();
-    }, []);
+    }, [editingEvent]);
 
-    // 5) Load dropdown data for ethnicities and participant categories
+    // 5) Load dropdown data.
     useEffect(() => {
         fetch("/api/ethnicity")
             .then((res) => res.json())
@@ -176,7 +194,7 @@ export default function CulturalEventPlanner() {
             .catch((err) => console.error("Failed to fetch participant categories:", err));
     }, []);
 
-    // 6) Load linked participants for the selected event
+    // 6) Load participants linked to the selected event.
     useEffect(() => {
         if (editingEvent && editingEvent.event_id) {
             fetch(`/api/event_participant?event_id=${editingEvent.event_id}`)
@@ -188,7 +206,7 @@ export default function CulturalEventPlanner() {
         }
     }, [editingEvent]);
 
-    // 7) Venue search
+    // 7) Venue search.
     useEffect(() => {
         async function loadVenues() {
             try {
@@ -209,15 +227,13 @@ export default function CulturalEventPlanner() {
     }, [venueSearchQuery]);
 
     // -------------------- HANDLERS --------------------
-    // Create or update an event
+    // Create or update an event.
     const handleEventSubmit = async (e) => {
         e.preventDefault();
-        const startDateTime = eventDateInput && eventStartTime
-            ? `${eventDateInput} ${eventStartTime}:00`
-            : null;
-        const endDateTime = eventDateInput && eventEndTime
-            ? `${eventDateInput} ${eventEndTime}:00`
-            : null;
+        const startDateTime =
+            eventDateInput && eventStartTime ? `${eventDateInput} ${eventStartTime}:00` : null;
+        const endDateTime =
+            eventDateInput && eventEndTime ? `${eventDateInput} ${eventEndTime}:00` : null;
         const eventBody = {
             event_title: eventTitle,
             event_description: eventDescription,
@@ -245,7 +261,7 @@ export default function CulturalEventPlanner() {
             const data = await res.json();
             setEvents(data);
 
-            // Reset event form
+            // Reset event form.
             setEditingEvent(null);
             setEventTitle("");
             setEventDateInput("");
@@ -261,7 +277,7 @@ export default function CulturalEventPlanner() {
         }
     };
 
-    // Select an event from the dropdown
+    // Select an event.
     const handleSelectEvent = (e) => {
         const selectedId = parseInt(e.target.value);
         if (!isNaN(selectedId)) {
@@ -296,7 +312,7 @@ export default function CulturalEventPlanner() {
                 setEventBudget(found.event_budget || 50000);
             }
         } else {
-            // Reset if no event selected
+            // Reset if no event.
             setEditingEvent(null);
             setEventTitle("");
             setEventDateInput("");
@@ -309,7 +325,7 @@ export default function CulturalEventPlanner() {
         }
     };
 
-    // Remove a linked participant from the event
+    // Remove a linked participant.
     const handleRemoveParticipant = async (participantId) => {
         if (!editingEvent) return;
         if (!window.confirm("Are you sure you want to remove this participant from the event?"))
@@ -327,7 +343,7 @@ export default function CulturalEventPlanner() {
         }
     };
 
-    // Update RSVP status
+    // Update RSVP status.
     const handleRsvpChange = async (participantId, newStatus) => {
         if (!editingEvent) return;
         try {
@@ -350,7 +366,20 @@ export default function CulturalEventPlanner() {
         }
     };
 
-    // Link a participant (from search results) to the event
+    // Delete a participant.
+    const handleDeleteParticipant = async (participantId) => {
+        if (!window.confirm("Are you sure you want to delete this participant?")) return;
+        try {
+            await fetch(`/api/participant/${participantId}`, { method: "DELETE" });
+            const res = await fetch("/api/participant");
+            const data = await res.json();
+            setParticipants(data);
+        } catch (error) {
+            console.error("Error deleting participant:", error);
+        }
+    };
+
+    // Link a participant.
     const handleLinkParticipantFromMain = async (participantId) => {
         if (!editingEvent || !editingEvent.event_id) {
             alert("Please select an event first.");
@@ -369,12 +398,15 @@ export default function CulturalEventPlanner() {
             const res = await fetch(`/api/event_participant?event_id=${editingEvent.event_id}`);
             const data = await res.json();
             setEventParticipants(data);
+            setSelectParticipantModalOpen(false);
+            setParticipantSearch("");
+            setParticipants([]);
         } catch (error) {
             console.error("Error linking participant:", error);
         }
     };
 
-    // Create or update a participant (via modal)
+    // Create/update a participant.
     const handleParticipantSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -405,67 +437,35 @@ export default function CulturalEventPlanner() {
                 ethnicity_id: "",
                 category_id: "",
             });
-            setParticipantModalOpen(false);
+            setSelectParticipantMode("list");
         } catch (err) {
             console.error("Failed to save participant:", err);
         }
     };
 
-    // Logistics
-    const handleLogisticSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await fetch("/api/logistic", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newLogisticTask),
-            });
-            const res = await fetch("/api/logistic");
-            const data = await res.json();
-            setLogisticTasks(data);
-            setNewLogisticTask({ logistic_title: "", logistic_description: "" });
-            setLogisticModalOpen(false);
-        } catch (err) {
-            console.error("Failed to create logistic task:", err);
-        }
-    };
-
-    const toggleLogisticTask = async (id) => {
-        const task = logisticTasks.find((x) => x.logistic_id === id);
-        if (!task) return;
-        const updated = { ...task, logistic_completed: !task.logistic_completed };
-        try {
-            await fetch(`/api/logistic/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updated),
-            });
-            const res = await fetch("/api/logistic");
-            const data = await res.json();
-            setLogisticTasks(data);
-        } catch (err) {
-            console.error("Failed to toggle logistic task:", err);
-        }
-    };
-
-    // Agenda
+    // Create/update an agenda item.
     const handleAgendaSubmit = async (e) => {
         e.preventDefault();
+        if (!editingEvent || !editingEvent.event_id) {
+            alert("Please select an event before adding an agenda item.");
+            return;
+        }
+        const payload = { ...agendaForm, event_id: editingEvent.event_id };
         try {
             if (editingAgendaItem) {
                 await fetch(`/api/agenda/${editingAgendaItem.agenda_id}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(agendaForm),
+                    body: JSON.stringify(payload),
                 });
             } else {
                 await fetch("/api/agenda", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(agendaForm),
+                    body: JSON.stringify(payload),
                 });
             }
-            const res = await fetch("/api/agenda");
+            const res = await fetch(`/api/agenda?event_id=${editingEvent.event_id}`);
             const data = await res.json();
             setAgendaItems(data);
             setEditingAgendaItem(null);
@@ -481,10 +481,116 @@ export default function CulturalEventPlanner() {
         }
     };
 
+    // Delete an agenda item.
+    const handleDeleteAgendaItem = async (agendaId) => {
+        if (!window.confirm("Are you sure you want to delete this agenda item?")) return;
+        try {
+            await fetch(`/api/agenda?agenda_id=${agendaId}`, { method: "DELETE" });
+            const res = await fetch(`/api/agenda?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setAgendaItems(data);
+        } catch (err) {
+            console.error("Error deleting agenda item:", err);
+        }
+    };
+
+    // Create/update a logistic task.
+    const handleLogisticSubmit = async (e) => {
+        e.preventDefault();
+        if (!editingEvent || !editingEvent.event_id) {
+            alert("Please select an event before adding a logistic task.");
+            return;
+        }
+        const payload = { ...newLogisticTask, event_id: editingEvent.event_id };
+        try {
+            if (editingLogisticTask) {
+                await fetch(`/api/logistics/${editingLogisticTask.logistic_id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+            } else {
+                await fetch("/api/logistics", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+            }
+            const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setLogisticTasks(data);
+            setNewLogisticTask({ logistic_title: "", logistic_description: "", logistic_status: "Pending" });
+            setEditingLogisticTask(null);
+            setLogisticModalOpen(false);
+        } catch (err) {
+            console.error("Failed to submit logistic task:", err);
+        }
+    };
+
+    // Delete a logistic task.
+    const handleDeleteLogisticTask = async (taskId) => {
+        if (!window.confirm("Are you sure you want to delete this logistic task?")) return;
+        try {
+            await fetch(`/api/logistics?logistic_id=${taskId}`, { method: "DELETE" });
+            const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setLogisticTasks(data);
+        } catch (err) {
+            console.error("Error deleting logistic task:", err);
+        }
+    };
+
+    // Toggle logistic task status (quick toggle).
+    const toggleLogisticTask = async (id) => {
+        const task = logisticTasks.find((x) => x.logistic_id === id);
+        if (!task) return;
+        const updated = { ...task, logistic_status: task.logistic_status === "Pending" ? "Completed" : "Pending" };
+        try {
+            await fetch(`/api/logistics/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updated),
+            });
+            const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setLogisticTasks(data);
+        } catch (err) {
+            console.error("Failed to toggle logistic task:", err);
+        }
+    };
+
+    // Open logistic status modal.
+    const handleOpenLogisticStatusModal = (task) => {
+        setSelectedLogisticTaskForStatus(task);
+        setLogisticStatusModalOpen(true);
+    };
+
+    // Submit logistic status change.
+    const handleLogisticStatusSubmit = async (e) => {
+        e.preventDefault();
+        const newStatus = e.target.elements.status.value;
+        try {
+            const updated = { ...selectedLogisticTaskForStatus, logistic_status: newStatus };
+            await fetch(`/api/logistics/${selectedLogisticTaskForStatus.logistic_id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updated),
+            });
+            const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setLogisticTasks(data);
+            setLogisticStatusModalOpen(false);
+            setSelectedLogisticTaskForStatus(null);
+        } catch (err) {
+            console.error("Failed to update logistic status:", err);
+        }
+    };
+
     // -------------------- RENDER --------------------
     return (
         <div className="bg-gray-50 min-h-screen text-black relative">
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
+                {/* HEADER: Event Selection */}
                 <header className="mb-6 flex justify-between items-center">
                     <h1 className="text-2xl font-bold">Cultural Event Planner</h1>
                     <div>
@@ -571,7 +677,7 @@ export default function CulturalEventPlanner() {
                                         placeholder="Search venue by name"
                                     />
                                     {venueResults.length > 0 && (
-                                        <div className="border rounded-lg mt-1 max-h-40 overflow-y-auto bg-white">
+                                        <div className="border rounded-lg mt-1 bg-white max-h-40 overflow-y-auto">
                                             {venueResults.map((venue) => (
                                                 <div
                                                     key={venue.venue_id}
@@ -616,7 +722,7 @@ export default function CulturalEventPlanner() {
                                 <div className="mt-4">
                                     <button
                                         type="submit"
-                                        className="w-full bg-primary rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-primary/90"
+                                        className="w-full bg-primary rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-primary/90 text-black"
                                     >
                                         {editingEvent ? (
                                             <>
@@ -634,7 +740,7 @@ export default function CulturalEventPlanner() {
                             </form>
                         </div>
 
-                        {/* LINKED PARTICIPANTS SECTION (only shown if an event is selected) */}
+                        {/* LINKED PARTICIPANTS SECTION */}
                         {editingEvent ? (
                             <div className="bg-white shadow rounded-lg p-6 mb-8">
                                 <div className="flex justify-between items-center mb-4">
@@ -643,64 +749,63 @@ export default function CulturalEventPlanner() {
                                     </h2>
                                     <button
                                         onClick={() => {
-                                            setEditingParticipant(null);
-                                            setParticipantForm({
-                                                participant_fullname: "",
-                                                participant_description: "",
-                                                ethnicity_id: "",
-                                                category_id: "",
-                                            });
-                                            setParticipantModalOpen(true);
+                                            setParticipantSearch("");
+                                            setSelectParticipantMode("list");
+                                            setSelectParticipantModalOpen(true);
                                         }}
-                                        className="rounded bg-primary px-3 py-1.5 text-sm font-medium flex items-center hover:bg-primary/90 text-white"
+                                        className="rounded bg-primary px-3 py-1.5 text-sm font-medium flex items-center hover:bg-primary/90 text-black"
                                     >
-                                        <i className="ri-user-add-line mr-2" />
-                                        Create Participant
+                                        Select Participant
                                     </button>
-                                </div>
-                                {/* Optional: Search box to link existing participants */}
-                                <div className="mb-4">
-                                    <input
-                                        type="text"
-                                        value={participantSearch}
-                                        onChange={(e) => setParticipantSearch(e.target.value)}
-                                        className="w-full border rounded-lg px-4 py-2"
-                                        placeholder="Search participants to link..."
-                                    />
                                 </div>
                                 {eventParticipants.length === 0 ? (
                                     <p className="text-sm">No participants linked yet.</p>
                                 ) : (
-                                    <table className="min-w-full divide-y divide-gray-200">
+                                    // <-- UPDATED: table-fixed and truncate classes
+                                    <table className="table-fixed w-full divide-y divide-gray-200">
                                         <thead>
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">
                                                 Full Name
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">
                                                 Description
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                                                RSVP Status
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">
+                                                Category
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">
+                                                Ethnicity
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">
+                                                RSVP
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">
                                                 Actions
                                             </th>
                                         </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody className="divide-y divide-gray-200">
                                         {eventParticipants.map((p) => (
                                             <tr key={p.participant_id}>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
                                                     {p.participant_fullname}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
                                                     {p.participant_description}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                                                    {p.category_name || "—"}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                                                    {p.ethnicity_name || "—"}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap">
                                                     <select
                                                         value={p.rsvp_status || "Pending"}
-                                                        onChange={(e) => handleRsvpChange(p.participant_id, e.target.value)}
+                                                        onChange={(e) =>
+                                                            handleRsvpChange(p.participant_id, e.target.value)
+                                                        }
                                                         className="border rounded"
                                                     >
                                                         <option value="Pending">Pending</option>
@@ -708,10 +813,10 @@ export default function CulturalEventPlanner() {
                                                         <option value="Rejected">Rejected</option>
                                                     </select>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap">
                                                     <button
                                                         onClick={() => handleRemoveParticipant(p.participant_id)}
-                                                        className="text-red-500 hover:text-red-700"
+                                                        className="text-red-500 hover:underline"
                                                     >
                                                         Delete
                                                     </button>
@@ -731,46 +836,47 @@ export default function CulturalEventPlanner() {
                         )}
 
                         {/* AGENDA SECTION */}
-                        <div className="bg-white shadow rounded-lg p-6 mb-8">
-                            <div className="flex justify-between items-center mb-4">
-                                <h2 className="text-xl font-semibold">Event Agenda</h2>
-                                <button
-                                    onClick={() => {
-                                        setEditingAgendaItem(null);
-                                        setAgendaForm({
-                                            agenda_timeframe: "",
-                                            agenda_title: "",
-                                            agenda_description: "",
-                                            agenda_status: "Pending",
-                                        });
-                                        setAgendaModalOpen(true);
-                                    }}
-                                    className="rounded border border-primary/20 text-primary px-3 py-1.5 text-sm font-medium hover:bg-primary/5 flex items-center"
-                                >
-                                    <i className="ri-add-line mr-2" />
-                                    Add Agenda Item
-                                </button>
-                            </div>
-                            <div className="overflow-x-auto">
+                        {editingEvent ? (
+                            <div className="bg-white shadow rounded-lg p-6 mb-8">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h2 className="text-xl font-semibold">Event Agenda</h2>
+                                    <button
+                                        onClick={() => {
+                                            setEditingAgendaItem(null);
+                                            setAgendaForm({
+                                                agenda_timeframe: "",
+                                                agenda_title: "",
+                                                agenda_description: "",
+                                                agenda_status: "Pending",
+                                            });
+                                            setAgendaModalOpen(true);
+                                        }}
+                                        className="rounded border border-primary/20 text-primary px-3 py-1.5 text-sm font-medium hover:bg-primary/5 flex items-center text-black"
+                                    >
+                                        <i className="ri-add-line mr-2" />
+                                        Add Agenda Item
+                                    </button>
+                                </div>
                                 {agendaItems.length === 0 ? (
-                                    <p className="text-sm">No agenda items added.</p>
+                                    <p className="text-sm">No agenda items added for this event.</p>
                                 ) : (
-                                    <table className="min-w-full divide-y divide-gray-200 mb-6">
+                                    // <-- UPDATED: table-fixed and truncate classes
+                                    <table className="table-fixed w-full divide-y divide-gray-200">
                                         <thead>
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
                                                 Timeframe
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
                                                 Title
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
                                                 Description
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
                                                 Status
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
                                                 Actions
                                             </th>
                                         </tr>
@@ -778,19 +884,19 @@ export default function CulturalEventPlanner() {
                                         <tbody className="bg-white divide-y divide-gray-200">
                                         {agendaItems.map((item) => (
                                             <tr key={item.agenda_id}>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm max-w-[150px] overflow-hidden truncate">
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
                                                     {item.agenda_timeframe}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm max-w-[150px] overflow-hidden truncate">
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
                                                     {item.agenda_title}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm max-w-[150px] overflow-hidden truncate">
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
                                                     {item.agenda_description}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap">
                                                     {item.agenda_status}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap">
                                                     <div className="flex space-x-2">
                                                         <button
                                                             onClick={() => {
@@ -803,18 +909,24 @@ export default function CulturalEventPlanner() {
                                                                 });
                                                                 setAgendaModalOpen(true);
                                                             }}
-                                                            className="text-blue-500 hover:text-blue-700"
+                                                            className="text-blue-500 hover:underline text-black"
                                                         >
-                                                            <i className="ri-edit-line" />
+                                                            Edit
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeleteAgendaItem(item.agenda_id)}
+                                                            className="text-red-500 hover:underline text-black"
+                                                        >
+                                                            Delete
                                                         </button>
                                                         <button
                                                             onClick={() => {
                                                                 setSelectedAgendaDetails(item);
                                                                 setAgendaDetailsModalOpen(true);
                                                             }}
-                                                            className="text-gray-500 hover:text-gray-700"
+                                                            className="text-gray-500 hover:underline text-black"
                                                         >
-                                                            <i className="ri-eye-line" />
+                                                            View
                                                         </button>
                                                     </div>
                                                 </td>
@@ -824,7 +936,95 @@ export default function CulturalEventPlanner() {
                                     </table>
                                 )}
                             </div>
-                        </div>
+                        ) : null}
+
+                        {/* LOGISTIC TASKS SECTION */}
+                        {editingEvent ? (
+                            <div className="bg-white shadow rounded-lg p-6 mb-8">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h2 className="text-xl font-semibold">Logistic Tasks</h2>
+                                    <button
+                                        onClick={() => {
+                                            setEditingLogisticTask(null);
+                                            setNewLogisticTask({ logistic_title: "", logistic_description: "", logistic_status: "Pending" });
+                                            setLogisticModalOpen(true);
+                                        }}
+                                        className="rounded border border-primary/20 text-primary px-3 py-1.5 text-sm font-medium hover:bg-primary/5 flex items-center text-black"
+                                    >
+                                        <i className="ri-add-line mr-2" />
+                                        Add Logistic Task
+                                    </button>
+                                </div>
+                                {logisticTasks.length === 0 ? (
+                                    <p className="text-sm">No logistic tasks added for this event.</p>
+                                ) : (
+                                    // <-- UPDATED: table-fixed and truncate classes
+                                    <table className="table-fixed w-full divide-y divide-gray-200">
+                                        <thead>
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
+                                                Title
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
+                                                Description
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
+                                                Status
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-200">
+                                        {logisticTasks.map((task) => (
+                                            <tr key={task.logistic_id}>
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
+                                                    {task.logistic_title}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
+                                                    {task.logistic_description}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap">
+                                                    {task.logistic_status}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm whitespace-nowrap">
+                                                    <div className="flex space-x-2">
+                                                        <button
+                                                            onClick={() => {
+                                                                setEditingLogisticTask(task);
+                                                                setNewLogisticTask({
+                                                                    logistic_title: task.logistic_title,
+                                                                    logistic_description: task.logistic_description,
+                                                                    logistic_status: task.logistic_status,
+                                                                });
+                                                                setLogisticModalOpen(true);
+                                                            }}
+                                                            className="text-blue-500 hover:underline text-black"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleOpenLogisticStatusModal(task)}
+                                                            className="text-green-600 hover:underline text-black"
+                                                        >
+                                                            Status
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeleteLogisticTask(task.logistic_id)}
+                                                            className="text-red-500 hover:underline text-black"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                )}
+                            </div>
+                        ) : null}
                     </div>
 
                     {/* RIGHT COLUMN */}
@@ -893,7 +1093,7 @@ export default function CulturalEventPlanner() {
                                         placeholder="48h Before the Event"
                                     />
                                 </div>
-                                <button className="rounded bg-gray-800 px-3 py-1.5 text-sm font-medium hover:bg-gray-700 flex items-center whitespace-nowrap text-white">
+                                <button className="rounded bg-gray-800 px-3 py-1.5 text-sm font-medium hover:bg-gray-700 flex items-center whitespace-nowrap text-black">
                                     Schedule Reminder
                                 </button>
                             </div>
@@ -918,8 +1118,8 @@ export default function CulturalEventPlanner() {
                             </div>
                             <div>
                                 <button
-                                    onClick={() => router.push("/finance")}
-                                    className="bg-primary px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-primary/90 flex items-center cursor-pointer whitespace-nowrap text-white"
+                                    onClick={() => router.push(`/finance?event_id=${editingEvent.event_id}`)}
+                                    className="bg-primary px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-primary/90 flex items-center cursor-pointer whitespace-nowrap text-black"
                                 >
                                     View Detailed Finance
                                 </button>
@@ -929,7 +1129,176 @@ export default function CulturalEventPlanner() {
                 </div>
             </main>
 
-            {/* PARTICIPANT MODALS */}
+            {/* SELECT PARTICIPANT MODAL */}
+            {isSelectParticipantModalOpen && (
+                <Modal
+                    isOpen={isSelectParticipantModalOpen}
+                    onClose={() => setSelectParticipantModalOpen(false)}
+                    title="Select Participant"
+                >
+                    {selectParticipantMode === "list" ? (
+                        <>
+                            <input
+                                type="text"
+                                placeholder="Search participants..."
+                                value={participantSearch}
+                                onChange={(e) => setParticipantSearch(e.target.value)}
+                                className="w-full border rounded-lg px-4 py-2 mb-4 text-black"
+                            />
+                            {/* <-- If you truly want no vertical scrollbars, remove overflow-y-auto and let the container expand.
+                                 But that can lead to a very tall list. For a large participant list, you might still prefer some vertical scrolling. */}
+                            <div className="max-h-80">
+                                {participants.length > 0 ? (
+                                    // <-- UPDATED: table-fixed and truncate classes
+                                    <table className="table-fixed w-full divide-y divide-gray-200 text-sm">
+                                        <thead>
+                                        <tr>
+                                            <th className="px-2 py-1 text-left uppercase whitespace-nowrap overflow-hidden text-ellipsis">
+                                                Full Name
+                                            </th>
+                                            <th className="px-2 py-1 text-left uppercase whitespace-nowrap overflow-hidden text-ellipsis">
+                                                Category
+                                            </th>
+                                            <th className="px-2 py-1 text-left uppercase whitespace-nowrap overflow-hidden text-ellipsis">
+                                                Ethnicity
+                                            </th>
+                                            <th className="px-2 py-1 text-left uppercase whitespace-nowrap overflow-hidden text-ellipsis">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-200">
+                                        {participants.map((p) => (
+                                            <tr key={p.participant_id}>
+                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                                                    {p.participant_fullname}
+                                                </td>
+                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                                                    {p.category_name || "—"}
+                                                </td>
+                                                <td className="px-2 py-1 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                                                    {p.ethnicity_name || "—"}
+                                                </td>
+                                                <td className="px-2 py-1 whitespace-nowrap">
+                                                    <div className="flex items-center space-x-2">
+                                                        <button
+                                                            onClick={() => {
+                                                                setEditingParticipant(p);
+                                                                setParticipantForm({
+                                                                    participant_fullname: p.participant_fullname,
+                                                                    participant_description: p.participant_description,
+                                                                    ethnicity_id: p.ethnicity_id || "",
+                                                                    category_id: p.category_id || "",
+                                                                });
+                                                                setSelectParticipantMode("create");
+                                                            }}
+                                                            className="text-blue-500 hover:underline text-black"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeleteParticipant(p.participant_id)}
+                                                            className="text-red-500 hover:underline text-black"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleLinkParticipantFromMain(p.participant_id)}
+                                                            className="text-green-600 hover:underline text-black"
+                                                        >
+                                                            Link
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <p className="text-sm text-gray-500">No participants found.</p>
+                                )}
+                            </div>
+                            <button
+                                onClick={() => setSelectParticipantMode("create")}
+                                className="mt-4 px-4 py-2 bg-blue-500 text-black rounded"
+                            >
+                                Create New Participant
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <form onSubmit={handleParticipantSubmit} className="space-y-4 text-black">
+                                <input
+                                    type="text"
+                                    placeholder="Full Name"
+                                    value={participantForm.participant_fullname}
+                                    onChange={(e) =>
+                                        setParticipantForm({
+                                            ...participantForm,
+                                            participant_fullname: e.target.value,
+                                        })
+                                    }
+                                    className="w-full border rounded-lg px-4 py-2"
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Description"
+                                    value={participantForm.participant_description}
+                                    onChange={(e) =>
+                                        setParticipantForm({
+                                            ...participantForm,
+                                            participant_description: e.target.value,
+                                        })
+                                    }
+                                    className="w-full border rounded-lg px-4 py-2"
+                                />
+                                <select
+                                    value={participantForm.ethnicity_id}
+                                    onChange={(e) =>
+                                        setParticipantForm({ ...participantForm, ethnicity_id: e.target.value })
+                                    }
+                                    className="w-full border rounded-lg px-4 py-2"
+                                    required
+                                >
+                                    <option value="">Select Ethnicity</option>
+                                    {ethnicities.map((eth) => (
+                                        <option key={eth.ethnicity_id} value={eth.ethnicity_id}>
+                                            {eth.ethnicity_name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <select
+                                    value={participantForm.category_id}
+                                    onChange={(e) =>
+                                        setParticipantForm({ ...participantForm, category_id: e.target.value })
+                                    }
+                                    className="w-full border rounded-lg px-4 py-2"
+                                    required
+                                >
+                                    <option value="">Select Category</option>
+                                    {participantCategories.map((cat) => (
+                                        <option key={cat.category_id} value={cat.category_id}>
+                                            {cat.category_name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-black">
+                                    {editingParticipant ? "Save Participant" : "Create Participant"}
+                                </button>
+                            </form>
+                            <button
+                                onClick={() => setSelectParticipantMode("list")}
+                                className="mt-4 px-4 py-2 bg-gray-300 rounded text-black"
+                            >
+                                Back to List
+                            </button>
+                        </>
+                    )}
+                </Modal>
+            )}
+
+            {/* EXISTING PARTICIPANT MODAL */}
             <Modal
                 isOpen={isParticipantModalOpen}
                 onClose={() => setParticipantModalOpen(false)}
@@ -991,8 +1360,8 @@ export default function CulturalEventPlanner() {
                             </option>
                         ))}
                     </select>
-                    <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-white">
-                        {editingParticipant ? "Save Changes" : "Create Participant"}
+                    <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-black">
+                        {editingParticipant ? "Save Participant" : "Create Participant"}
                     </button>
                 </form>
             </Modal>
@@ -1047,7 +1416,9 @@ export default function CulturalEventPlanner() {
                         <input
                             type="text"
                             value={agendaForm.agenda_title}
-                            onChange={(e) => setAgendaForm({ ...agendaForm, agenda_title: e.target.value })}
+                            onChange={(e) =>
+                                setAgendaForm({ ...agendaForm, agenda_title: e.target.value })
+                            }
                             className="w-full border rounded-lg px-4 py-2"
                             placeholder="Enter agenda title"
                             required
@@ -1076,20 +1447,38 @@ export default function CulturalEventPlanner() {
                             <option value="Declined">Declined</option>
                         </select>
                     </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-primary rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-primary/90 text-white"
-                    >
-                        {editingAgendaItem ? "Save Changes" : "Add Agenda Item"}
-                    </button>
+                    <div className="flex space-x-2">
+                        <button
+                            type="submit"
+                            className="w-full bg-primary rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-primary/90 text-black"
+                        >
+                            {editingAgendaItem ? "Save Changes" : "Add Agenda Item"}
+                        </button>
+                        {editingAgendaItem && (
+                            <button
+                                onClick={() => handleDeleteAgendaItem(editingAgendaItem.agenda_id)}
+                                className="w-full bg-red-300 rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-red-400 text-black"
+                            >
+                                Delete Agenda
+                            </button>
+                        )}
+                    </div>
                 </form>
             </Modal>
 
-            {/* LOGISTIC MODAL */}
+            {/* LOGISTIC MODAL (Add/Edit Logistic Task) */}
             <Modal
                 isOpen={isLogisticModalOpen}
-                onClose={() => setLogisticModalOpen(false)}
-                title="Add Logistic Task"
+                onClose={() => {
+                    setLogisticModalOpen(false);
+                    setEditingLogisticTask(null);
+                    setNewLogisticTask({
+                        logistic_title: "",
+                        logistic_description: "",
+                        logistic_status: "Pending",
+                    });
+                }}
+                title={editingLogisticTask ? "Edit Logistic Task" : "Add Logistic Task"}
             >
                 <form onSubmit={handleLogisticSubmit} className="space-y-4 text-black">
                     <input
@@ -1110,8 +1499,64 @@ export default function CulturalEventPlanner() {
                         }
                         className="w-full border rounded-lg px-4 py-2"
                     />
-                    <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-white">
-                        Save Task
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Status</label>
+                        <select
+                            value={newLogisticTask.logistic_status || "Pending"}
+                            onChange={(e) =>
+                                setNewLogisticTask({ ...newLogisticTask, logistic_status: e.target.value })
+                            }
+                            className="w-full border rounded-lg px-4 py-2"
+                        >
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                    <div className="flex space-x-2">
+                        <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-black">
+                            {editingLogisticTask ? "Save Changes" : "Save Task"}
+                        </button>
+                        {editingLogisticTask && (
+                            <button
+                                onClick={() => handleDeleteLogisticTask(editingLogisticTask.logistic_id)}
+                                className="w-full bg-red-300 rounded-lg px-4 py-2 text-black"
+                            >
+                                Delete Task
+                            </button>
+                        )}
+                    </div>
+                </form>
+            </Modal>
+
+            {/* LOGISTIC STATUS MODAL */}
+            <Modal
+                isOpen={isLogisticStatusModalOpen}
+                onClose={() => {
+                    setLogisticStatusModalOpen(false);
+                    setSelectedLogisticTaskForStatus(null);
+                }}
+                title="Change Logistic Status"
+            >
+                <form onSubmit={handleLogisticStatusSubmit} className="space-y-4 text-black">
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Status</label>
+                        <select
+                            name="status"
+                            defaultValue={
+                                selectedLogisticTaskForStatus
+                                    ? selectedLogisticTaskForStatus.logistic_status
+                                    : "Pending"
+                            }
+                            className="w-full border rounded-lg px-4 py-2"
+                        >
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                    <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-black">
+                        Update Status
                     </button>
                 </form>
             </Modal>

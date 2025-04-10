@@ -19,7 +19,7 @@ export async function GET(request, { params }) {
 }
 
 export async function PUT(request, { params }) {
-    const { participant_id } = params;
+    const { participant_id } = await params;
     try {
         const {
             participant_fullname,
@@ -45,7 +45,7 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-    const { participant_id } = params;
+    const { participant_id } = await params;
     try {
         await pool.query("DELETE FROM PARTICIPANT WHERE participant_id = ?", [participant_id]);
         return NextResponse.json({ success: true });

@@ -1,28 +1,28 @@
 import { NextResponse } from "next/server";
 import pool from "../db";
 
-export async function GET(request) {
+export async function PUT(request) {
     try {
-        const { searchParams } = new URL(request.url);
-        const search = searchParams.get("search") || "";
-        // Adjust your query as needed for your database.
-        const [rows] = await pool.query(
-            `SELECT p.participant_id,
-              p.participant_fullname,
-              p.participant_description,
-              e.ethnicity_name,
-              c.category_name,
-              p.ethnicity_id,
-              p.category_id
-         FROM PARTICIPANT p
-         LEFT JOIN ETHNICITY e ON p.ethnicity_id = e.ethnicity_id
-         LEFT JOIN PARTICIPANT_CATEGORY c ON p.category_id = c.category_id
-        WHERE p.participant_fullname LIKE ? OR p.participant_description LIKE ?`,
-            [`%${search}%`, `%${search}%`]
+        const { event_id, participant_id, rsvp_status } = await request.json();
+
+        if (!event_id || !participant_id) {
+            return NextResponse.json(
+                { error: "Missing event_id or participant_id" },
+                { status: 400 }
+            );
+        }
+
+        await pool.query(
+            "UPDATE EVENT_PARTICIPANT SET rsvp_status = ? WHERE event_id = ? AND participant_id = ?",
+            [rsvp_status, event_id, participant_id]
         );
-        return NextResponse.json(rows);
+
+        return NextResponse.json({ success: true });
     } catch (error) {
-        console.error("Error fetching participants:", error);
-        return NextResponse.json({ error: "Failed to fetch participants" }, { status: 500 });
+        console.error("Error updating RSVP status:", error);
+        return NextResponse.json(
+            { error: "Failed to update RSVP status" },
+            { status: 500 }
+        );
     }
 }

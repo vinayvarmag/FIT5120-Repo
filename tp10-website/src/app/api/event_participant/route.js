@@ -16,7 +16,7 @@ export async function POST(request) {
     }
 }
 
-// GET: retrieve participants linked to a given event, including RSVP
+// GET: retrieve participants linked to a given event, including RSVP, ethnicity name, and category name.
 export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url);
@@ -26,11 +26,20 @@ export async function GET(request) {
             return NextResponse.json({ error: "Missing event_id" }, { status: 400 });
         }
 
-        // Include the RSVP status from EVENT_PARTICIPANT
+        // Join to fetch ethnicity name and category name
         const [rows] = await pool.query(
-            `SELECT p.*, ep.rsvp_status
+            `SELECT p.participant_id,
+                    p.participant_fullname,
+                    p.participant_description,
+                    e.ethnicity_name,
+                    c.category_name,
+                    p.ethnicity_id,
+                    p.category_id,
+                    ep.rsvp_status
              FROM PARTICIPANT p
                       JOIN EVENT_PARTICIPANT ep ON p.participant_id = ep.participant_id
+                      LEFT JOIN ETHNICITY e ON p.ethnicity_id = e.ethnicity_id
+                      LEFT JOIN PARTICIPANT_CATEGORY c ON p.category_id = c.category_id
              WHERE ep.event_id = ?`,
             [event_id]
         );
@@ -50,10 +59,7 @@ export async function DELETE(request) {
         const participant_id = searchParams.get("participant_id");
 
         if (!event_id || !participant_id) {
-            return NextResponse.json(
-                { error: "Missing event_id or participant_id" },
-                { status: 400 }
-            );
+            return NextResponse.json({ error: "Missing event_id or participant_id" }, { status: 400 });
         }
 
         await pool.query(
@@ -64,9 +70,6 @@ export async function DELETE(request) {
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error("Error removing participant from event:", error);
-        return NextResponse.json(
-            { error: "Failed to remove participant from event" },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: "Failed to remove participant from event" }, { status: 500 });
     }
 }
