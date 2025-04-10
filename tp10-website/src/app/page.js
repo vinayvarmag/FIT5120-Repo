@@ -1,8 +1,12 @@
-'use client';
+"use client";
 
-import Head from 'next/head';
+import Head from "next/head";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Home() {
+    const router = useRouter();
+
     return (
         <>
             <Head>
@@ -63,58 +67,11 @@ export default function Home() {
                 />
             </Head>
 
-            <header className="w-full bg-white shadow-sm">
-                <nav className="container mx-auto px-4 py-4">
-                    <ul className="flex flex-wrap items-center space-x-6 md:space-x-10">
-                        <li>
-                            <a
-                                href="#"
-                                className="text-gray-800 font-semibold hover:text-primary transition-colors"
-                            >
-                                HOME
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                className="text-gray-800 font-semibold hover:text-primary transition-colors"
-                            >
-                                GAMES
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                className="text-gray-800 font-semibold hover:text-primary transition-colors"
-                            >
-                                EVENTS CALENDAR
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                className="text-gray-800 font-semibold hover:text-primary transition-colors"
-                            >
-                                EXCHANGE PROGRAM
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                className="text-gray-800 font-semibold hover:text-primary transition-colors"
-                            >
-                                CultureEventPlanner
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </header>
-
             <main className="w-full min-h-[calc(100vh-80px)] relative">
-                <section className="relative w-full h-[calc(100vh-80px)] overflow-hidden">
+                <section className="relative w-full h-[calc(100vh-80px)] overflow-hidden ">
                     {/* Background Images from the public folder */}
                     <div
-                        className="bg-image"
+                        className="bg-image opacity-0"
                         style={{
                             backgroundImage: "url('/slide1.jpg')",
                         }}
@@ -138,99 +95,157 @@ export default function Home() {
                         }}
                     ></div>
 
-                    {/* White Trapezoid Overlay with a Straight Left and More Transparency */}
+                    {/* White Trapezoid Overlay */}
                     <div className="absolute inset-0 trapezoid-overlay"></div>
 
                     {/* Content */}
                     <div className="relative z-10 container mx-auto px-6 h-full flex items-center">
                         <div className="max-w-2xl">
-                            {/* UNITED BY with black overlay */}
-                            <div className="relative">
+                            {/* UNITED BY (Black overlay) */}
+                            <div className="relative mb-2">
                                 <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-                                <h2 className="handwritten text-5xl md:text-6xl text-white mb-2 relative z-10 pl-6">
+                                <h2 className="handwritten text-4xl md:text-5xl text-white mb-2 relative z-10 pl-6">
                                     UNITED BY
                                 </h2>
                             </div>
-                            {/* CULTURE. with purple overlay */}
-                            <div className="relative">
+
+                            {/* CULTURE (Purple overlay) */}
+                            <div className="relative mb-2">
                                 <div className="absolute inset-0 bg-primary bg-opacity-90 transform skew-x-[-15deg] origin-top-left"></div>
-                                <h1 className="text-8xl md:text-[12rem] font-bold text-purple-900 mb-4 relative z-10 pl-6">
-                                    CULTURE.
+                                <h1 className="text-6xl md:text-[7rem] font-bold text-purple-900 mb-4 relative z-10 pl-6">
+                                    CULTURE
                                 </h1>
                             </div>
-                            {/* POWERED BY PLAY. with black overlay */}
-                            <div className="relative">
+
+                            {/* POWERED BY PLAY (Black overlay) */}
+                            <div className="relative mb-4">
                                 <div className="absolute inset-0 bg-black bg-opacity-60 transform skew-x-[-15deg] origin-top-left"></div>
-                                <h3 className="text-4xl md:text-5xl font-semibold text-white mb-4 relative z-10 pl-6">
-                                    POWERED BY PLAY.
+                                <h3 className="handwritten text-3xl md:text-4xl font-semibold text-white mb-4 relative z-10 pl-6">
+                                    POWERED BY PLAY
                                 </h3>
                             </div>
-                            <p className="text-2xl text-black-200 max-w-xl mt-8">
+
+                            <p className="text-xl md:text-2xl text-black max-w-xl mt-8">
                                 Fostering cultural understanding through interactive learning experiences that bring people together across borders and traditions.
                             </p>
                             <div className="mt-8 flex flex-wrap gap-4">
-                                <button className="bg-primary text-white px-8 py-4 text-xl rounded-md font-semibold hover:bg-opacity-90 transition-all whitespace-nowrap">
+                                <button className="bg-purple-900 text-white px-8 py-4 text-lg md:text-xl rounded-md font-semibold transition-all whitespace-nowrap">
                                     Explore Events
                                 </button>
                             </div>
                         </div>
                     </div>
                 </section>
-
+                <section className="relative py-10 px-6 text-center overflow-hidden">
+                    {/* Language background */}
+                    <div className="absolute inset-0 z-0 bg-[url('/Language.png')] bg-repeat-x bg-center bg-contain opacity-50"></div>
+                    <h2 className="relative z-10 text-2xl font-bold mb-8 text-black">
+                        Discover Cultural Activities
+                    </h2>
+                    <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
+                        {[
+                            {
+                                title: "Games",
+                                description: "Engage in fun cultural games",
+                                icon: "/Games.png",
+                                link: "/Games",
+                            },
+                            {
+                                title: "Event Calendar",
+                                description: "See local & global events",
+                                icon: "/Calendar.png",
+                                link: "/EventCalendar",
+                            },
+                            {
+                                title: "Exchange Program",
+                                description: "Learn globally through programs",
+                                icon: "/Exchange.png",
+                                link: "/ExchangeProgram",
+                            },
+                            {
+                                title: "Culture Awareness",
+                                description: "Understand cultural perspectives",
+                                icon: "/Awareness.png",
+                            },
+                        ].map((item) => (
+                            <div
+                                key={item.title}
+                                className="bg-white/80 backdrop-blur-md p-6 rounded-lg shadow-md w-full max-w-xs text-left cursor-pointer hover:shadow-lg transition"
+                                onClick={() => item.link && router.push(item.link)}
+                            >
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Image
+                                        src={item.icon}
+                                        alt={item.title}
+                                        width={32}
+                                        height={32}
+                                        className="object-contain"
+                                    />
+                                    <h3 className="text-lg font-bold">{item.title}</h3>
+                                </div>
+                                <p className="text-sm text-gray-600 mt-2">{item.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
                 {/* Additional sections would go here */}
             </main>
+
             <style jsx>{`
-        /* Background image base styles */
-        .bg-image {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-size: cover;
-          background-position: center;
-          opacity: 0;
-          animation: backgroundChange 20s infinite;
-        }
-        .bg-image:nth-child(1) {
-          animation-delay: 0s;
-        }
-        .bg-image:nth-child(2) {
-          animation-delay: 5s;
-        }
-        .bg-image:nth-child(3) {
-          animation-delay: 10s;
-        }
-        .bg-image:nth-child(4) {
-          animation-delay: 15s;
-        }
-        @keyframes backgroundChange {
-          0% {
-            opacity: 0;
-          }
-          5% {
-            opacity: 1;
-          }
-          45% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0;
-          }
-          100% {
-            opacity: 0;
-          }
-        }
-        .handwritten {
-          font-family: 'Caveat', cursive;
-        }
-        /* White trapezoid overlay with straight left side */
-        .trapezoid-overlay {
-          clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
-          background-color: white;
-          opacity: 0.6;
-        }
-      `}</style>
+                /* Background image base styles */
+                .bg-image {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-size: cover;
+                    background-position: center;
+                    opacity: 0;
+                    animation: backgroundChange 20s infinite;
+                }
+                .bg-image:nth-child(1) {
+                    animation-delay: 0s;
+                }
+                .bg-image:nth-child(2) {
+                    animation-delay: 5s;
+                }
+                .bg-image:nth-child(3) {
+                    animation-delay: 10s;
+                }
+                .bg-image:nth-child(4) {
+                    animation-delay: 15s;
+                }
+
+                @keyframes backgroundChange {
+                    0% {
+                        opacity: 0;
+                    }
+                    5% {
+                        opacity: 1;
+                    }
+                    45% {
+                        opacity: 1;
+                    }
+                    50% {
+                        opacity: 0;
+                    }
+                    100% {
+                        opacity: 0;
+                    }
+                }
+
+                .handwritten {
+                    font-family: "Caveat", cursive;
+                }
+
+                /* White trapezoid overlay */
+                .trapezoid-overlay {
+                    clip-path: polygon(0 25%, 100% 25%, 80% 75%, 0 75%);
+                    background-color: white;
+                    opacity: 0.6;
+                }
+            `}</style>
         </>
     );
 }

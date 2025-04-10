@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
     // State to toggle mobile menu
@@ -10,6 +11,8 @@ export default function Navbar() {
     const [isVisible, setIsVisible] = useState(true);
     // Ref to hold the previous scroll position (initially set to 0)
     const prevScrollPos = useRef(0);
+    // Get the current pathname for active link styling
+    const pathname = usePathname();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -23,7 +26,6 @@ export default function Navbar() {
                 // User is scrolling down, hide the navbar
                 setIsVisible(false);
             }
-            // Set the previous scroll position to the current one for next time
             prevScrollPos.current = currentScrollPos;
         };
 
@@ -31,58 +33,60 @@ export default function Navbar() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    // Helper to return classes for desktop links based on active route
+    const getLinkClasses = (href) => {
+        const baseClasses =
+            "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium";
+        const activeClasses = "border-indigo-500 text-black";
+        const inactiveClasses =
+            "border-transparent text-black hover:text-gray-700 hover:border-gray-300";
+        return `${baseClasses} ${pathname === href ? activeClasses : inactiveClasses}`;
+    };
+
+    // Helper to return classes for mobile links based on active route
+    const getMobileLinkClasses = (href) => {
+        const baseClasses = "block pl-3 pr-4 py-2 border-l-4 text-base font-medium";
+        const activeClasses = "border-indigo-500 text-indigo-700 bg-indigo-50";
+        const inactiveClasses =
+            "border-transparent text-black hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300";
+        return `${baseClasses} ${pathname === href ? activeClasses : inactiveClasses}`;
+    };
+
     return (
-        // Use Tailwind transform and transition classes to animate the hide/show behavior
+        // Added a semi-transparent background and mix-blend-mode style for blending with the page
         <nav
-            className={`fixed top-0 left-0 w-full z-50 bg-white backdrop-blur-md shadow transition-transform duration-300 ease-in-out ${
+            style={{ mixBlendMode: "multiply" }}
+            className={`fixed top-0 left-0 w-full z-50 bg-white/70 backdrop-blur-md shadow transition-transform duration-300 ease-in-out ${
                 isVisible ? "translate-y-0" : "-translate-y-full"
             }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Desktop Navigation */}
                 <div className="flex justify-between h-16">
-                    {/* Left side: Logo and navigation links */}
-                    <div className="flex">
-                        <div className="flex-shrink-0 flex items-center">
-                            <Link href="/">
-                                <span className="text-xl font-bold text-black">MyLogo</span>
-                            </Link>
-                        </div>
-                        <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                            <Link
-                                href="/"
-                                className="inline-flex items-center px-1 pt-1 border-b-2 border-indigo-500 text-sm font-medium text-black"
-                            >
-                                Home
-                            </Link>
-                            <Link
-                                href="/Games"
-                                className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-black hover:text-gray-700 hover:border-gray-300"
-                            >
-                                Games
-                            </Link>
-                            <Link
-                                href="/EventCalendar"
-                                className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-black hover:text-gray-700 hover:border-gray-300"
-                            >
-                                Event Calendar
-                            </Link>
-                            <Link
-                                href="/ExchangeProgram"
-                                className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-black hover:text-gray-700 hover:border-gray-300"
-                            >
-                                Exchange Program
-                            </Link>
-                            <Link
-                                href="/EventPlanner"
-                                className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-black hover:text-gray-700 hover:border-gray-300"
-                            >
-                                Culture Event Planner
-                            </Link>
-                        </div>
+                    {/* Logo on the far left */}
+                    <div className="flex items-center">
+                        <Link href="/">
+                            <span className="text-xl font-bold text-black">MyLogo</span>
+                        </Link>
                     </div>
-
-                    {/* Right side: Mobile menu toggle */}
+                    {/* Desktop Navigation Links on the right */}
+                    <div className="hidden sm:flex sm:items-center sm:space-x-8">
+                        <Link href="/" className={getLinkClasses("/")}>
+                            Home
+                        </Link>
+                        <Link href="/Games" className={getLinkClasses("/Games")}>
+                            Games
+                        </Link>
+                        <Link href="/EventCalendar" className={getLinkClasses("/EventCalendar")}>
+                            Event Calendar
+                        </Link>
+                        <Link href="/ExchangeProgram" className={getLinkClasses("/ExchangeProgram")}>
+                            Exchange Program
+                        </Link>
+                        <Link href="/EventPlanner" className={getLinkClasses("/EventPlanner")}>
+                            Culture Event Planner
+                        </Link>
+                    </div>
+                    {/* Mobile Menu Toggle */}
                     <div className="flex items-center sm:hidden">
                         <button
                             type="button"
@@ -93,33 +97,13 @@ export default function Navbar() {
                             <span className="sr-only">Open main menu</span>
                             {isOpen ? (
                                 // Close Icon
-                                <svg
-                                    className="h-6 w-6"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
+                                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             ) : (
                                 // Hamburger Icon
-                                <svg
-                                    className="h-6 w-6"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
+                                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
                             )}
                         </button>
@@ -127,38 +111,23 @@ export default function Navbar() {
                 </div>
             </div>
 
-            {/* Mobile Menu */}
+            {/* Mobile Navigation Menu */}
             {isOpen && (
                 <div className="sm:hidden">
                     <div className="pt-2 pb-3 space-y-1">
-                        <Link
-                            href="/"
-                            className="block pl-3 pr-4 py-2 border-l-4 border-indigo-500 text-base font-medium text-indigo-700 bg-indigo-50"
-                        >
+                        <Link href="/" className={getMobileLinkClasses("/")}>
                             Home
                         </Link>
-                        <Link
-                            href="/Games"
-                            className="block pl-3 pr-4 py-2 border-l-4 border-indigo-500 text-base font-medium text-indigo-700 bg-indigo-50"
-                        >
+                        <Link href="/Games" className={getMobileLinkClasses("/Games")}>
                             Games
                         </Link>
-                        <Link
-                            href="/EventCalendar"
-                            className="block pl-3 pr-4 py-2 border-l-4 border-indigo-500 text-base font-medium text-indigo-700 bg-indigo-50"
-                        >
+                        <Link href="/EventCalendar" className={getMobileLinkClasses("/EventCalendar")}>
                             Event Calendar
                         </Link>
-                        <Link
-                            href="/ExchangeProgram"
-                            className="block pl-3 pr-4 py-2 border-l-4 border-indigo-500 text-base font-medium text-indigo-700 bg-indigo-50"
-                        >
+                        <Link href="/ExchangeProgram" className={getMobileLinkClasses("/ExchangeProgram")}>
                             Exchange Program
                         </Link>
-                        <Link
-                            href="/EventPlanner"
-                            className="block pl-3 pr-4 py-2 border-l-4 border-indigo-500 text-base font-medium text-indigo-700 bg-indigo-50"
-                        >
+                        <Link href="/EventPlanner" className={getMobileLinkClasses("/EventPlanner")}>
                             Culture Event Planner
                         </Link>
                     </div>

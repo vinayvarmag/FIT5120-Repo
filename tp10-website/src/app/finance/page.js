@@ -20,6 +20,7 @@ export default function FinanceDashboardPage() {
     // ------------------ State ------------------
     const [eventData, setEventData] = useState(null);
     const [expenses, setExpenses] = useState([]);
+    const [categories, setCategories] = useState([]);
 
     // Modal states
     const [isBudgetDetailsModalOpen, setBudgetDetailsModalOpen] = useState(false);
@@ -30,13 +31,13 @@ export default function FinanceDashboardPage() {
 
     // Form state for Add or Edit Expense
     const [newExpense, setNewExpense] = useState({
-        category: "",
+        categoryId: "",
         title: "",
         amount: "",
         description: "",
     });
 
-    // ------------------ Load Event & Expenses ------------------
+    // ------------------ Load Event & Expenses & Categories ------------------
     useEffect(() => {
         if (!eventId) return; // if the param is missing or invalid, skip
 
@@ -66,6 +67,24 @@ export default function FinanceDashboardPage() {
         loadEventAndExpenses();
     }, [eventId]);
 
+    // Fetch categories (from /api/categories or wherever you have them)
+    useEffect(() => {
+        async function loadCategories() {
+            try {
+                const catRes = await fetch(`/api/categories`);
+                if (!catRes.ok) {
+                    throw new Error("Failed to fetch categories");
+                }
+                const catData = await catRes.json();
+                setCategories(catData);
+            } catch (err) {
+                console.error("Error loading categories:", err);
+            }
+        }
+
+        loadCategories();
+    }, []);
+
     // ------------------ Derived Data ------------------
     const totalBudget = eventData?.event_budget || 0;
     const currentExpenses = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
@@ -86,7 +105,7 @@ export default function FinanceDashboardPage() {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        category: newExpense.category,
+                        categoryId: Number(newExpense.categoryId),
                         title: newExpense.title,
                         amount: Number(newExpense.amount),
                         description: newExpense.description,
@@ -98,8 +117,8 @@ export default function FinanceDashboardPage() {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        event_id: eventId, // pass the numeric value
-                        category: newExpense.category,
+                        event_id: eventId,
+                        categoryId: Number(newExpense.categoryId),
                         title: newExpense.title,
                         amount: Number(newExpense.amount),
                         description: newExpense.description,
@@ -113,7 +132,7 @@ export default function FinanceDashboardPage() {
             setExpenses(expenseData);
 
             // Reset form & close modal
-            setNewExpense({ category: "", title: "", amount: "", description: "" });
+            setNewExpense({ categoryId: "", title: "", amount: "", description: "" });
             setEditingExpenseId(null);
             setExpenseModalOpen(false);
         } catch (error) {
@@ -124,8 +143,15 @@ export default function FinanceDashboardPage() {
     // ------------------ Edit Expense ------------------
     const handleEditExpense = (exp) => {
         setEditingExpenseId(exp.expense_id);
+
+        // We only store the category ID in the DB, but the GET route returns category name.
+        // So you’ll need a way to map the name back to an ID if you want to show it in the dropdown.
+        // If you have a category object array, you can look it up by name:
+        const foundCat = categories.find((c) => c.category === exp.category);
+        const catId = foundCat ? foundCat.id : "";
+
         setNewExpense({
-            category: exp.category,
+            categoryId: catId,
             title: exp.title,
             amount: exp.amount,
             description: exp.description,
@@ -164,9 +190,9 @@ export default function FinanceDashboardPage() {
                 <div>
                     {/* Display the event title from DB, if available */}
                     <button className="bg-white border border-gray-200 px-4 py-2 rounded-lg flex items-center space-x-2 shadow-sm hover:bg-gray-100">
-                        <span className="font-medium text-sm">
-                            {eventData?.event_title || "No Event Selected"}
-                        </span>
+            <span className="font-medium text-sm">
+              {eventData?.event_title || "No Event Selected"}
+            </span>
                         <i className="ri-calendar-event-line text-lg" />
                     </button>
                 </div>
@@ -224,7 +250,6 @@ export default function FinanceDashboardPage() {
                         </button>
                     </div>
                     <div className="flex items-center justify-center h-52 bg-gray-50 rounded-lg">
-                        {/* Pass DB-backed expenses to DonutChart */}
                         <DonutChart expenseItems={expenses} />
                     </div>
                 </div>
@@ -243,7 +268,6 @@ export default function FinanceDashboardPage() {
                         </div>
                     </div>
                     <div className="flex items-center justify-center h-52 bg-gray-50 rounded-lg">
-                        {/* Pass DB-backed expenses to LineChart */}
                         <LineChart expenseItems={expenses} />
                     </div>
                 </div>
@@ -262,7 +286,7 @@ export default function FinanceDashboardPage() {
                         <button
                             onClick={() => {
                                 setEditingExpenseId(null);
-                                setNewExpense({ category: "", title: "", amount: "", description: "" });
+                                setNewExpense({ categoryId: "", title: "", amount: "", description: "" });
                                 setExpenseModalOpen(true);
                             }}
                             className="bg-primary text-black px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-primary/90"
@@ -272,7 +296,6 @@ export default function FinanceDashboardPage() {
                     </div>
                 </div>
 
-                {/* Display the list of expenses from DB */}
                 <table className="min-w-full">
                     <thead>
                     <tr className="text-left text-xs text-gray-500 border-b border-gray-200">
@@ -286,11 +309,9 @@ export default function FinanceDashboardPage() {
                     <tbody className="text-sm text-gray-600">
                     {expenses.map((exp) => (
                         <tr key={exp.expense_id} className="border-b border-gray-100">
-                            <td className="py-3">{exp.category}</td>
+                            <td className="py-3">{exp.category}</td> {/* c.category from DB */}
                             <td className="py-3">{exp.title}</td>
-                            <td className="py-3">
-                                ${Number(exp.amount).toLocaleString()}
-                            </td>
+                            <td className="py-3">${Number(exp.amount).toLocaleString()}</td>
                             <td className="py-3">{exp.description}</td>
                             <td className="py-3">
                                 <div className="flex space-x-2">
@@ -349,19 +370,26 @@ export default function FinanceDashboardPage() {
                 onClose={() => {
                     setExpenseModalOpen(false);
                     setEditingExpenseId(null);
-                    setNewExpense({ category: "", title: "", amount: "", description: "" });
+                    setNewExpense({ categoryId: "", title: "", amount: "", description: "" });
                 }}
                 title={editingExpenseId ? "Edit Expense" : "Add New Expense"}
             >
                 <form onSubmit={handleExpenseSubmit} className="space-y-4 text-black">
-                    <input
-                        type="text"
-                        placeholder="Category"
-                        value={newExpense.category}
-                        onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
+                    {/* Category Dropdown */}
+                    <select
+                        value={newExpense.categoryId}
+                        onChange={(e) => setNewExpense({ ...newExpense, categoryId: e.target.value })}
                         className="w-full border border-gray-300 rounded-lg px-4 py-2"
                         required
-                    />
+                    >
+                        <option value="">-- Select a Category --</option>
+                        {categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>
+                                {cat.category}
+                            </option>
+                        ))}
+                    </select>
+
                     <input
                         type="text"
                         placeholder="Title"
@@ -370,6 +398,7 @@ export default function FinanceDashboardPage() {
                         className="w-full border border-gray-300 rounded-lg px-4 py-2"
                         required
                     />
+
                     <input
                         type="number"
                         placeholder="Amount"
@@ -378,13 +407,18 @@ export default function FinanceDashboardPage() {
                         className="w-full border border-gray-300 rounded-lg px-4 py-2"
                         required
                     />
+
                     <textarea
                         placeholder="Description"
                         value={newExpense.description}
                         onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
                         className="w-full border border-gray-300 rounded-lg px-4 py-2"
                     />
-                    <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-black">
+
+                    <button
+                        type="submit"
+                        className="w-full bg-primary rounded-lg px-4 py-2 text-black"
+                    >
                         {editingExpenseId ? "Save Changes" : "Save Expense"}
                     </button>
                 </form>

@@ -1,16 +1,12 @@
 // /app/api/expense/route.js
 import { NextResponse } from "next/server";
-import pool from "../db"; // Adjust if your db file is located elsewhere
+import pool from "../db"; // Update path to your db config if necessary
 
 /**
  * GET /api/expense?event_id=123
  *
  * Returns the expenses linked to the given event_id.
- * The columns are aliased to match your front-end code:
- *   - category      <-- expense_type
- *   - title         <-- title (varchar)
- *   - amount        <-- expense_amount
- *   - description   <-- expense_description
+ * We JOIN with event_budget_categories to get the category name.
  */
 export async function GET(request) {
     try {
@@ -22,16 +18,20 @@ export async function GET(request) {
         }
 
         const [rows] = await pool.query(
-            `SELECT
-                 e.expense_id                 AS expense_id,
-                 e.expense_type               AS category,
-                 e.title                      AS title,
-                 e.expense_amount             AS amount,
-                 e.expense_description        AS description
-             FROM EXPENSE e
-                      JOIN EVENT_FINANCE ef
-                           ON e.expense_id = ef.expense_id
-             WHERE ef.event_id = ?`,
+            `
+                SELECT
+                    e.expense_id             AS expense_id,
+                    c.category               AS category,         -- from event_budget_categories
+                    e.title                  AS title,
+                    e.expense_amount         AS amount,
+                    e.expense_description    AS description
+                FROM EXPENSE e
+                         JOIN event_budget_categories c
+                              ON e.expense_category_id = c.id
+                         JOIN EVENT_FINANCE ef
+                              ON e.expense_id = ef.expense_id
+                WHERE ef.event_id = ?
+            `,
             [event_id]
         );
 
@@ -49,47 +49,45 @@ export async function GET(request) {
  * POST /api/expense
  *
  * Expects JSON in the request body:
- *   {
- *     "event_id": 123,
- *     "category": "Venue",
- *     "title": "Main Hall",
- *     "amount": 2000,
- *     "description": "Conference hall booking"
- *   }
+ * {
+ *   "event_id": 123,
+ *   "categoryId": 2,       // references event_budget_categories(id)
+ *   "title": "Main Hall",
+ *   "amount": 2000,
+ *   "description": "Conference hall booking"
+ * }
  *
- * 1) Inserts a new row into EXPENSE (AUTO_INCREMENT expense_id).
- * 2) Inserts a linking row into EVENT_FINANCE (event_id, expense_id).
+ * 1) Insert a new row into EXPENSE (AUTO_INCREMENT expense_id).
+ * 2) Insert a linking row into EVENT_FINANCE (event_id, expense_id).
  */
 export async function POST(request) {
     try {
-        const { event_id, category, title, amount, description } =
+        const { event_id, categoryId, title, amount, description } =
             await request.json();
 
-        if (!event_id || !category || !amount) {
+        if (!event_id || !categoryId || amount == null) {
             return NextResponse.json(
-                { error: "Missing required fields: event_id, category, amount" },
+                { error: "Missing required fields: event_id, categoryId, amount" },
                 { status: 400 }
             );
         }
 
-        // 1) Insert into EXPENSE
+        // 1) Insert into EXPENSE using the new expense_category_id column
         const [expenseResult] = await pool.query(
-            `INSERT INTO EXPENSE
-                 (expense_type, title, expense_amount, expense_description)
-             VALUES (?, ?, ?, ?)`,
-            [
-                category,
-                title || "",
-                amount,                     // decimal(7,2)
-                description || ""
-            ]
+            `
+                INSERT INTO EXPENSE (expense_category_id, title, expense_amount, expense_description)
+                VALUES (?, ?, ?, ?)
+            `,
+            [categoryId, title || "", amount, description || ""]
         );
         const expense_id = expenseResult.insertId;
 
         // 2) Insert link into EVENT_FINANCE
         await pool.query(
-            `INSERT INTO EVENT_FINANCE (event_id, expense_id)
-             VALUES (?, ?)`,
+            `
+                INSERT INTO EVENT_FINANCE (event_id, expense_id)
+                VALUES (?, ?)
+            `,
             [event_id, expense_id]
         );
 
@@ -107,15 +105,14 @@ export async function POST(request) {
  * PUT /api/expense?expense_id=456
  *
  * Expects JSON in the body, e.g.:
- *   {
- *     "category": "Catering",
- *     "title": "Gala Dinner",
- *     "amount": 1500.00,
- *     "description": "Fancy dinner for VIPs"
- *   }
+ * {
+ *   "categoryId": 3,
+ *   "title": "Gala Dinner",
+ *   "amount": 1500.00,
+ *   "description": "Fancy dinner for VIPs"
+ * }
  *
- * Updates the matching row in EXPENSE. This won't change EVENT_FINANCE
- * since we only update columns in EXPENSE.
+ * Updates the matching row in EXPENSE.
  */
 export async function PUT(request) {
     try {
@@ -129,24 +126,19 @@ export async function PUT(request) {
             );
         }
 
-        const { category, title, amount, description } =
-            await request.json();
+        const { categoryId, title, amount, description } = await request.json();
 
         // Update the row in EXPENSE
         await pool.query(
-            `UPDATE EXPENSE
-         SET expense_type       = ?,
-             title              = ?,
-             expense_amount     = ?,
-             expense_description= ?
-       WHERE expense_id = ?`,
-            [
-                category,
-                title || "",
-                amount,
-                description || "",
-                expense_id
-            ]
+            `
+                UPDATE EXPENSE
+                SET expense_category_id = ?,
+                    title              = ?,
+                    expense_amount     = ?,
+                    expense_description= ?
+                WHERE expense_id = ?
+            `,
+            [categoryId, title || "", amount, description || "", expense_id]
         );
 
         return NextResponse.json({ success: true });
@@ -163,8 +155,9 @@ export async function PUT(request) {
  * DELETE /api/expense?expense_id=789
  *
  * Removes the expense row from EXPENSE. Because we have
- * foreign key with ON DELETE CASCADE, the corresponding row
- * in EVENT_FINANCE is removed automatically.
+ * a foreign key in EVENT_FINANCE with ON DELETE CASCADE,
+ * that link is removed automatically (if configured as such),
+ * or you can manually delete from EVENT_FINANCE as well.
  */
 export async function DELETE(request) {
     try {
@@ -179,7 +172,10 @@ export async function DELETE(request) {
         }
 
         await pool.query(
-            `DELETE FROM EXPENSE WHERE expense_id = ?`,
+            `
+                DELETE FROM EXPENSE
+                WHERE expense_id = ?
+            `,
             [expense_id]
         );
 

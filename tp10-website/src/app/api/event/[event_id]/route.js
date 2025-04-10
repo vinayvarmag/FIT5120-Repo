@@ -36,3 +36,20 @@ export async function PUT(request, { params }) {
         return NextResponse.json({ error: "Failed to update event" }, { status: 500 });
     }
 }
+
+export async function DELETE(request, { params }) {
+    const { event_id } = await params;
+    try {
+        const [result] = await pool.query(
+            "DELETE FROM EVENT WHERE event_id = ?",
+            [event_id]
+        );
+        if (result.affectedRows === 0) {
+            return NextResponse.json({ error: "Event not found" }, { status: 404 });
+        }
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error("Error deleting event:", error);
+        return NextResponse.json({ error: "Failed to delete event" }, { status: 500 });
+    }
+}

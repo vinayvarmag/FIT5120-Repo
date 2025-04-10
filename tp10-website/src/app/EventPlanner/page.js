@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import "remixicon/fonts/remixicon.css";
 import Modal from "../../components/Modal"; // Adjust the import as needed
 
 export default function CulturalEventPlanner() {
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     // -------------------- CALENDAR --------------------
     const today = new Date();
@@ -105,12 +106,558 @@ export default function CulturalEventPlanner() {
         logistic_description: "",
         logistic_status: "Pending",
     });
-    // New modal for quickly changing logistic status.
     const [isLogisticStatusModalOpen, setLogisticStatusModalOpen] = useState(false);
     const [selectedLogisticTaskForStatus, setSelectedLogisticTaskForStatus] = useState(null);
 
-    const currentExpenses = 78000;
+    // -------------------- EXPENSES & FINANCIAL OVERVIEW --------------------
+    const [isExpenseModalOpen, setExpenseModalOpen] = useState(false);
+    const [expenses, setExpenses] = useState([]);
+    const currentExpenses = expenses.reduce(
+        (sum, expense) => sum + Number(expense.expense_amount),
+        0
+    );
     const remainingBudget = eventBudget - currentExpenses;
+
+    // -------------------- REMINDER STATE (using cookies) --------------------
+    const [reminderOption, setReminderOption] = useState("48h Before");
+
+    useEffect(() => {
+        const cookies = document.cookie.split("; ").reduce((acc, cookie) => {
+            const [key, value] = cookie.split("=");
+            acc[key] = value;
+            return acc;
+        }, {});
+        if (cookies.reminder) {
+            setReminderOption(decodeURIComponent(cookies.reminder));
+        }
+    }, []);
+
+    // -------------------- HELPER FUNCTIONS FOR CALENDAR INTEGRATION --------------------
+    const getGoogleCalendarLink = () => {
+        if (!eventTitle || !eventDateInput || !eventStartTime || !eventEndTime) return "#";
+        const startDate = new Date(`${eventDateInput}T${eventStartTime}:00`);
+        const endDate = new Date(`${eventDateInput}T${eventEndTime}:00`);
+        const formatDate = (date) =>
+            date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+        const start = formatDate(startDate);
+        const end = formatDate(endDate);
+        const text = encodeURIComponent(eventTitle);
+        const details = encodeURIComponent(eventDescription || "");
+        const location = encodeURIComponent(selectedVenue ? selectedVenue.venue_name : "");
+        return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${start}/${end}&details=${details}&location=${location}`;
+    };
+
+    const getICSFileContent = () => {
+        if (!eventTitle || !eventDateInput || !eventStartTime || !eventEndTime)
+            return "";
+        const startDate = new Date(`${eventDateInput}T${eventStartTime}:00`);
+        const endDate = new Date(`${eventDateInput}T${eventEndTime}:00`);
+        const formatDate = (date) =>
+            date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+        const start = formatDate(startDate);
+        const end = formatDate(endDate);
+        const summary = eventTitle;
+        const description = eventDescription || "";
+        const location = selectedVenue ? selectedVenue.venue_name : "";
+        return `
+BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+SUMMARY:${summary}
+DESCRIPTION:${description}
+LOCATION:${location}
+DTSTART:${start}
+DTEND:${end}
+END:VEVENT
+END:VCALENDAR
+        `.trim();
+    };
+
+    const downloadICS = () => {
+        const icsContent = getICSFileContent();
+        if (!icsContent) return;
+        const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "event.ics";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    // -------------------- HANDLERS --------------------
+    // Create or update an event.
+    const handleEventSubmit = async (e) => {
+        e.preventDefault();
+        const startDateTime =
+            eventDateInput && eventStartTime ? `${eventDateInput} ${eventStartTime}:00` : null;
+        const endDateTime =
+            eventDateInput && eventEndTime ? `${eventDateInput} ${eventEndTime}:00` : null;
+        const eventBody = {
+            event_title: eventTitle,
+            event_description: eventDescription,
+            event_startdatetime: startDateTime,
+            event_enddatetime: endDateTime,
+            venue_id: selectedVenue ? selectedVenue.venue_id : null,
+            event_budget: eventBudget,
+        };
+
+        try {
+            if (editingEvent) {
+                await fetch(`/api/event/${editingEvent.event_id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(eventBody),
+                });
+            } else {
+                await fetch("/api/event", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(eventBody),
+                });
+            }
+            const res = await fetch("/api/event");
+            const data = await res.json();
+            setEvents(data);
+
+            // Reset event form
+            setEditingEvent(null);
+            setEventTitle("");
+            setEventDateInput("");
+            setEventStartTime("");
+            setEventEndTime("");
+            setSelectedVenue(null);
+            setVenueSearchQuery("");
+            setVenueResults([]);
+            setEventDescription("");
+            setEventBudget(50000);
+        } catch (err) {
+            console.error("Failed to save event:", err);
+        }
+    };
+
+    // New: Delete an existing event
+    const handleDeleteEvent = async () => {
+        if (!editingEvent) return;
+        if (!window.confirm("Are you sure you want to delete this event?")) return;
+
+        try {
+            await fetch(`/api/event/${editingEvent.event_id}`, {
+                method: "DELETE",
+            });
+            // Re-fetch updated events after deletion
+            const res = await fetch("/api/event");
+            const data = await res.json();
+            setEvents(data);
+
+            // Reset the form
+            setEditingEvent(null);
+            setEventTitle("");
+            setEventDateInput("");
+            setEventStartTime("");
+            setEventEndTime("");
+            setSelectedVenue(null);
+            setVenueSearchQuery("");
+            setVenueResults([]);
+            setEventDescription("");
+            setEventBudget(50000);
+        } catch (err) {
+            console.error("Failed to delete event:", err);
+        }
+    };
+
+    // Select an event from dropdown
+    const handleSelectEvent = (e) => {
+        const selectedId = parseInt(e.target.value);
+        if (!isNaN(selectedId)) {
+            const found = events.find((ev) => ev.event_id === selectedId);
+            if (found) {
+                setEditingEvent(found);
+                setEventTitle(found.event_title || "");
+                if (found.event_startdatetime) {
+                    const dtStart = new Date(found.event_startdatetime);
+                    setEventDateInput(dtStart.toISOString().split("T")[0]);
+                    setEventStartTime(dtStart.toISOString().split("T")[1].slice(0, 5));
+                }
+                if (found.event_enddatetime) {
+                    const dtEnd = new Date(found.event_enddatetime);
+                    setEventEndTime(dtEnd.toISOString().split("T")[1].slice(0, 5));
+                }
+                if (found.venue_id) {
+                    const selected = {
+                        venue_id: found.venue_id,
+                        venue_name: found.venue_name,
+                        venue_category: found.venue_category,
+                        venue_long: found.venue_long,
+                        venue_lat: found.venue_lat,
+                    };
+                    setSelectedVenue(selected);
+                    setVenueSearchQuery(selected.venue_name);
+                } else {
+                    setSelectedVenue(null);
+                    setVenueSearchQuery("");
+                }
+                setEventDescription(found.event_description || "");
+                setEventBudget(found.event_budget || 50000);
+            }
+        } else {
+            // Reset if no event
+            setEditingEvent(null);
+            setEventTitle("");
+            setEventDateInput("");
+            setEventStartTime("");
+            setEventEndTime("");
+            setSelectedVenue(null);
+            setVenueSearchQuery("");
+            setEventDescription("");
+            setEventBudget(50000);
+        }
+    };
+
+    // -------------------- Expense Handlers --------------------
+    const [editingExpenseId, setEditingExpenseId] = useState(null);
+    const [newExpense, setNewExpense] = useState({
+        category: "",
+        title: "",
+        amount: "",
+        description: "",
+    });
+
+    const handleExpenseSubmit = async (e) => {
+        e.preventDefault();
+        if (!editingEvent || !editingEvent.event_id) {
+            alert("No event selected!");
+            return;
+        }
+
+        try {
+            if (editingExpenseId) {
+                // Update existing expense
+                await fetch(`/api/expense?expense_id=${editingExpenseId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        category: newExpense.category,
+                        title: newExpense.title,
+                        amount: Number(newExpense.amount),
+                        description: newExpense.description,
+                    }),
+                });
+            } else {
+                // Create new expense
+                await fetch(`/api/expense`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        event_id: editingEvent.event_id,
+                        category: newExpense.category,
+                        title: newExpense.title,
+                        amount: Number(newExpense.amount),
+                        description: newExpense.description,
+                    }),
+                });
+            }
+            const expenseRes = await fetch(`/api/expense?event_id=${editingEvent.event_id}`);
+            const expenseData = await expenseRes.json();
+            setExpenses(expenseData);
+
+            // Reset form
+            setNewExpense({ category: "", title: "", amount: "", description: "" });
+            setEditingExpenseId(null);
+            setExpenseModalOpen(false);
+        } catch (error) {
+            console.error("Error creating/updating expense:", error);
+        }
+    };
+
+    const handleEditExpense = (exp) => {
+        setEditingExpenseId(exp.expense_id);
+        setNewExpense({
+            category: exp.category,
+            title: exp.title,
+            amount: exp.amount,
+            description: exp.description,
+        });
+        setExpenseModalOpen(true);
+    };
+
+    const handleDeleteExpense = async (expense_id) => {
+        if (!window.confirm("Are you sure you want to delete this expense?")) return;
+        try {
+            await fetch(`/api/expense?expense_id=${expense_id}`, { method: "DELETE" });
+            const expenseRes = await fetch(`/api/expense?event_id=${editingEvent.event_id}`);
+            const expenseData = await expenseRes.json();
+            setExpenses(expenseData);
+        } catch (err) {
+            console.error("Error deleting expense:", err);
+        }
+    };
+
+    // -------------------- Participant handlers (link, remove, etc.) --------------------
+    const handleRsvpChange = async (participantId, newStatus) => {
+        if (!editingEvent) return;
+        try {
+            await fetch(`/api/participant_rsvp`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    event_id: editingEvent.event_id,
+                    participant_id: participantId,
+                    rsvp_status: newStatus,
+                }),
+            });
+            setEventParticipants((prev) =>
+                prev.map((p) =>
+                    p.participant_id === participantId ? { ...p, rsvp_status: newStatus } : p
+                )
+            );
+        } catch (error) {
+            console.error("Error updating RSVP status:", error);
+        }
+    };
+
+    const handleDeleteParticipant = async (participantId) => {
+        if (!window.confirm("Are you sure you want to delete this participant?")) return;
+        try {
+            await fetch(`/api/participant/${participantId}`, { method: "DELETE" });
+            const res = await fetch("/api/participant");
+            const data = await res.json();
+            setParticipants(data);
+        } catch (error) {
+            console.error("Error deleting participant:", error);
+        }
+    };
+
+    const handleLinkParticipantFromMain = async (participantId) => {
+        if (!editingEvent || !editingEvent.event_id) {
+            alert("Please select an event first.");
+            return;
+        }
+        try {
+            await fetch("/api/event_participant", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    event_id: editingEvent.event_id,
+                    participant_id: participantId,
+                    rsvp_status: "Pending",
+                }),
+            });
+            const res = await fetch(`/api/event_participant?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setEventParticipants(data);
+        } catch (error) {
+            console.error("Error linking participant:", error);
+        }
+    };
+
+    const handleParticipantSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (editingParticipant) {
+                await fetch(`/api/participant/${editingParticipant.participant_id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(participantForm),
+                });
+            } else {
+                await fetch("/api/participant", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(participantForm),
+                });
+            }
+            let url = "/api/participant";
+            if (participantSearch) {
+                url += `?search=${encodeURIComponent(participantSearch)}`;
+            }
+            const res = await fetch(url);
+            const data = await res.json();
+            setParticipants(data);
+            setEditingParticipant(null);
+            setParticipantForm({
+                participant_fullname: "",
+                participant_description: "",
+                ethnicity_id: "",
+                category_id: "",
+            });
+            setSelectParticipantMode("list");
+        } catch (err) {
+            console.error("Failed to save participant:", err);
+        }
+    };
+
+    // -------------------- Agenda Handlers --------------------
+    const handleAgendaSubmit = async (e) => {
+        e.preventDefault();
+        if (!editingEvent || !editingEvent.event_id) {
+            alert("Please select an event before adding an agenda item.");
+            return;
+        }
+        const payload = { ...agendaForm, event_id: editingEvent.event_id };
+        try {
+            if (editingAgendaItem) {
+                await fetch(`/api/agenda/${editingAgendaItem.agenda_id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+            } else {
+                await fetch("/api/agenda", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+            }
+            const res = await fetch(`/api/agenda?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setAgendaItems(data);
+            setEditingAgendaItem(null);
+            setAgendaForm({
+                agenda_timeframe: "",
+                agenda_title: "",
+                agenda_description: "",
+                agenda_status: "Pending",
+            });
+            setAgendaModalOpen(false);
+        } catch (err) {
+            console.error("Failed to save agenda item:", err);
+        }
+    };
+
+    const handleDeleteAgendaItem = async (agendaId) => {
+        if (!window.confirm("Are you sure you want to delete this agenda item?")) return;
+        try {
+            await fetch(`/api/agenda?agenda_id=${agendaId}`, { method: "DELETE" });
+            const res = await fetch(`/api/agenda?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setAgendaItems(data);
+        } catch (err) {
+            console.error("Error deleting agenda item:", err);
+        }
+    };
+
+    // -------------------- Logistic Handlers --------------------
+    const handleLogisticSubmit = async (e) => {
+        e.preventDefault();
+        if (!editingEvent || !editingEvent.event_id) {
+            alert("Please select an event before adding a logistic task.");
+            return;
+        }
+        const payload = { ...newLogisticTask, event_id: editingEvent.event_id };
+        try {
+            if (editingLogisticTask) {
+                await fetch(`/api/logistics/${editingLogisticTask.logistic_id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+            } else {
+                await fetch("/api/logistics", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+            }
+            const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setLogisticTasks(data);
+            setNewLogisticTask({ logistic_title: "", logistic_description: "", logistic_status: "Pending" });
+            setEditingLogisticTask(null);
+            setLogisticModalOpen(false);
+        } catch (err) {
+            console.error("Failed to submit logistic task:", err);
+        }
+    };
+
+    const handleDeleteLogisticTask = async (taskId) => {
+        if (!window.confirm("Are you sure you want to delete this logistic task?")) return;
+        try {
+            await fetch(`/api/logistics?logistic_id=${taskId}`, { method: "DELETE" });
+            const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setLogisticTasks(data);
+        } catch (err) {
+            console.error("Error deleting logistic task:", err);
+        }
+    };
+
+    const toggleLogisticTask = async (id) => {
+        const task = logisticTasks.find((x) => x.logistic_id === id);
+        if (!task) return;
+        const updated = {
+            ...task,
+            logistic_status: task.logistic_status === "Pending" ? "Completed" : "Pending",
+        };
+        try {
+            await fetch(`/api/logistics/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updated),
+            });
+            const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setLogisticTasks(data);
+        } catch (err) {
+            console.error("Failed to toggle logistic task:", err);
+        }
+    };
+
+    const handleOpenLogisticStatusModal = (task) => {
+        setSelectedLogisticTaskForStatus(task);
+        setLogisticStatusModalOpen(true);
+    };
+
+    const handleLogisticStatusSubmit = async (e) => {
+        e.preventDefault();
+        const newStatus = e.target.elements.status.value;
+        try {
+            const updated = { ...selectedLogisticTaskForStatus, logistic_status: newStatus };
+            await fetch(`/api/logistics/${selectedLogisticTaskForStatus.logistic_id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updated),
+            });
+            const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setLogisticTasks(data);
+            setLogisticStatusModalOpen(false);
+            setSelectedLogisticTaskForStatus(null);
+        } catch (err) {
+            console.error("Failed to update logistic status:", err);
+        }
+    };
+
+    // Handler to remove participant from event (if you need it)
+    const handleRemoveParticipant = async (participantId) => {
+        if (!editingEvent) return;
+        if (!window.confirm("Are you sure you want to remove this participant from the event?")) return;
+        try {
+            await fetch(`/api/event_participant`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    event_id: editingEvent.event_id,
+                    participant_id: participantId,
+                }),
+            });
+            const res = await fetch(`/api/event_participant?event_id=${editingEvent.event_id}`);
+            const data = await res.json();
+            setEventParticipants(data);
+        } catch (error) {
+            console.error("Error removing participant from event:", error);
+        }
+    };
+
+    // -------------------- REMINDER HANDLER --------------------
+    const handleScheduleReminder = () => {
+        document.cookie = `reminder=${encodeURIComponent(
+            reminderOption
+        )}; path=/; max-age=31536000`; // cookie valid for 1 year
+        alert(`Reminder scheduled: ${reminderOption}`);
+    };
 
     // -------------------- DATA FETCHING --------------------
     // 1) Load participants.
@@ -226,365 +773,24 @@ export default function CulturalEventPlanner() {
         loadVenues();
     }, [venueSearchQuery]);
 
-    // -------------------- HANDLERS --------------------
-    // Create or update an event.
-    const handleEventSubmit = async (e) => {
-        e.preventDefault();
-        const startDateTime =
-            eventDateInput && eventStartTime ? `${eventDateInput} ${eventStartTime}:00` : null;
-        const endDateTime =
-            eventDateInput && eventEndTime ? `${eventDateInput} ${eventEndTime}:00` : null;
-        const eventBody = {
-            event_title: eventTitle,
-            event_description: eventDescription,
-            event_startdatetime: startDateTime,
-            event_enddatetime: endDateTime,
-            venue_id: selectedVenue ? selectedVenue.venue_id : null,
-            event_budget: eventBudget,
-        };
-
-        try {
-            if (editingEvent) {
-                await fetch(`/api/event/${editingEvent.event_id}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(eventBody),
-                });
-            } else {
-                await fetch("/api/event", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(eventBody),
-                });
-            }
-            const res = await fetch("/api/event");
-            const data = await res.json();
-            setEvents(data);
-
-            // Reset event form.
-            setEditingEvent(null);
-            setEventTitle("");
-            setEventDateInput("");
-            setEventStartTime("");
-            setEventEndTime("");
-            setSelectedVenue(null);
-            setVenueSearchQuery("");
-            setVenueResults([]);
-            setEventDescription("");
-            setEventBudget(50000);
-        } catch (err) {
-            console.error("Failed to save event:", err);
-        }
-    };
-
-    // Select an event.
-    const handleSelectEvent = (e) => {
-        const selectedId = parseInt(e.target.value);
-        if (!isNaN(selectedId)) {
-            const found = events.find((ev) => ev.event_id === selectedId);
-            if (found) {
-                setEditingEvent(found);
-                setEventTitle(found.event_title || "");
-                if (found.event_startdatetime) {
-                    const dtStart = new Date(found.event_startdatetime);
-                    setEventDateInput(dtStart.toISOString().split("T")[0]);
-                    setEventStartTime(dtStart.toISOString().split("T")[1].slice(0, 5));
+    // 8) Load financial expenses for the selected event.
+    useEffect(() => {
+        async function loadExpenses() {
+            if (editingEvent && editingEvent.event_id) {
+                try {
+                    const res = await fetch(`/api/expense?event_id=${editingEvent.event_id}`);
+                    if (!res.ok) throw new Error("Failed to load expenses");
+                    const data = await res.json();
+                    setExpenses(data);
+                } catch (err) {
+                    console.error("Error loading expenses:", err);
                 }
-                if (found.event_enddatetime) {
-                    const dtEnd = new Date(found.event_enddatetime);
-                    setEventEndTime(dtEnd.toISOString().split("T")[1].slice(0, 5));
-                }
-                if (found.venue_id) {
-                    const selected = {
-                        venue_id: found.venue_id,
-                        venue_name: found.venue_name,
-                        venue_category: found.venue_category,
-                        venue_long: found.venue_long,
-                        venue_lat: found.venue_lat,
-                    };
-                    setSelectedVenue(selected);
-                    setVenueSearchQuery(selected.venue_name);
-                } else {
-                    setSelectedVenue(null);
-                    setVenueSearchQuery("");
-                }
-                setEventDescription(found.event_description || "");
-                setEventBudget(found.event_budget || 50000);
-            }
-        } else {
-            // Reset if no event.
-            setEditingEvent(null);
-            setEventTitle("");
-            setEventDateInput("");
-            setEventStartTime("");
-            setEventEndTime("");
-            setSelectedVenue(null);
-            setVenueSearchQuery("");
-            setEventDescription("");
-            setEventBudget(50000);
-        }
-    };
-
-    // Remove a linked participant.
-    const handleRemoveParticipant = async (participantId) => {
-        if (!editingEvent) return;
-        if (!window.confirm("Are you sure you want to remove this participant from the event?"))
-            return;
-        try {
-            await fetch(
-                `/api/event_participant?event_id=${editingEvent.event_id}&participant_id=${participantId}`,
-                { method: "DELETE" }
-            );
-            const res = await fetch(`/api/event_participant?event_id=${editingEvent.event_id}`);
-            const data = await res.json();
-            setEventParticipants(data);
-        } catch (error) {
-            console.error("Error removing participant:", error);
-        }
-    };
-
-    // Update RSVP status.
-    const handleRsvpChange = async (participantId, newStatus) => {
-        if (!editingEvent) return;
-        try {
-            await fetch(`/api/participant_rsvp`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    event_id: editingEvent.event_id,
-                    participant_id: participantId,
-                    rsvp_status: newStatus,
-                }),
-            });
-            setEventParticipants((prev) =>
-                prev.map((p) =>
-                    p.participant_id === participantId ? { ...p, rsvp_status: newStatus } : p
-                )
-            );
-        } catch (error) {
-            console.error("Error updating RSVP status:", error);
-        }
-    };
-
-    // Delete a participant.
-    const handleDeleteParticipant = async (participantId) => {
-        if (!window.confirm("Are you sure you want to delete this participant?")) return;
-        try {
-            await fetch(`/api/participant/${participantId}`, { method: "DELETE" });
-            const res = await fetch("/api/participant");
-            const data = await res.json();
-            setParticipants(data);
-        } catch (error) {
-            console.error("Error deleting participant:", error);
-        }
-    };
-
-    // Link a participant.
-    const handleLinkParticipantFromMain = async (participantId) => {
-        if (!editingEvent || !editingEvent.event_id) {
-            alert("Please select an event first.");
-            return;
-        }
-        try {
-            await fetch("/api/event_participant", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    event_id: editingEvent.event_id,
-                    participant_id: participantId,
-                    rsvp_status: "Pending",
-                }),
-            });
-            const res = await fetch(`/api/event_participant?event_id=${editingEvent.event_id}`);
-            const data = await res.json();
-            setEventParticipants(data);
-            setSelectParticipantModalOpen(false);
-            setParticipantSearch("");
-            setParticipants([]);
-        } catch (error) {
-            console.error("Error linking participant:", error);
-        }
-    };
-
-    // Create/update a participant.
-    const handleParticipantSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            if (editingParticipant) {
-                await fetch(`/api/participant/${editingParticipant.participant_id}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(participantForm),
-                });
             } else {
-                await fetch("/api/participant", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(participantForm),
-                });
+                setExpenses([]);
             }
-            let url = "/api/participant";
-            if (participantSearch) {
-                url += `?search=${encodeURIComponent(participantSearch)}`;
-            }
-            const res = await fetch(url);
-            const data = await res.json();
-            setParticipants(data);
-            setEditingParticipant(null);
-            setParticipantForm({
-                participant_fullname: "",
-                participant_description: "",
-                ethnicity_id: "",
-                category_id: "",
-            });
-            setSelectParticipantMode("list");
-        } catch (err) {
-            console.error("Failed to save participant:", err);
         }
-    };
-
-    // Create/update an agenda item.
-    const handleAgendaSubmit = async (e) => {
-        e.preventDefault();
-        if (!editingEvent || !editingEvent.event_id) {
-            alert("Please select an event before adding an agenda item.");
-            return;
-        }
-        const payload = { ...agendaForm, event_id: editingEvent.event_id };
-        try {
-            if (editingAgendaItem) {
-                await fetch(`/api/agenda/${editingAgendaItem.agenda_id}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                });
-            } else {
-                await fetch("/api/agenda", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                });
-            }
-            const res = await fetch(`/api/agenda?event_id=${editingEvent.event_id}`);
-            const data = await res.json();
-            setAgendaItems(data);
-            setEditingAgendaItem(null);
-            setAgendaForm({
-                agenda_timeframe: "",
-                agenda_title: "",
-                agenda_description: "",
-                agenda_status: "Pending",
-            });
-            setAgendaModalOpen(false);
-        } catch (err) {
-            console.error("Failed to save agenda item:", err);
-        }
-    };
-
-    // Delete an agenda item.
-    const handleDeleteAgendaItem = async (agendaId) => {
-        if (!window.confirm("Are you sure you want to delete this agenda item?")) return;
-        try {
-            await fetch(`/api/agenda?agenda_id=${agendaId}`, { method: "DELETE" });
-            const res = await fetch(`/api/agenda?event_id=${editingEvent.event_id}`);
-            const data = await res.json();
-            setAgendaItems(data);
-        } catch (err) {
-            console.error("Error deleting agenda item:", err);
-        }
-    };
-
-    // Create/update a logistic task.
-    const handleLogisticSubmit = async (e) => {
-        e.preventDefault();
-        if (!editingEvent || !editingEvent.event_id) {
-            alert("Please select an event before adding a logistic task.");
-            return;
-        }
-        const payload = { ...newLogisticTask, event_id: editingEvent.event_id };
-        try {
-            if (editingLogisticTask) {
-                await fetch(`/api/logistics/${editingLogisticTask.logistic_id}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                });
-            } else {
-                await fetch("/api/logistics", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                });
-            }
-            const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
-            const data = await res.json();
-            setLogisticTasks(data);
-            setNewLogisticTask({ logistic_title: "", logistic_description: "", logistic_status: "Pending" });
-            setEditingLogisticTask(null);
-            setLogisticModalOpen(false);
-        } catch (err) {
-            console.error("Failed to submit logistic task:", err);
-        }
-    };
-
-    // Delete a logistic task.
-    const handleDeleteLogisticTask = async (taskId) => {
-        if (!window.confirm("Are you sure you want to delete this logistic task?")) return;
-        try {
-            await fetch(`/api/logistics?logistic_id=${taskId}`, { method: "DELETE" });
-            const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
-            const data = await res.json();
-            setLogisticTasks(data);
-        } catch (err) {
-            console.error("Error deleting logistic task:", err);
-        }
-    };
-
-    // Toggle logistic task status (quick toggle).
-    const toggleLogisticTask = async (id) => {
-        const task = logisticTasks.find((x) => x.logistic_id === id);
-        if (!task) return;
-        const updated = { ...task, logistic_status: task.logistic_status === "Pending" ? "Completed" : "Pending" };
-        try {
-            await fetch(`/api/logistics/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updated),
-            });
-            const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
-            const data = await res.json();
-            setLogisticTasks(data);
-        } catch (err) {
-            console.error("Failed to toggle logistic task:", err);
-        }
-    };
-
-    // Open logistic status modal.
-    const handleOpenLogisticStatusModal = (task) => {
-        setSelectedLogisticTaskForStatus(task);
-        setLogisticStatusModalOpen(true);
-    };
-
-    // Submit logistic status change.
-    const handleLogisticStatusSubmit = async (e) => {
-        e.preventDefault();
-        const newStatus = e.target.elements.status.value;
-        try {
-            const updated = { ...selectedLogisticTaskForStatus, logistic_status: newStatus };
-            await fetch(`/api/logistics/${selectedLogisticTaskForStatus.logistic_id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updated),
-            });
-            const res = await fetch(`/api/logistics?event_id=${editingEvent.event_id}`);
-            const data = await res.json();
-            setLogisticTasks(data);
-            setLogisticStatusModalOpen(false);
-            setSelectedLogisticTaskForStatus(null);
-        } catch (err) {
-            console.error("Failed to update logistic status:", err);
-        }
-    };
+        loadExpenses();
+    }, [editingEvent]);
 
     // -------------------- RENDER --------------------
     return (
@@ -719,23 +925,33 @@ export default function CulturalEventPlanner() {
                                         required
                                     />
                                 </div>
-                                <div className="mt-4">
-                                    <button
-                                        type="submit"
-                                        className="w-full bg-primary rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-primary/90 text-black"
-                                    >
-                                        {editingEvent ? (
-                                            <>
+                                <div className="mt-4 flex space-x-2">
+                                    {editingEvent ? (
+                                        <>
+                                            <button
+                                                type="submit"
+                                                className="bg-purple-900 rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary/90 text-white flex items-center"
+                                            >
                                                 <i className="ri-edit-line mr-2" />
                                                 Save Changes
-                                            </>
-                                        ) : (
-                                            <>
-                                                <i className="ri-add-line mr-2" />
-                                                Create Event
-                                            </>
-                                        )}
-                                    </button>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handleDeleteEvent}
+                                                className="rounded-lg px-4 py-2 text-sm font-medium hover:bg-red-400 bg-purple-900 text-white"
+                                            >
+                                                Delete Event
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <button
+                                            type="submit"
+                                            className="w-full bg-purple-900 rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-primary/90 text-white"
+                                        >
+                                            <i className="ri-add-line mr-2" />
+                                            Create Event
+                                        </button>
+                                    )}
                                 </div>
                             </form>
                         </div>
@@ -753,7 +969,7 @@ export default function CulturalEventPlanner() {
                                             setSelectParticipantMode("list");
                                             setSelectParticipantModalOpen(true);
                                         }}
-                                        className="rounded bg-primary px-3 py-1.5 text-sm font-medium flex items-center hover:bg-primary/90 text-black"
+                                        className="rounded bg-purple-900 px-3 py-1.5 text-sm font-medium flex items-center hover:bg-primary/90 text-white"
                                     >
                                         Select Participant
                                     </button>
@@ -761,7 +977,6 @@ export default function CulturalEventPlanner() {
                                 {eventParticipants.length === 0 ? (
                                     <p className="text-sm">No participants linked yet.</p>
                                 ) : (
-                                    // <-- UPDATED: table-fixed and truncate classes
                                     <table className="table-fixed w-full divide-y divide-gray-200">
                                         <thead>
                                         <tr>
@@ -836,7 +1051,7 @@ export default function CulturalEventPlanner() {
                         )}
 
                         {/* AGENDA SECTION */}
-                        {editingEvent ? (
+                        {editingEvent && (
                             <div className="bg-white shadow rounded-lg p-6 mb-8">
                                 <div className="flex justify-between items-center mb-4">
                                     <h2 className="text-xl font-semibold">Event Agenda</h2>
@@ -851,7 +1066,7 @@ export default function CulturalEventPlanner() {
                                             });
                                             setAgendaModalOpen(true);
                                         }}
-                                        className="rounded border border-primary/20 text-primary px-3 py-1.5 text-sm font-medium hover:bg-primary/5 flex items-center text-black"
+                                        className="rounded border border-primary/20 text-primary px-3 py-1.5 text-sm font-medium hover:bg-primary/5 flex items-center bg-purple-900 text-white"
                                     >
                                         <i className="ri-add-line mr-2" />
                                         Add Agenda Item
@@ -860,7 +1075,6 @@ export default function CulturalEventPlanner() {
                                 {agendaItems.length === 0 ? (
                                     <p className="text-sm">No agenda items added for this event.</p>
                                 ) : (
-                                    // <-- UPDATED: table-fixed and truncate classes
                                     <table className="table-fixed w-full divide-y divide-gray-200">
                                         <thead>
                                         <tr>
@@ -936,20 +1150,24 @@ export default function CulturalEventPlanner() {
                                     </table>
                                 )}
                             </div>
-                        ) : null}
+                        )}
 
                         {/* LOGISTIC TASKS SECTION */}
-                        {editingEvent ? (
+                        {editingEvent && (
                             <div className="bg-white shadow rounded-lg p-6 mb-8">
                                 <div className="flex justify-between items-center mb-4">
                                     <h2 className="text-xl font-semibold">Logistic Tasks</h2>
                                     <button
                                         onClick={() => {
                                             setEditingLogisticTask(null);
-                                            setNewLogisticTask({ logistic_title: "", logistic_description: "", logistic_status: "Pending" });
+                                            setNewLogisticTask({
+                                                logistic_title: "",
+                                                logistic_description: "",
+                                                logistic_status: "Pending",
+                                            });
                                             setLogisticModalOpen(true);
                                         }}
-                                        className="rounded border border-primary/20 text-primary px-3 py-1.5 text-sm font-medium hover:bg-primary/5 flex items-center text-black"
+                                        className="rounded border border-primary/20 text-primary px-3 py-1.5 text-sm font-medium hover:bg-primary/5 flex items-center bg-purple-900 text-white"
                                     >
                                         <i className="ri-add-line mr-2" />
                                         Add Logistic Task
@@ -958,7 +1176,6 @@ export default function CulturalEventPlanner() {
                                 {logisticTasks.length === 0 ? (
                                     <p className="text-sm">No logistic tasks added for this event.</p>
                                 ) : (
-                                    // <-- UPDATED: table-fixed and truncate classes
                                     <table className="table-fixed w-full divide-y divide-gray-200">
                                         <thead>
                                         <tr>
@@ -1024,7 +1241,7 @@ export default function CulturalEventPlanner() {
                                     </table>
                                 )}
                             </div>
-                        ) : null}
+                        )}
                     </div>
 
                     {/* RIGHT COLUMN */}
@@ -1066,7 +1283,7 @@ export default function CulturalEventPlanner() {
                                                 <div
                                                     key={`day-${dayNum}`}
                                                     className={`h-10 flex items-center justify-center text-sm rounded-full cursor-pointer hover:bg-gray-100 ${
-                                                        isToday ? "bg-primary text-white hover:bg-primary/90" : ""
+                                                        isToday ? "bg-purple-900 text-white hover:bg-purple-500/90" : ""
                                                     }`}
                                                 >
                                                     {dayNum}
@@ -1074,6 +1291,23 @@ export default function CulturalEventPlanner() {
                                             );
                                         })}
                                     </div>
+                                </div>
+                                {/* Google Calendar and Apple Calendar Buttons */}
+                                <div className="mt-4 flex space-x-2">
+                                    <a
+                                        href={getGoogleCalendarLink()}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="bg-purple-900 hover:bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-medium"
+                                    >
+                                        Add to Google Calendar
+                                    </a>
+                                    <button
+                                        onClick={downloadICS}
+                                        className="bg-gray-800 hover:bg-gray-900 text-white rounded-lg px-4 py-2 text-sm font-medium"
+                                    >
+                                        Add to Apple Calendar
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -1087,49 +1321,201 @@ export default function CulturalEventPlanner() {
                                 </p>
                                 <div>
                                     <label className="block text-sm font-medium mb-1">Remind me in</label>
-                                    <input
-                                        type="text"
+                                    <select
+                                        value={reminderOption}
+                                        onChange={(e) => setReminderOption(e.target.value)}
                                         className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                        placeholder="48h Before the Event"
-                                    />
+                                    >
+                                        <option value="15 minutes Before">15 minutes Before</option>
+                                        <option value="30 minutes Before">30 minutes Before</option>
+                                        <option value="1 hour Before">1 hour Before</option>
+                                        <option value="48h Before">48h Before</option>
+                                        <option value="1 week Before">1 week Before</option>
+                                    </select>
                                 </div>
-                                <button className="rounded bg-gray-800 px-3 py-1.5 text-sm font-medium hover:bg-gray-700 flex items-center whitespace-nowrap text-black">
+                                <button
+                                    onClick={handleScheduleReminder}
+                                    className="rounded bg-purple-900 px-3 py-1.5 text-sm font-medium hover:bg-gray-700 flex items-center whitespace-nowrap text-white"
+                                >
                                     Schedule Reminder
                                 </button>
                             </div>
                         </div>
 
                         {/* FINANCIAL OVERVIEW */}
-                        <div className="bg-white shadow rounded-lg p-6">
-                            <h2 className="text-xl font-semibold mb-4">Financial Overview</h2>
-                            <div className="grid grid-cols-3 gap-4 mb-4">
-                                <div className="bg-gray-50 rounded-lg p-4 text-black">
-                                    <h3 className="text-sm font-medium mb-2">Total Budget</h3>
-                                    <p className="text-2xl font-bold">${eventBudget.toLocaleString()}</p>
+                        {editingEvent && (
+                            <div className="bg-white shadow rounded-lg p-6">
+                                <h2 className="text-xl font-semibold mb-4">Financial Overview</h2>
+                                <div className="grid grid-cols-3 gap-4 mb-4">
+                                    <div className="bg-gray-50 rounded-lg p-4 text-black">
+                                        <h3 className="text-sm font-medium mb-2">Total Budget</h3>
+                                        <p className="text-2xl font-bold">${eventBudget.toLocaleString()}</p>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-lg p-4 text-black">
+                                        <h3 className="text-sm font-medium mb-2">Current Expenses</h3>
+                                        <p className="text-2xl font-bold">${currentExpenses.toLocaleString()}</p>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-lg p-4 text-black">
+                                        <h3 className="text-sm font-medium mb-2">Budget Remaining</h3>
+                                        <p className="text-2xl font-bold">${remainingBudget.toLocaleString()}</p>
+                                    </div>
                                 </div>
-                                <div className="bg-gray-50 rounded-lg p-4 text-black">
-                                    <h3 className="text-sm font-medium mb-2">Current Expenses</h3>
-                                    <p className="text-2xl font-bold">${currentExpenses.toLocaleString()}</p>
-                                </div>
-                                <div className="bg-gray-50 rounded-lg p-4 text-black">
-                                    <h3 className="text-sm font-medium mb-2">Budget Remaining</h3>
-                                    <p className="text-2xl font-bold">${remainingBudget.toLocaleString()}</p>
+                                <div>
+                                    <button
+                                        onClick={() => router.push(`/finance?event_id=${editingEvent.event_id}`)}
+                                        className="bg-purple-900 px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-primary/90 flex items-center cursor-pointer whitespace-nowrap text-white"
+                                    >
+                                        Detailed Finance
+                                    </button>
                                 </div>
                             </div>
-                            <div>
-                                <button
-                                    onClick={() => router.push(`/finance?event_id=${editingEvent.event_id}`)}
-                                    className="bg-primary px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-primary/90 flex items-center cursor-pointer whitespace-nowrap text-black"
-                                >
-                                    View Detailed Finance
-                                </button>
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             </main>
 
-            {/* SELECT PARTICIPANT MODAL */}
+            {/* Expense Modal */}
+            <Modal
+                isOpen={isExpenseModalOpen}
+                onClose={() => {
+                    setExpenseModalOpen(false);
+                    setEditingExpenseId(null);
+                    setNewExpense({ category: "", title: "", amount: "", description: "" });
+                }}
+                title={editingExpenseId ? "Edit Expense" : "Add New Expense"}
+            >
+                <form onSubmit={handleExpenseSubmit} className="space-y-4 text-black">
+                    <input
+                        type="text"
+                        placeholder="Category"
+                        value={newExpense.category}
+                        onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                        required
+                    />
+                    <input
+                        type="text"
+                        placeholder="Title"
+                        value={newExpense.title}
+                        onChange={(e) => setNewExpense({ ...newExpense, title: e.target.value })}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                        required
+                    />
+                    <input
+                        type="number"
+                        placeholder="Amount"
+                        value={newExpense.amount}
+                        onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                        required
+                    />
+                    <textarea
+                        placeholder="Description"
+                        value={newExpense.description}
+                        onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                    />
+                    <button type="submit" className="w-full bg-purple-900 rounded-lg px-4 py-2 text-white">
+                        {editingExpenseId ? "Save Changes" : "Save Expense"}
+                    </button>
+                </form>
+            </Modal>
+
+            {/* Participant Modal */}
+            <Modal
+                isOpen={isParticipantModalOpen}
+                onClose={() => setParticipantModalOpen(false)}
+                title={editingParticipant ? "Edit Participant" : "Create Participant"}
+            >
+                <form onSubmit={handleParticipantSubmit} className="space-y-4 text-black">
+                    <input
+                        type="text"
+                        placeholder="Full Name"
+                        value={participantForm.participant_fullname}
+                        onChange={(e) =>
+                            setParticipantForm({
+                                ...participantForm,
+                                participant_fullname: e.target.value,
+                            })
+                        }
+                        className="w-full border rounded-lg px-4 py-2"
+                        required
+                    />
+                    <input
+                        type="text"
+                        placeholder="Description"
+                        value={participantForm.participant_description}
+                        onChange={(e) =>
+                            setParticipantForm({
+                                ...participantForm,
+                                participant_description: e.target.value,
+                            })
+                        }
+                        className="w-full border rounded-lg px-4 py-2"
+                    />
+                    <select
+                        value={participantForm.ethnicity_id}
+                        onChange={(e) =>
+                            setParticipantForm({ ...participantForm, ethnicity_id: e.target.value })
+                        }
+                        className="w-full border rounded-lg px-4 py-2"
+                        required
+                    >
+                        <option value="">Select Ethnicity</option>
+                        {ethnicities.map((eth) => (
+                            <option key={eth.ethnicity_id} value={eth.ethnicity_id}>
+                                {eth.ethnicity_name}
+                            </option>
+                        ))}
+                    </select>
+                    <select
+                        value={participantForm.category_id}
+                        onChange={(e) =>
+                            setParticipantForm({ ...participantForm, category_id: e.target.value })
+                        }
+                        className="w-full border rounded-lg px-4 py-2"
+                        required
+                    >
+                        <option value="">Select Category</option>
+                        {participantCategories.map((cat) => (
+                            <option key={cat.category_id} value={cat.category_id}>
+                                {cat.category_name}
+                            </option>
+                        ))}
+                    </select>
+                    <button type="submit" className="w-full bg-purple-900 rounded-lg px-4 py-2 text-white">
+                        {editingParticipant ? "Save Participant" : "Create Participant"}
+                    </button>
+                </form>
+            </Modal>
+
+            {/* Participant Details Modal */}
+            <Modal
+                isOpen={isParticipantDetailsModalOpen}
+                onClose={() => setParticipantDetailsModalOpen(false)}
+                title="Participant Details"
+            >
+                <div className="max-h-[400px] overflow-y-auto text-black">
+                    {selectedParticipantDetails && (
+                        <div className="space-y-2">
+                            <p>
+                                <strong>Full Name:</strong> {selectedParticipantDetails.participant_fullname}
+                            </p>
+                            <p>
+                                <strong>Description:</strong> {selectedParticipantDetails.participant_description}
+                            </p>
+                            <p>
+                                <strong>Ethnicity:</strong> {selectedParticipantDetails.ethnicity_name}
+                            </p>
+                            <p>
+                                <strong>Category:</strong> {selectedParticipantDetails.category_name}
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </Modal>
+
+            {/* Select Participant Modal */}
             {isSelectParticipantModalOpen && (
                 <Modal
                     isOpen={isSelectParticipantModalOpen}
@@ -1220,7 +1606,7 @@ export default function CulturalEventPlanner() {
                             </div>
                             <button
                                 onClick={() => setSelectParticipantMode("create")}
-                                className="mt-4 px-4 py-2 bg-blue-500 text-black rounded"
+                                className="mt-4 px-4 py-2 bg-purple-900 text-white"
                             >
                                 Create New Participant
                             </button>
@@ -1289,7 +1675,7 @@ export default function CulturalEventPlanner() {
                             </form>
                             <button
                                 onClick={() => setSelectParticipantMode("list")}
-                                className="mt-4 px-4 py-2 bg-gray-300 rounded text-black"
+                                className="mt-4 px-4 py-2 bg-purple-900 text-white"
                             >
                                 Back to List
                             </button>
@@ -1360,7 +1746,7 @@ export default function CulturalEventPlanner() {
                             </option>
                         ))}
                     </select>
-                    <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-black">
+                    <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 bg-purple-900 text-white">
                         {editingParticipant ? "Save Participant" : "Create Participant"}
                     </button>
                 </form>
@@ -1391,7 +1777,7 @@ export default function CulturalEventPlanner() {
                 </div>
             </Modal>
 
-            {/* AGENDA MODAL */}
+            {/* Agenda Modal */}
             <Modal
                 isOpen={isAgendaModalOpen}
                 onClose={() => setAgendaModalOpen(false)}
@@ -1450,14 +1836,15 @@ export default function CulturalEventPlanner() {
                     <div className="flex space-x-2">
                         <button
                             type="submit"
-                            className="w-full bg-primary rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-primary/90 text-black"
+                            className="w-full bg-purple-900 rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-primary/90 text-white"
                         >
                             {editingAgendaItem ? "Save Changes" : "Add Agenda Item"}
                         </button>
                         {editingAgendaItem && (
                             <button
+                                type="button"
                                 onClick={() => handleDeleteAgendaItem(editingAgendaItem.agenda_id)}
-                                className="w-full bg-red-300 rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-red-400 text-black"
+                                className="w-full rounded-lg px-4 py-2 text-sm font-medium flex items-center justify-center hover:bg-red-400 bg-purple-900 text-white"
                             >
                                 Delete Agenda
                             </button>
@@ -1466,7 +1853,7 @@ export default function CulturalEventPlanner() {
                 </form>
             </Modal>
 
-            {/* LOGISTIC MODAL (Add/Edit Logistic Task) */}
+            {/* Logistic Task Modal */}
             <Modal
                 isOpen={isLogisticModalOpen}
                 onClose={() => {
@@ -1519,8 +1906,9 @@ export default function CulturalEventPlanner() {
                         </button>
                         {editingLogisticTask && (
                             <button
+                                type="button"
                                 onClick={() => handleDeleteLogisticTask(editingLogisticTask.logistic_id)}
-                                className="w-full bg-red-300 rounded-lg px-4 py-2 text-black"
+                                className="w-full rounded-lg px-4 py-2 bg-purple-900 text-white"
                             >
                                 Delete Task
                             </button>
@@ -1529,7 +1917,7 @@ export default function CulturalEventPlanner() {
                 </form>
             </Modal>
 
-            {/* LOGISTIC STATUS MODAL */}
+            {/* Logistic Status Modal */}
             <Modal
                 isOpen={isLogisticStatusModalOpen}
                 onClose={() => {
@@ -1555,7 +1943,7 @@ export default function CulturalEventPlanner() {
                             <option value="Completed">Completed</option>
                         </select>
                     </div>
-                    <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-black">
+                    <button type="submit" className="w-full bg-purple-900 rounded-lg px-4 py-2 text-white">
                         Update Status
                     </button>
                 </form>
