@@ -130,7 +130,7 @@ export default function Home() {
                             </p>
                             <div className="mt-8 flex flex-wrap gap-4">
                                 <button className="bg-purple-900 text-white px-8 py-4 text-lg md:text-xl rounded-md font-semibold transition-all whitespace-nowrap">
-                                    Explore Events
+                                    Explore Evens
                                 </button>
                             </div>
                         </div>
@@ -140,7 +140,7 @@ export default function Home() {
                 {/* LANGUAGE ACTIVITIES SECTION */}
                 <section className="relative py-10 px-6 text-center overflow-hidden">
                     {/* Language background */}
-                    <div className="absolute inset-0 z-0 bg-[url('/Language.png')] bg-repeat-x bg-center bg-contain opacity-50"></div>
+                    <div className="absolute inset-0 z-0 bg-[url('/Language.png')] bg-repeat-x bg-center bg-contain bg-white opacity-0"></div>
                     <h2 className="relative z-10 text-2xl font-bold mb-8 text-white">
                         Discover Cultural Activities
                     </h2>
@@ -148,25 +148,25 @@ export default function Home() {
                         {[
                             {
                                 title: "Games",
-                                description: "Engage in fun cultural games",
+                                description: "Step into a world of fun cultural games! From language match-ups to global trivia and role-play adventures",
                                 icon: "/Games.png",
                                 link: "/Games",
                             },
                             {
                                 title: "Event Calendar",
-                                description: "See local & global events",
+                                description: "Discover local and international events happening throughout the year.",
                                 icon: "/Calendar.png",
                                 link: "/EventCalendar",
                             },
                             {
                                 title: "Exchange Program",
-                                description: "Learn globally through programs",
+                                description: "Make friends across the world! Join global classrooms, exchange letters, or team up on cultural projects.",
                                 icon: "/Exchange.png",
                                 link: "/ExchangeProgram",
                             },
                             {
                                 title: "Culture Awareness",
-                                description: "Understand cultural perspectives",
+                                description: "Uncover stories, traditions, and values from different cultures.",
                                 icon: "/Awareness.png",
                                 link: "/Awareness",
                             },
