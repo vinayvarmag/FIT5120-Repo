@@ -12,7 +12,15 @@ export default function CulturalEventPlanner() {
     //const searchParams = useSearchParams();
 
     // -------------------- CALENDAR --------------------
-    const today = new Date();
+    const nowLocal = new Date();
+// 2) Convert local→UTC
+    const utcMs    = nowLocal.getTime() + nowLocal.getTimezoneOffset() * 60000;
+// 3) Add AEST offset
+    const aestMs   = utcMs + 10 * 60 * 60 * 1000;
+// 4) Create an AEST “today” Date
+    const today = new Date(aestMs);
+
+
     const [currentYear, setCurrentYear] = useState(today.getFullYear());
     const [currentMonth, setCurrentMonth] = useState(today.getMonth());
     const monthNames = [
@@ -47,6 +55,10 @@ export default function CulturalEventPlanner() {
     const [editingEvent, setEditingEvent] = useState(null);
     const [eventTitle, setEventTitle] = useState("");
     const [eventDateInput, setEventDateInput] = useState("");
+    const minDate = today.toISOString().split("T")[0];
+    const nowTime = today.toTimeString().slice(0, 5);
+    const isToday = eventDateInput === minDate;
+    const minTime = isToday ? nowTime : "00:00";
     const [eventStartTime, setEventStartTime] = useState("");
     const [eventEndTime, setEventEndTime] = useState("");
 
@@ -112,12 +124,7 @@ export default function CulturalEventPlanner() {
     const [selectedLogisticTaskForStatus, setSelectedLogisticTaskForStatus] = useState(null);
 
     // -------------------- EXPENSES & FINANCIAL OVERVIEW --------------------
-    const [isExpenseModalOpen, setExpenseModalOpen] = useState(false);
-    const [expenses, setExpenses] = useState([]);
-    const currentExpenses = expenses.reduce(
-        (sum, expense) => sum + Number(expense.expense_amount),
-        0
-    );
+    const [currentExpenses, setCurrentExpenses] = useState(0);
     const remainingBudget = eventBudget - currentExpenses;
 
     // -------------------- REMINDER STATE (using cookies) --------------------
@@ -204,6 +211,7 @@ END:VCALENDAR
             event_enddatetime: endDateTime,
             venue_id: selectedVenue ? selectedVenue.venue_id : null,
             event_budget: eventBudget,
+            currentExpenses: currentExpenses,
         };
 
         try {
@@ -235,6 +243,7 @@ END:VCALENDAR
             setVenueResults([]);
             setEventDescription("");
             setEventBudget(50000);
+            setCurrentExpenses(0);
         } catch (err) {
             console.error("Failed to save event:", err);
         }
@@ -318,84 +327,6 @@ END:VCALENDAR
         }
     };
 
-    // -------------------- Expense Handlers --------------------
-    const [editingExpenseId, setEditingExpenseId] = useState(null);
-    const [newExpense, setNewExpense] = useState({
-        category: "",
-        title: "",
-        amount: "",
-        description: "",
-    });
-
-    const handleExpenseSubmit = async (e) => {
-        e.preventDefault();
-        if (!editingEvent || !editingEvent.event_id) {
-            alert("No event selected!");
-            return;
-        }
-
-        try {
-            if (editingExpenseId) {
-                // Update existing expense
-                await fetch(`/api/expense?expense_id=${editingExpenseId}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        category: newExpense.category,
-                        title: newExpense.title,
-                        amount: Number(newExpense.amount),
-                        description: newExpense.description,
-                    }),
-                });
-            } else {
-                // Create new expense
-                await fetch(`/api/expense`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        event_id: editingEvent.event_id,
-                        category: newExpense.category,
-                        title: newExpense.title,
-                        amount: Number(newExpense.amount),
-                        description: newExpense.description,
-                    }),
-                });
-            }
-            const expenseRes = await fetch(`/api/expense?event_id=${editingEvent.event_id}`);
-            const expenseData = await expenseRes.json();
-            setExpenses(expenseData);
-
-            // Reset form
-            setNewExpense({ category: "", title: "", amount: "", description: "" });
-            setEditingExpenseId(null);
-            setExpenseModalOpen(false);
-        } catch (error) {
-            console.error("Error creating/updating expense:", error);
-        }
-    };
-
-    const handleEditExpense = (exp) => {
-        setEditingExpenseId(exp.expense_id);
-        setNewExpense({
-            category: exp.category,
-            title: exp.title,
-            amount: exp.amount,
-            description: exp.description,
-        });
-        setExpenseModalOpen(true);
-    };
-
-    const handleDeleteExpense = async (expense_id) => {
-        if (!window.confirm("Are you sure you want to delete this expense?")) return;
-        try {
-            await fetch(`/api/expense?expense_id=${expense_id}`, { method: "DELETE" });
-            const expenseRes = await fetch(`/api/expense?event_id=${editingEvent.event_id}`);
-            const expenseData = await expenseRes.json();
-            setExpenses(expenseData);
-        } catch (err) {
-            console.error("Error deleting expense:", err);
-        }
-    };
 
     // -------------------- Participant handlers (link, remove, etc.) --------------------
     const handleRsvpChange = async (participantId, newStatus) => {
@@ -777,22 +708,13 @@ END:VCALENDAR
 
     // 8) Load financial expenses for the selected event.
     useEffect(() => {
-        async function loadExpenses() {
-            if (editingEvent && editingEvent.event_id) {
-                try {
-                    const res = await fetch(`/api/expense?event_id=${editingEvent.event_id}`);
-                    if (!res.ok) throw new Error("Failed to load expenses");
-                    const data = await res.json();
-                    setExpenses(data);
-                } catch (err) {
-                    console.error("Error loading expenses:", err);
-                }
-            } else {
-                setExpenses([]);
-            }
+        if (editingEvent) {
+            setCurrentExpenses(editingEvent.current_expenses ?? 0);
+        } else {
+            setCurrentExpenses(0);
         }
-        loadExpenses();
     }, [editingEvent]);
+
 
     // -------------------- RENDER --------------------
     return (
@@ -845,7 +767,7 @@ END:VCALENDAR
                                             type="date"
                                             value={eventDateInput}
                                             onChange={(e) => setEventDateInput(e.target.value)}
-                                            className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                            min={minDate} className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
                                             required
                                         />
                                     </div>
@@ -856,7 +778,7 @@ END:VCALENDAR
                                                 type="time"
                                                 value={eventStartTime}
                                                 onChange={(e) => setEventStartTime(e.target.value)}
-                                                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                                min = {minTime} className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
                                                 required
                                             />
                                         </div>
@@ -866,7 +788,7 @@ END:VCALENDAR
                                                 type="time"
                                                 value={eventEndTime}
                                                 onChange={(e) => setEventEndTime(e.target.value)}
-                                                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                                min = {eventStartTime} className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
                                                 required
                                             />
                                         </div>
@@ -885,7 +807,7 @@ END:VCALENDAR
                                         className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
                                         placeholder="Search venue by name"
                                     />
-                                    {venueResults.length > 0 && (
+                                    {!selectedVenue && venueResults.length > 0 && (
                                         <div className="border rounded-lg mt-1 bg-white max-h-40 overflow-y-auto">
                                             {venueResults.map((venue) => (
                                                 <div
@@ -894,7 +816,7 @@ END:VCALENDAR
                                                     onClick={() => {
                                                         setSelectedVenue(venue);
                                                         setVenueSearchQuery(venue.venue_name);
-                                                        setVenueResults([]);
+                                                        // no need to clear results here since the effect will do it
                                                     }}
                                                 >
                                                     {venue.venue_name} ({venue.venue_category})
@@ -980,6 +902,7 @@ END:VCALENDAR
                                 {eventParticipants.length === 0 ? (
                                     <p className="text-sm">No participants linked yet.</p>
                                 ) : (
+                                    <div className="max-h-80 overflow-y-auto border border-gray-200 rounded">
                                     <table className="table-fixed w-full divide-y divide-gray-200">
                                         <thead>
                                         <tr>
@@ -1043,6 +966,7 @@ END:VCALENDAR
                                         ))}
                                         </tbody>
                                     </table>
+                                    </div>
                                 )}
                             </div>
                         ) : (
@@ -1078,6 +1002,7 @@ END:VCALENDAR
                                 {agendaItems.length === 0 ? (
                                     <p className="text-sm">No agenda items added for this event.</p>
                                 ) : (
+                                    <div className="max-h-80 overflow-y-auto border border-gray-200 rounded">
                                     <table className="table-fixed w-full divide-y divide-gray-200">
                                         <thead>
                                         <tr>
@@ -1098,7 +1023,7 @@ END:VCALENDAR
                                             </th>
                                         </tr>
                                         </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
+                                        <tbody className="bg-white divide-y divide-gray-200 scroll-auto overflow-y-auto">
                                         {agendaItems.map((item) => (
                                             <tr key={item.agenda_id}>
                                                 <td className="px-6 py-4 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
@@ -1126,13 +1051,13 @@ END:VCALENDAR
                                                                 });
                                                                 setAgendaModalOpen(true);
                                                             }}
-                                                            className="text-blue-500 hover:underline text-black"
+                                                            className="text-blue-500 hover:underline "
                                                         >
                                                             Edit
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteAgendaItem(item.agenda_id)}
-                                                            className="text-red-500 hover:underline text-black"
+                                                            className="text-red-500 hover:underline "
                                                         >
                                                             Delete
                                                         </button>
@@ -1141,7 +1066,7 @@ END:VCALENDAR
                                                                 setSelectedAgendaDetails(item);
                                                                 setAgendaDetailsModalOpen(true);
                                                             }}
-                                                            className="text-gray-500 hover:underline text-black"
+                                                            className="text-gray-500 hover:underline "
                                                         >
                                                             View
                                                         </button>
@@ -1151,6 +1076,7 @@ END:VCALENDAR
                                         ))}
                                         </tbody>
                                     </table>
+                                    </div>
                                 )}
                             </div>
                         )}
@@ -1179,6 +1105,7 @@ END:VCALENDAR
                                 {logisticTasks.length === 0 ? (
                                     <p className="text-sm">No logistic tasks added for this event.</p>
                                 ) : (
+                                   <div className="max-h-80 overflow-y-auto border border-gray-200 rounded">
                                     <table className="table-fixed w-full divide-y divide-gray-200">
                                         <thead>
                                         <tr>
@@ -1220,19 +1147,19 @@ END:VCALENDAR
                                                                 });
                                                                 setLogisticModalOpen(true);
                                                             }}
-                                                            className="text-blue-500 hover:underline text-black"
+                                                            className="text-blue-500 hover:underline "
                                                         >
                                                             Edit
                                                         </button>
                                                         <button
                                                             onClick={() => handleOpenLogisticStatusModal(task)}
-                                                            className="text-green-600 hover:underline text-black"
+                                                            className="text-green-600 hover:underline "
                                                         >
                                                             Status
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteLogisticTask(task.logistic_id)}
-                                                            className="text-red-500 hover:underline text-black"
+                                                            className="text-red-500 hover:underline "
                                                         >
                                                             Delete
                                                         </button>
@@ -1242,6 +1169,7 @@ END:VCALENDAR
                                         ))}
                                         </tbody>
                                     </table>
+                                   </div>
                                 )}
                             </div>
                         )}
@@ -1377,53 +1305,6 @@ END:VCALENDAR
                 </div>
             </main>
 
-            {/* Expense Modal */}
-            <Modal
-                isOpen={isExpenseModalOpen}
-                onClose={() => {
-                    setExpenseModalOpen(false);
-                    setEditingExpenseId(null);
-                    setNewExpense({ category: "", title: "", amount: "", description: "" });
-                }}
-                title={editingExpenseId ? "Edit Expense" : "Add New Expense"}
-            >
-                <form onSubmit={handleExpenseSubmit} className="space-y-4 text-black">
-                    <input
-                        type="text"
-                        placeholder="Category"
-                        value={newExpense.category}
-                        onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                        required
-                    />
-                    <input
-                        type="text"
-                        placeholder="Title"
-                        value={newExpense.title}
-                        onChange={(e) => setNewExpense({ ...newExpense, title: e.target.value })}
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                        required
-                    />
-                    <input
-                        type="number"
-                        placeholder="Amount"
-                        value={newExpense.amount}
-                        onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                        required
-                    />
-                    <textarea
-                        placeholder="Description"
-                        value={newExpense.description}
-                        onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                    />
-                    <button type="submit" className="w-full bg-purple-900 rounded-lg px-4 py-2 text-white">
-                        {editingExpenseId ? "Save Changes" : "Save Expense"}
-                    </button>
-                </form>
-            </Modal>
-
             {/* Participant Modal */}
             <Modal
                 isOpen={isParticipantModalOpen}
@@ -1536,7 +1417,7 @@ END:VCALENDAR
                             />
                             {/* <-- If you truly want no vertical scrollbars, remove overflow-y-auto and let the container expand.
                                  But that can lead to a very tall list. For a large participant list, you might still prefer some vertical scrolling. */}
-                            <div className="max-h-80">
+                            <div className="max-h-80 overflow-y-auto border border-gray-200 rounded">
                                 {participants.length > 0 ? (
                                     // <-- UPDATED: table-fixed and truncate classes
                                     <table className="table-fixed w-full divide-y divide-gray-200 text-sm">
@@ -1581,19 +1462,19 @@ END:VCALENDAR
                                                                 });
                                                                 setSelectParticipantMode("create");
                                                             }}
-                                                            className="text-blue-500 hover:underline text-black"
+                                                            className="text-blue-500 hover:underline "
                                                         >
                                                             Edit
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteParticipant(p.participant_id)}
-                                                            className="text-red-500 hover:underline text-black"
+                                                            className="text-red-500 hover:underline "
                                                         >
                                                             Delete
                                                         </button>
                                                         <button
                                                             onClick={() => handleLinkParticipantFromMain(p.participant_id)}
-                                                            className="text-green-600 hover:underline text-black"
+                                                            className="text-green-600 hover:underline "
                                                         >
                                                             Link
                                                         </button>
@@ -1904,7 +1785,7 @@ END:VCALENDAR
                         </select>
                     </div>
                     <div className="flex space-x-2">
-                        <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-black">
+                        <button type="submit" className="w-full bg-primary rounded-lg px-4 py-2 text-white bg-purple-900">
                             {editingLogisticTask ? "Save Changes" : "Save Task"}
                         </button>
                         {editingLogisticTask && (

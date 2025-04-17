@@ -129,8 +129,10 @@ export default function Home() {
                                 Fostering cultural understanding through interactive learning experiences that bring people together across borders and traditions.
                             </p>
                             <div className="mt-8 flex flex-wrap gap-4">
-                                <button className="bg-purple-900 text-white px-8 py-4 text-lg md:text-xl rounded-md font-semibold transition-all whitespace-nowrap">
-                                    Explore Evens
+                                <button  onClick={() => router.push("/EventCalendar")}
+                                    className="bg-purple-900 text-white px-8 py-4 text-lg md:text-xl rounded-md font-semibold transition-all whitespace-nowrap">
+                                    Explore Events
+
                                 </button>
                             </div>
                         </div>
@@ -144,7 +146,7 @@ export default function Home() {
                     <h2 className="relative z-10 text-2xl font-bold mb-8 text-white">
                         Discover Cultural Activities
                     </h2>
-                    <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center text-purple-900">
+                    <div className="relative z-10 flex flex-row flex-nowrap gap-6 justify-center items-center text-purple-900">
                         {[
                             {
                                 title: "Games",
@@ -163,6 +165,13 @@ export default function Home() {
                                 description: "Make friends across the world! Join global classrooms, exchange letters, or team up on cultural projects.",
                                 icon: "/Exchange.png",
                                 link: "/ExchangeProgram",
+                            },
+                            {
+                                title: "Event Planner",
+                                description: "Plan Events across the world!",
+                                icon: "/EventPlanner.png",
+                                link: "/EventPlanner",
+
                             },
                             {
                                 title: "Culture Awareness",
