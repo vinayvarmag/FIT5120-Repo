@@ -1,0 +1,2927 @@
+[
+  {
+    "country": "Afghanistan",
+    "craft": "Carpet Weaving",
+    "description": ""
+  },
+  {
+    "country": "Albania",
+    "craft": "Filigree Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Algeria",
+    "craft": "Pottery",
+    "description": "Kabyle Ceramics"
+  },
+  {
+    "country": "Andorra",
+    "craft": "Wool Weaving",
+    "description": ""
+  },
+  {
+    "country": "Angola",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Antigua and Barbuda",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Argentina",
+    "craft": "Silverwork",
+    "description": "Criollo Style"
+  },
+  {
+    "country": "Armenia",
+    "craft": "Carpet Weaving",
+    "description": "Armenian Rugs"
+  },
+  {
+    "country": "Australia",
+    "craft": "Aboriginal Dot Painting",
+    "description": ""
+  },
+  {
+    "country": "Austria",
+    "craft": "Glassblowing",
+    "description": "Tyrolean Style"
+  },
+  {
+    "country": "Azerbaijan",
+    "craft": "Carpet Weaving",
+    "description": "Azerbaijani Rugs"
+  },
+  {
+    "country": "Bahamas",
+    "craft": "Straw Weaving",
+    "description": "Plaiting"
+  },
+  {
+    "country": "Bahrain",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Bangladesh",
+    "craft": "Nakshi Kantha",
+    "description": "Embroidery"
+  },
+  {
+    "country": "Barbados",
+    "craft": "Basketry",
+    "description": "Straw Weaving"
+  },
+  {
+    "country": "Belarus",
+    "craft": "Straw Weaving",
+    "description": "Solomka"
+  },
+  {
+    "country": "Belgium",
+    "craft": "Lace Making",
+    "description": ""
+  },
+  {
+    "country": "Belize",
+    "craft": "Basketry",
+    "description": ""
+  },
+  {
+    "country": "Benin",
+    "craft": "Bronze Casting",
+    "description": ""
+  },
+  {
+    "country": "Bhutan",
+    "craft": "Thangka Painting",
+    "description": ""
+  },
+  {
+    "country": "Bolivia",
+    "craft": "Textiles Weaving",
+    "description": "Alpaca Wool"
+  },
+  {
+    "country": "Bosnia and Herzegovina",
+    "craft": "Filigree Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Botswana",
+    "craft": "Basketry",
+    "description": "Grass Weaving"
+  },
+  {
+    "country": "Brazil",
+    "craft": "Brazilian Embroidery",
+    "description": "Northeast"
+  },
+  {
+    "country": "Brunei",
+    "craft": "Silverwork",
+    "description": ""
+  },
+  {
+    "country": "Bulgaria",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Burkina Faso",
+    "craft": "Traditional Mask Making",
+    "description": ""
+  },
+  {
+    "country": "Burundi",
+    "craft": "Basketry",
+    "description": "Bamboo Weaving"
+  },
+  {
+    "country": "Côte d'Ivoire",
+    "craft": "Mask Making",
+    "description": ""
+  },
+  {
+    "country": "Cape Verde",
+    "craft": "Pottery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Cambodia",
+    "craft": "Silk Weaving",
+    "description": ""
+  },
+  {
+    "country": "Cameroon",
+    "craft": "Traditional Mask Making",
+    "description": ""
+  },
+  {
+    "country": "Canada",
+    "craft": "Inuit Carving",
+    "description": "Soapstone"
+  },
+  {
+    "country": "Central African Republic",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Chad",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Chile",
+    "craft": "Lapiz Lazuli Carving",
+    "description": ""
+  },
+  {
+    "country": "China",
+    "craft": "Calligraphy",
+    "description": ""
+  },
+  {
+    "country": "Colombia",
+    "craft": "Mochila Bags Weaving",
+    "description": ""
+  },
+  {
+    "country": "Comoros",
+    "craft": "Tortoise Shell Carving",
+    "description": ""
+  },
+  {
+    "country": "Congo",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Costa Rica",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Croatia",
+    "craft": "Lace Making",
+    "description": ""
+  },
+  {
+    "country": "Cuba",
+    "craft": "Straw Weaving",
+    "description": ""
+  },
+  {
+    "country": "Cyprus",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Czech Republic",
+    "craft": "Bohemian Glasswork",
+    "description": ""
+  },
+  {
+    "country": "Congo, the Democratic Republic of the",
+    "craft": "Traditional Mask Making",
+    "description": ""
+  },
+  {
+    "country": "Denmark",
+    "craft": "Royal Copenhagen Porcelain",
+    "description": ""
+  },
+  {
+    "country": "Djibouti",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Dominica",
+    "craft": "Carving",
+    "description": "Wood and Stone"
+  },
+  {
+    "country": "Dominican Republic",
+    "craft": "Larimar Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Ecuador",
+    "craft": "Panama Hat Weaving",
+    "description": ""
+  },
+  {
+    "country": "Egypt",
+    "craft": "Papyrus Making",
+    "description": ""
+  },
+  {
+    "country": "El Salvador",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Equatorial Guinea",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Eritrea",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Estonia",
+    "craft": "Wooden Folk Art",
+    "description": ""
+  },
+  {
+    "country": "Swaziland",
+    "craft": "Basketry",
+    "description": "Palm Fiber"
+  },
+  {
+    "country": "Ethiopia",
+    "craft": "Enset Weaving",
+    "description": ""
+  },
+  {
+    "country": "Fiji",
+    "craft": "Masi",
+    "description": "Bark Cloth Making"
+  },
+  {
+    "country": "Finland",
+    "craft": "Handicraft",
+    "description": "Kantele Making"
+  },
+  {
+    "country": "France",
+    "craft": "Tapestry Weaving",
+    "description": "Aubusson"
+  },
+  {
+    "country": "Gabon",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Gambia",
+    "craft": "Basketry",
+    "description": "Raffia"
+  },
+  {
+    "country": "Georgia",
+    "craft": "Tapestry Weaving",
+    "description": ""
+  },
+  {
+    "country": "Germany",
+    "craft": "Wood Carving",
+    "description": "Black Forest"
+  },
+  {
+    "country": "Ghana",
+    "craft": "Kente Cloth Weaving",
+    "description": ""
+  },
+  {
+    "country": "Greece",
+    "craft": "Ceramic Pottery",
+    "description": "Greek Style"
+  },
+  {
+    "country": "Grenada",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Guatemala",
+    "craft": "Mayan Textile Weaving",
+    "description": ""
+  },
+  {
+    "country": "Guinea",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Guinea-Bissau",
+    "craft": "Basketry",
+    "description": "Palm Fiber"
+  },
+  {
+    "country": "Guyana",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Haiti",
+    "craft": "Metalwork",
+    "description": "Recycled Art"
+  },
+  {
+    "country": "Holy See (Vatican City State)",
+    "craft": "Mosaic Art",
+    "description": ""
+  },
+  {
+    "country": "Honduras",
+    "craft": "Pottery",
+    "description": "Copan Style"
+  },
+  {
+    "country": "Hungary",
+    "craft": "Embroidery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Iceland",
+    "craft": "Wool Weaving",
+    "description": "Lopapeysa Sweaters"
+  },
+  {
+    "country": "India",
+    "craft": "Block Printing",
+    "description": "Textiles"
+  },
+  {
+    "country": "Indonesia",
+    "craft": "Batik Fabric Printing",
+    "description": ""
+  },
+  {
+    "country": "Iran, Islamic Republic of",
+    "craft": "Persian Carpet Weaving",
+    "description": ""
+  },
+  {
+    "country": "Iraq",
+    "craft": "Carpet Weaving",
+    "description": ""
+  },
+  {
+    "country": "Ireland",
+    "craft": "Wool Weaving",
+    "description": "Aran Sweaters"
+  },
+  {
+    "country": "Israel",
+    "craft": "Glassblowing",
+    "description": "Jerusalem Glass"
+  },
+  {
+    "country": "Italy",
+    "craft": "Murano Glassmaking",
+    "description": ""
+  },
+  {
+    "country": "Jamaica",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Japan",
+    "craft": "Origami",
+    "description": "Paper Folding"
+  },
+  {
+    "country": "Jordan",
+    "craft": "Pottery",
+    "description": "Mosaic Art"
+  },
+  {
+    "country": "Kazakhstan",
+    "craft": "Yurt Weaving",
+    "description": ""
+  },
+  {
+    "country": "Kenya",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Kiribati",
+    "craft": "Coconut Husk Crafting",
+    "description": ""
+  },
+  {
+    "country": "Kuwait",
+    "craft": "Sadu Weaving",
+    "description": ""
+  },
+  {
+    "country": "Kyrgyzstan",
+    "craft": "Felt Making",
+    "description": "Shyrdak"
+  },
+  {
+    "country": "Lao People's Democratic Republic",
+    "craft": "Silk Weaving",
+    "description": ""
+  },
+  {
+    "country": "Latvia",
+    "craft": "Textile Weaving",
+    "description": "Linen"
+  },
+  {
+    "country": "Lebanon",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Lesotho",
+    "craft": "Wool Weaving",
+    "description": ""
+  },
+  {
+    "country": "Liberia",
+    "craft": "Basketry",
+    "description": "Palm Leaves"
+  },
+  {
+    "country": "Libya",
+    "craft": "Pottery",
+    "description": "Tripolitanian"
+  },
+  {
+    "country": "Liechtenstein",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Lithuania",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Luxembourg",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Madagascar",
+    "craft": "Zafimaniry Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Malawi",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Malaysia",
+    "craft": "Batik Fabric Printing",
+    "description": ""
+  },
+  {
+    "country": "Maldives",
+    "craft": "Lacquerware",
+    "description": "Thundu Kunaa"
+  },
+  {
+    "country": "Mali",
+    "craft": "Mud Cloth",
+    "description": "Bogolanfini"
+  },
+  {
+    "country": "Malta",
+    "craft": "Lace Making",
+    "description": ""
+  },
+  {
+    "country": "Marshall Islands",
+    "craft": "Shell Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Mauritania",
+    "craft": "Metalworking",
+    "description": "Silver Jewelry"
+  },
+  {
+    "country": "Mauritius",
+    "craft": "Basketry",
+    "description": "Cane Weaving"
+  },
+  {
+    "country": "Mexico",
+    "craft": "Pottery",
+    "description": "Talavera Ceramics"
+  },
+  {
+    "country": "Micronesia, Federated States of",
+    "craft": "Tapa Cloth Making",
+    "description": ""
+  },
+  {
+    "country": "Moldova, Republic of",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Monaco",
+    "craft": "Pottery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Mongolia",
+    "craft": "Felt Making",
+    "description": "Shyrdak"
+  },
+  {
+    "country": "Montenegro",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Morocco",
+    "craft": "Ceramic Pottery",
+    "description": "Zellij"
+  },
+  {
+    "country": "Mozambique",
+    "craft": "Weaving",
+    "description": "Coconut Palm"
+  },
+  {
+    "country": "Myanmar",
+    "craft": "Lacquerware",
+    "description": ""
+  },
+  {
+    "country": "Namibia",
+    "craft": "Basketry",
+    "description": "Palm Fiber"
+  },
+  {
+    "country": "Nauru",
+    "craft": "Weaving",
+    "description": "Coconut Fiber"
+  },
+  {
+    "country": "Nepal",
+    "craft": "Thangka Painting",
+    "description": ""
+  },
+  {
+    "country": "Netherlands",
+    "craft": "Delft Pottery",
+    "description": ""
+  },
+  {
+    "country": "New Zealand",
+    "craft": "Maori Carving",
+    "description": ""
+  },
+  {
+    "country": "Nicaragua",
+    "craft": "Pottery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Niger",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Nigeria",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Korea, Democratic People's Republic of",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Macedonia, the former Yugoslav Republic of",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Norway",
+    "craft": "Wood Carving",
+    "description": "Viking Art"
+  },
+  {
+    "country": "Oman",
+    "craft": "Pottery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Pakistan",
+    "craft": "Truck Art",
+    "description": ""
+  },
+  {
+    "country": "Palau",
+    "craft": "Weaving",
+    "description": "Bark Cloth"
+  },
+  {
+    "country": "Palestine State",
+    "craft": "Olive Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Panama",
+    "craft": "Panama Hat Weaving",
+    "description": ""
+  },
+  {
+    "country": "Papua New Guinea",
+    "craft": "Bilum Weaving",
+    "description": ""
+  },
+  {
+    "country": "Paraguay",
+    "craft": "Ñandutí Lace Making",
+    "description": ""
+  },
+  {
+    "country": "Peru",
+    "craft": "Pottery",
+    "description": "Inca Style"
+  },
+  {
+    "country": "Philippines",
+    "craft": "Weaving",
+    "description": "Ikat"
+  },
+  {
+    "country": "Poland",
+    "craft": "Pottery",
+    "description": "Boles?awiec Ceramics"
+  },
+  {
+    "country": "Portugal",
+    "craft": "Azulejos",
+    "description": "Ceramic Tiles"
+  },
+  {
+    "country": "Qatar",
+    "craft": "Weaving",
+    "description": "Sadu"
+  },
+  {
+    "country": "Romania",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Russian Federation",
+    "craft": "Matryoshka Dolls",
+    "description": "Wood Carving"
+  },
+  {
+    "country": "Rwanda",
+    "craft": "Basket Weaving",
+    "description": ""
+  },
+  {
+    "country": "Saint Kitts and Nevis",
+    "craft": "Basketry",
+    "description": "Palm Leaves"
+  },
+  {
+    "country": "Saint Lucia",
+    "craft": "Weaving",
+    "description": "Coconut Husk"
+  },
+  {
+    "country": "Saint Vincent and the Grenadines",
+    "craft": "Weaving",
+    "description": "Grass Mats"
+  },
+  {
+    "country": "Samoa",
+    "craft": "Tapa Cloth Making",
+    "description": ""
+  },
+  {
+    "country": "San Marino",
+    "craft": "Ceramics",
+    "description": "Hand-painted"
+  },
+  {
+    "country": "Sao Tome and Principe",
+    "craft": "Weaving",
+    "description": "Coconut Fiber"
+  },
+  {
+    "country": "Saudi Arabia",
+    "craft": "Arabic Calligraphy",
+    "description": ""
+  },
+  {
+    "country": "Senegal",
+    "craft": "Kente Weaving",
+    "description": ""
+  },
+  {
+    "country": "Serbia",
+    "craft": "Wood Carving",
+    "description": "Religious Icons"
+  },
+  {
+    "country": "Seychelles",
+    "craft": "Shell Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Sierra Leone",
+    "craft": "Basketry",
+    "description": "Palm Fiber"
+  },
+  {
+    "country": "Singapore",
+    "craft": "Batik Fabric Printing",
+    "description": ""
+  },
+  {
+    "country": "Slovakia",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Slovenia",
+    "craft": "Lace Making",
+    "description": ""
+  },
+  {
+    "country": "Solomon Islands",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Somalia",
+    "craft": "Weaving",
+    "description": "Silk and Wool"
+  },
+  {
+    "country": "South Africa",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Korea, Republic of",
+    "craft": "Hanji Paper Making",
+    "description": ""
+  },
+  {
+    "country": "South Sudan",
+    "craft": "Weaving",
+    "description": "Traditional Rugs"
+  },
+  {
+    "country": "Spain",
+    "craft": "Flamenco",
+    "description": "Dance, Guitar"
+  },
+  {
+    "country": "Sri Lanka",
+    "craft": "Batik Fabric Printing",
+    "description": ""
+  },
+  {
+    "country": "Sudan",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Suriname",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Sweden",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Switzerland",
+    "craft": "Wood Carving",
+    "description": "Swiss Chalet Style"
+  },
+  {
+    "country": "Syrian Arab Republic",
+    "craft": "Calligraphy",
+    "description": "Arabic"
+  },
+  {
+    "country": "Tajikistan",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Tanzania, United Republic of",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Thailand",
+    "craft": "Thai Silk Weaving",
+    "description": ""
+  },
+  {
+    "country": "Timor-Leste",
+    "craft": "Weaving",
+    "description": "Textiles"
+  },
+  {
+    "country": "Togo",
+    "craft": "Weaving",
+    "description": "Cotton and Silk"
+  },
+  {
+    "country": "Tonga",
+    "craft": "Weaving",
+    "description": "Coconut Fiber"
+  },
+  {
+    "country": "Trinidad and Tobago",
+    "craft": "Steelpan Music",
+    "description": "Crafting"
+  },
+  {
+    "country": "Tunisia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Turkey",
+    "craft": "Turkish Carpets",
+    "description": "Weaving"
+  },
+  {
+    "country": "Turkmenistan",
+    "craft": "Carpet Weaving",
+    "description": "Turkmen"
+  },
+  {
+    "country": "Tuvalu",
+    "craft": "Weaving",
+    "description": "Palm Leaves"
+  },
+  {
+    "country": "Uganda",
+    "craft": "Basket Weaving",
+    "description": ""
+  },
+  {
+    "country": "Ukraine",
+    "craft": "Pysanky",
+    "description": "Egg Decorating"
+  },
+  {
+    "country": "United Arab Emirates",
+    "craft": "Weaving",
+    "description": "Sadu"
+  },
+  {
+    "country": "United Kingdom",
+    "craft": "Pottery",
+    "description": "Worcester, Staffordshire"
+  },
+  {
+    "country": "United States",
+    "craft": "Quilting",
+    "description": ""
+  },
+  {
+    "country": "Uruguay",
+    "craft": "Weaving",
+    "description": "Wool"
+  },
+  {
+    "country": "Uzbekistan",
+    "craft": "Carpet Weaving",
+    "description": "Silk and Wool"
+  },
+  {
+    "country": "Vanuatu",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Venezuela",
+    "craft": "Leatherworking",
+    "description": "Hats"
+  },
+  {
+    "country": "Vietnam",
+    "craft": "Lacquerware",
+    "description": ""
+  },
+  {
+    "country": "Yemen",
+    "craft": "Silver Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Zambia",
+    "craft": "Basketry",
+    "description": "Palm and Grass"
+  },
+  {
+    "country": "Zimbabwe",
+    "craft": "Shona Sculpture",
+    "description": "Stone Carving"
+  },
+  {
+    "country": "Afghanistan",
+    "craft": "Embroidery",
+    "description": "Khamak"
+  },
+  {
+    "country": "Albania",
+    "craft": "Wool Weaving",
+    "description": "Çilima"
+  },
+  {
+    "country": "Algeria",
+    "craft": "Carpet Weaving",
+    "description": "Berber Rugs"
+  },
+  {
+    "country": "Andorra",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Angola",
+    "craft": "Mask Making",
+    "description": ""
+  },
+  {
+    "country": "Antigua and Barbuda",
+    "craft": "Straw Hat Making",
+    "description": ""
+  },
+  {
+    "country": "Argentina",
+    "craft": "Poncho Weaving",
+    "description": ""
+  },
+  {
+    "country": "Armenia",
+    "craft": "Khachkar",
+    "description": "Stone Cross Carving"
+  },
+  {
+    "country": "Australia",
+    "craft": "Boomerang Craft",
+    "description": ""
+  },
+  {
+    "country": "Austria",
+    "craft": "Wood Carving",
+    "description": "Toys"
+  },
+  {
+    "country": "Azerbaijan",
+    "craft": "Shebeke",
+    "description": "Stained Glass Art"
+  },
+  {
+    "country": "Bahamas",
+    "craft": "Junkanoo Costume Making",
+    "description": ""
+  },
+  {
+    "country": "Bahrain",
+    "craft": "Basket Weaving",
+    "description": "Palm Fronds"
+  },
+  {
+    "country": "Bangladesh",
+    "craft": "Jamdani Weaving",
+    "description": ""
+  },
+  {
+    "country": "Barbados",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Belarus",
+    "craft": "Embroidery",
+    "description": "Rushnik"
+  },
+  {
+    "country": "Belgium",
+    "craft": "Tapestry Weaving",
+    "description": ""
+  },
+  {
+    "country": "Belize",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Benin",
+    "craft": "Tie-Dye",
+    "description": "Adire"
+  },
+  {
+    "country": "Bhutan",
+    "craft": "Weaving",
+    "description": "Textiles"
+  },
+  {
+    "country": "Bolivia",
+    "craft": "Pottery",
+    "description": "Aymara Style"
+  },
+  {
+    "country": "Bosnia and Herzegovina",
+    "craft": "Carpet Weaving",
+    "description": ""
+  },
+  {
+    "country": "Botswana",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Brazil",
+    "craft": "Ceramic Pottery",
+    "description": ""
+  },
+  {
+    "country": "Brunei",
+    "craft": "Weaving",
+    "description": "Textiles"
+  },
+  {
+    "country": "Bulgaria",
+    "craft": "Pottery",
+    "description": "Ceramics"
+  },
+  {
+    "country": "Burkina Faso",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Burundi",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Côte d'Ivoire",
+    "craft": "Textile Weaving",
+    "description": "Kente"
+  },
+  {
+    "country": "Cape Verde",
+    "craft": "Weaving",
+    "description": "Basketry"
+  },
+  {
+    "country": "Cambodia",
+    "craft": "Stone Carving",
+    "description": ""
+  },
+  {
+    "country": "Cameroon",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Canada",
+    "craft": "Beadwork",
+    "description": "Indigenous"
+  },
+  {
+    "country": "Central African Republic",
+    "craft": "Basket Weaving",
+    "description": ""
+  },
+  {
+    "country": "Chad",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Chile",
+    "craft": "Weaving",
+    "description": "Mapuche Textiles"
+  },
+  {
+    "country": "China",
+    "craft": "Silk Weaving",
+    "description": ""
+  },
+  {
+    "country": "Colombia",
+    "craft": "Emerald Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Comoros",
+    "craft": "Weaving",
+    "description": "Coconut Fiber"
+  },
+  {
+    "country": "Congo",
+    "craft": "Basketry",
+    "description": "Palm Leaves"
+  },
+  {
+    "country": "Costa Rica",
+    "craft": "Weaving",
+    "description": "Palm Leaves"
+  },
+  {
+    "country": "Croatia",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Cuba",
+    "craft": "Embroidery",
+    "description": "Guayabera Shirts"
+  },
+  {
+    "country": "Cyprus",
+    "craft": "Embroidery",
+    "description": "Lefkara Lace"
+  },
+  {
+    "country": "Czech Republic",
+    "craft": "Embroidery",
+    "description": "Czech Folk Art"
+  },
+  {
+    "country": "Congo, the Democratic Republic of the",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Denmark",
+    "craft": "Wood Carving",
+    "description": "Danish Folk Art"
+  },
+  {
+    "country": "Djibouti",
+    "craft": "Weaving",
+    "description": ""
+  },
+  {
+    "country": "Dominica",
+    "craft": "Basket Weaving",
+    "description": ""
+  },
+  {
+    "country": "Dominican Republic",
+    "craft": "Cigar Making",
+    "description": ""
+  },
+  {
+    "country": "Ecuador",
+    "craft": "Pottery",
+    "description": "Pre-Columbian"
+  },
+  {
+    "country": "Egypt",
+    "craft": "Carpet Weaving",
+    "description": "Egyptian Rugs"
+  },
+  {
+    "country": "El Salvador",
+    "craft": "Weaving",
+    "description": "Textiles"
+  },
+  {
+    "country": "Equatorial Guinea",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Eritrea",
+    "craft": "Weaving",
+    "description": "Basketry"
+  },
+  {
+    "country": "Estonia",
+    "craft": "Textile Weaving",
+    "description": "Linen"
+  },
+  {
+    "country": "Swaziland",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Ethiopia",
+    "craft": "Pottery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Fiji",
+    "craft": "Tapa Cloth Printing",
+    "description": ""
+  },
+  {
+    "country": "Finland",
+    "craft": "Textile Weaving",
+    "description": "Wool"
+  },
+  {
+    "country": "France",
+    "craft": "Pottery",
+    "description": "Faience"
+  },
+  {
+    "country": "Gabon",
+    "craft": "Mask Making",
+    "description": ""
+  },
+  {
+    "country": "Gambia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Georgia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Germany",
+    "craft": "Beer Stein Carving",
+    "description": ""
+  },
+  {
+    "country": "Ghana",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Greece",
+    "craft": "Embroidery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Grenada",
+    "craft": "Basketry",
+    "description": "Palm Leaves"
+  },
+  {
+    "country": "Guatemala",
+    "craft": "Pottery",
+    "description": "Handmade"
+  },
+  {
+    "country": "Guinea",
+    "craft": "Mask Making",
+    "description": ""
+  },
+  {
+    "country": "Guinea-Bissau",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Guyana",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Haiti",
+    "craft": "Paper Mâché",
+    "description": "Masks"
+  },
+  {
+    "country": "Holy See (Vatican City State)",
+    "craft": "Religious Iconography",
+    "description": ""
+  },
+  {
+    "country": "Honduras",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Hungary",
+    "craft": "Pottery",
+    "description": "Herend Porcelain"
+  },
+  {
+    "country": "Iceland",
+    "craft": "Pottery",
+    "description": "Stoneware"
+  },
+  {
+    "country": "India",
+    "craft": "Pottery",
+    "description": "Terracotta"
+  },
+  {
+    "country": "Indonesia",
+    "craft": "Wood Carving",
+    "description": "Bali"
+  },
+  {
+    "country": "Iran, Islamic Republic of",
+    "craft": "Calligraphy",
+    "description": ""
+  },
+  {
+    "country": "Iraq",
+    "craft": "Pottery",
+    "description": "Babylonian Style"
+  },
+  {
+    "country": "Ireland",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Israel",
+    "craft": "Olive Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Italy",
+    "craft": "Lace Making",
+    "description": "Venetian Lace"
+  },
+  {
+    "country": "Jamaica",
+    "craft": "Rasta Art",
+    "description": "Paintings"
+  },
+  {
+    "country": "Japan",
+    "craft": "Pottery",
+    "description": "Japanese Ceramics"
+  },
+  {
+    "country": "Jordan",
+    "craft": "Bedouin Weaving",
+    "description": ""
+  },
+  {
+    "country": "Kazakhstan",
+    "craft": "Metalworking",
+    "description": "Jewelry"
+  },
+  {
+    "country": "Kenya",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Kiribati",
+    "craft": "Weaving",
+    "description": "Palm Fiber"
+  },
+  {
+    "country": "Kuwait",
+    "craft": "Pottery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Kyrgyzstan",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Lao People's Democratic Republic",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Latvia",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Lebanon",
+    "craft": "Glassblowing",
+    "description": ""
+  },
+  {
+    "country": "Lesotho",
+    "craft": "Basketry",
+    "description": ""
+  },
+  {
+    "country": "Liberia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Libya",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Liechtenstein",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Lithuania",
+    "craft": "Weaving",
+    "description": "Rugs and Blankets"
+  },
+  {
+    "country": "Luxembourg",
+    "craft": "Glassblowing",
+    "description": "Art Glass"
+  },
+  {
+    "country": "Madagascar",
+    "craft": "Raffia Weaving",
+    "description": ""
+  },
+  {
+    "country": "Malawi",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Malaysia",
+    "craft": "Songket Weaving",
+    "description": ""
+  },
+  {
+    "country": "Maldives",
+    "craft": "Weaving",
+    "description": "Palm Fronds"
+  },
+  {
+    "country": "Mali",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Malta",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Marshall Islands",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Mauritania",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Mauritius",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Mexico",
+    "craft": "Embroidery",
+    "description": "Tequila Embroidery"
+  },
+  {
+    "country": "Micronesia, Federated States of",
+    "craft": "Basket Weaving",
+    "description": ""
+  },
+  {
+    "country": "Moldova, Republic of",
+    "craft": "Weaving",
+    "description": "Textiles"
+  },
+  {
+    "country": "Monaco",
+    "craft": "Jewelry",
+    "description": "Gold and Silver"
+  },
+  {
+    "country": "Mongolia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Montenegro",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Morocco",
+    "craft": "Carpet Weaving",
+    "description": "Berber Rugs"
+  },
+  {
+    "country": "Mozambique",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Myanmar",
+    "craft": "Weaving",
+    "description": "Longyi"
+  },
+  {
+    "country": "Namibia",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Nauru",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Nepal",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Netherlands",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "New Zealand",
+    "craft": "Weaving",
+    "description": "Flax"
+  },
+  {
+    "country": "Nicaragua",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Niger",
+    "craft": "Weaving",
+    "description": "Cotton and Grass"
+  },
+  {
+    "country": "Nigeria",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Korea, Democratic People's Republic of",
+    "craft": "Metalworking",
+    "description": ""
+  },
+  {
+    "country": "Macedonia, the former Yugoslav Republic of",
+    "craft": "Textile Weaving",
+    "description": ""
+  },
+  {
+    "country": "Norway",
+    "craft": "Rosemaling",
+    "description": "Decorative Painting"
+  },
+  {
+    "country": "Oman",
+    "craft": "Silver Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Pakistan",
+    "craft": "Pottery",
+    "description": "Multan Style"
+  },
+  {
+    "country": "Palau",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Palestine State",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Panama",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Papua New Guinea",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Paraguay",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Peru",
+    "craft": "Textile Weaving",
+    "description": "Alpaca Wool"
+  },
+  {
+    "country": "Philippines",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Poland",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Portugal",
+    "craft": "Embroidery",
+    "description": "Madeira"
+  },
+  {
+    "country": "Qatar",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Romania",
+    "craft": "Pottery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Russian Federation",
+    "craft": "Lacquer Painting",
+    "description": ""
+  },
+  {
+    "country": "Rwanda",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Saint Kitts and Nevis",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Saint Lucia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Saint Vincent and the Grenadines",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Samoa",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "San Marino",
+    "craft": "Embroidery",
+    "description": "Lace"
+  },
+  {
+    "country": "Sao Tome and Principe",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Saudi Arabia",
+    "craft": "Weaving",
+    "description": "Sadu"
+  },
+  {
+    "country": "Senegal",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Serbia",
+    "craft": "Weaving",
+    "description": "Textiles"
+  },
+  {
+    "country": "Seychelles",
+    "craft": "Weaving",
+    "description": "Coconut Fiber"
+  },
+  {
+    "country": "Sierra Leone",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Singapore",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Slovakia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Slovenia",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Solomon Islands",
+    "craft": "Weaving",
+    "description": "Palm Fiber"
+  },
+  {
+    "country": "Somalia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "South Africa",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Korea, Republic of",
+    "craft": "Pottery",
+    "description": "Celadon"
+  },
+  {
+    "country": "South Sudan",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Spain",
+    "craft": "Ceramics",
+    "description": "Andalusian Pottery"
+  },
+  {
+    "country": "Sri Lanka",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Sudan",
+    "craft": "Weaving",
+    "description": "Cotton Textiles"
+  },
+  {
+    "country": "Suriname",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Sweden",
+    "craft": "Textile Weaving",
+    "description": ""
+  },
+  {
+    "country": "Switzerland",
+    "craft": "Embroidery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Syrian Arab Republic",
+    "craft": "Pottery",
+    "description": "Damascus"
+  },
+  {
+    "country": "Tajikistan",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Tanzania, United Republic of",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Thailand",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Timor-Leste",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Togo",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Tonga",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Trinidad and Tobago",
+    "craft": "Weaving",
+    "description": "Grass Mats"
+  },
+  {
+    "country": "Tunisia",
+    "craft": "Embroidery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Turkey",
+    "craft": "Ceramic Tiles",
+    "description": "Iznik"
+  },
+  {
+    "country": "Turkmenistan",
+    "craft": "Jewelry",
+    "description": "Silver"
+  },
+  {
+    "country": "Tuvalu",
+    "craft": "Shell Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Uganda",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Ukraine",
+    "craft": "Embroidery",
+    "description": "Cross-stitch"
+  },
+  {
+    "country": "United Arab Emirates",
+    "craft": "Calligraphy",
+    "description": "Arabic"
+  },
+  {
+    "country": "United Kingdom",
+    "craft": "Embroidery",
+    "description": "Crewel Work"
+  },
+  {
+    "country": "United States",
+    "craft": "Pottery",
+    "description": "Native American"
+  },
+  {
+    "country": "Uruguay",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Uzbekistan",
+    "craft": "Embroidery",
+    "description": "Suzani"
+  },
+  {
+    "country": "Vanuatu",
+    "craft": "Basketry",
+    "description": ""
+  },
+  {
+    "country": "Venezuela",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Vietnam",
+    "craft": "Embroidery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Yemen",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Zambia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Zimbabwe",
+    "craft": "Basketry",
+    "description": ""
+  },
+  {
+    "country": "Afghanistan",
+    "craft": "Calligraphy",
+    "description": ""
+  },
+  {
+    "country": "Albania",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Algeria",
+    "craft": "Leatherwork",
+    "description": ""
+  },
+  {
+    "country": "Andorra",
+    "craft": "Stone Masonry",
+    "description": ""
+  },
+  {
+    "country": "Angola",
+    "craft": "Basketry",
+    "description": ""
+  },
+  {
+    "country": "Antigua and Barbuda",
+    "craft": "Shell Craft",
+    "description": ""
+  },
+  {
+    "country": "Argentina",
+    "craft": "Leatherwork",
+    "description": ""
+  },
+  {
+    "country": "Armenia",
+    "craft": "Miniature Painting",
+    "description": ""
+  },
+  {
+    "country": "Australia",
+    "craft": "Bark Painting",
+    "description": ""
+  },
+  {
+    "country": "Austria",
+    "craft": "Embroidery",
+    "description": ""
+  },
+  {
+    "country": "Azerbaijan",
+    "craft": "Ceramics",
+    "description": ""
+  },
+  {
+    "country": "Bahamas",
+    "craft": "Shell Craft",
+    "description": ""
+  },
+  {
+    "country": "Bahrain",
+    "craft": "Pearl Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Bangladesh",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Barbados",
+    "craft": "Shell Craft",
+    "description": ""
+  },
+  {
+    "country": "Belarus",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Belgium",
+    "craft": "Glass Art",
+    "description": "Stained Glass"
+  },
+  {
+    "country": "Belize",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Benin",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Bhutan",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Bolivia",
+    "craft": "Silverwork",
+    "description": ""
+  },
+  {
+    "country": "Bosnia and Herzegovina",
+    "craft": "Copperwork",
+    "description": ""
+  },
+  {
+    "country": "Botswana",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Brazil",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Brunei",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Bulgaria",
+    "craft": "Embroidery",
+    "description": "Traditional Shirts"
+  },
+  {
+    "country": "Burkina Faso",
+    "craft": "Textile Weaving",
+    "description": "Cotton"
+  },
+  {
+    "country": "Burundi",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Côte d'Ivoire",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Cape Verde",
+    "craft": "Embroidery",
+    "description": ""
+  },
+  {
+    "country": "Cambodia",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Cameroon",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Canada",
+    "craft": "Textile Weaving",
+    "description": "Métis"
+  },
+  {
+    "country": "Central African Republic",
+    "craft": "Textile Weaving",
+    "description": ""
+  },
+  {
+    "country": "Chad",
+    "craft": "Weaving",
+    "description": ""
+  },
+  {
+    "country": "Chile",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "China",
+    "craft": "Porcelain",
+    "description": "Jingdezhen"
+  },
+  {
+    "country": "Colombia",
+    "craft": "Pottery",
+    "description": "Pre-Columbian Style"
+  },
+  {
+    "country": "Comoros",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Congo",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Costa Rica",
+    "craft": "Traditional Masks",
+    "description": ""
+  },
+  {
+    "country": "Croatia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Cuba",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Cyprus",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Czech Republic",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Congo, the Democratic Republic of the",
+    "craft": "Basketry",
+    "description": "Palm Fiber"
+  },
+  {
+    "country": "Denmark",
+    "craft": "Textile Weaving",
+    "description": "Wool"
+  },
+  {
+    "country": "Djibouti",
+    "craft": "Silver Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Dominica",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Dominican Republic",
+    "craft": "Taino Art",
+    "description": "Stone Carving"
+  },
+  {
+    "country": "Ecuador",
+    "craft": "Andean Textile Weaving",
+    "description": ""
+  },
+  {
+    "country": "Egypt",
+    "craft": "Metalworking",
+    "description": "Brass and Copper"
+  },
+  {
+    "country": "El Salvador",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Equatorial Guinea",
+    "craft": "Traditional Mask Making",
+    "description": ""
+  },
+  {
+    "country": "Eritrea",
+    "craft": "Metalworking",
+    "description": "Silver Jewelry"
+  },
+  {
+    "country": "Estonia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Swaziland",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Ethiopia",
+    "craft": "Jewelry",
+    "description": "Silver"
+  },
+  {
+    "country": "Fiji",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Finland",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "France",
+    "craft": "Perfume Making",
+    "description": ""
+  },
+  {
+    "country": "Gabon",
+    "craft": "Basketry",
+    "description": "Palm Leaves"
+  },
+  {
+    "country": "Gambia",
+    "craft": "Fabric Weaving",
+    "description": ""
+  },
+  {
+    "country": "Georgia",
+    "craft": "Gold and Silver Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Germany",
+    "craft": "Glassblowing",
+    "description": ""
+  },
+  {
+    "country": "Ghana",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Greece",
+    "craft": "Gold and Silver Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Grenada",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Guatemala",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Guinea",
+    "craft": "Textile Weaving",
+    "description": ""
+  },
+  {
+    "country": "Guinea-Bissau",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Guyana",
+    "craft": "Basketry",
+    "description": "Bamboo Weaving"
+  },
+  {
+    "country": "Haiti",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Holy See (Vatican City State)",
+    "craft": "Bookbinding",
+    "description": ""
+  },
+  {
+    "country": "Honduras",
+    "craft": "Weaving",
+    "description": "Textiles"
+  },
+  {
+    "country": "Hungary",
+    "craft": "Lace Making",
+    "description": ""
+  },
+  {
+    "country": "Iceland",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "India",
+    "craft": "Handicrafts",
+    "description": "Wood, Brass"
+  },
+  {
+    "country": "Indonesia",
+    "craft": "Traditional Mask Making",
+    "description": ""
+  },
+  {
+    "country": "Iran, Islamic Republic of",
+    "craft": "Miniature Painting",
+    "description": ""
+  },
+  {
+    "country": "Iraq",
+    "craft": "Silverwork",
+    "description": ""
+  },
+  {
+    "country": "Ireland",
+    "craft": "Metalwork",
+    "description": "Celtic Jewelry"
+  },
+  {
+    "country": "Israel",
+    "craft": "Ceramic Pottery",
+    "description": ""
+  },
+  {
+    "country": "Italy",
+    "craft": "Ceramic Pottery",
+    "description": "Deruta"
+  },
+  {
+    "country": "Jamaica",
+    "craft": "Weaving",
+    "description": "Straw Hats"
+  },
+  {
+    "country": "Japan",
+    "craft": "Kimono Weaving",
+    "description": ""
+  },
+  {
+    "country": "Jordan",
+    "craft": "Calligraphy",
+    "description": "Arabic Script"
+  },
+  {
+    "country": "Kazakhstan",
+    "craft": "Felt Making",
+    "description": ""
+  },
+  {
+    "country": "Kenya",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Kiribati",
+    "craft": "Tapa Cloth Making",
+    "description": ""
+  },
+  {
+    "country": "Kuwait",
+    "craft": "Silver Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Kyrgyzstan",
+    "craft": "Jewelry",
+    "description": "Silver"
+  },
+  {
+    "country": "Lao People's Democratic Republic",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Latvia",
+    "craft": "Folk Art",
+    "description": "Ceramics"
+  },
+  {
+    "country": "Lebanon",
+    "craft": "Silk Weaving",
+    "description": ""
+  },
+  {
+    "country": "Lesotho",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Liberia",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Libya",
+    "craft": "Basketry",
+    "description": "Palm Fronds"
+  },
+  {
+    "country": "Liechtenstein",
+    "craft": "Embroidery",
+    "description": ""
+  },
+  {
+    "country": "Lithuania",
+    "craft": "Amber Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Luxembourg",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Madagascar",
+    "craft": "Basketry",
+    "description": "Palm Fiber"
+  },
+  {
+    "country": "Malawi",
+    "craft": "Weaving",
+    "description": "Grass and Palm"
+  },
+  {
+    "country": "Malaysia",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Maldives",
+    "craft": "Traditional Boat Making",
+    "description": ""
+  },
+  {
+    "country": "Mali",
+    "craft": "Pottery",
+    "description": "Ceramics"
+  },
+  {
+    "country": "Malta",
+    "craft": "Glassblowing",
+    "description": ""
+  },
+  {
+    "country": "Marshall Islands",
+    "craft": "Weaving",
+    "description": "Coconut Husk"
+  },
+  {
+    "country": "Mauritania",
+    "craft": "Weaving",
+    "description": "Textiles"
+  },
+  {
+    "country": "Mauritius",
+    "craft": "Embroidery",
+    "description": "Textiles"
+  },
+  {
+    "country": "Mexico",
+    "craft": "Silver Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Micronesia, Federated States of",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Moldova, Republic of",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Monaco",
+    "craft": "Embroidery",
+    "description": ""
+  },
+  {
+    "country": "Mongolia",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Montenegro",
+    "craft": "Metalworking",
+    "description": ""
+  },
+  {
+    "country": "Morocco",
+    "craft": "Leatherwork",
+    "description": "Babouches"
+  },
+  {
+    "country": "Mozambique",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Myanmar",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Namibia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Nauru",
+    "craft": "Shell Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Nepal",
+    "craft": "Weaving",
+    "description": "Khadi"
+  },
+  {
+    "country": "Netherlands",
+    "craft": "Textile Art",
+    "description": "Dutch Wax Prints"
+  },
+  {
+    "country": "New Zealand",
+    "craft": "Bone and Greenstone Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Nicaragua",
+    "craft": "Weaving",
+    "description": "Palm and Raffia"
+  },
+  {
+    "country": "Niger",
+    "craft": "Metalworking",
+    "description": ""
+  },
+  {
+    "country": "Nigeria",
+    "craft": "Textile Weaving",
+    "description": "Aso-Oke"
+  },
+  {
+    "country": "Korea, Democratic People's Republic of",
+    "craft": "Embroidery",
+    "description": "Traditional"
+  },
+  {
+    "country": "Macedonia, the former Yugoslav Republic of",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Norway",
+    "craft": "Textile Weaving",
+    "description": "Linen"
+  },
+  {
+    "country": "Oman",
+    "craft": "Weaving",
+    "description": "Palm Leaves"
+  },
+  {
+    "country": "Pakistan",
+    "craft": "Embroidery",
+    "description": "Kashmiri"
+  },
+  {
+    "country": "Palau",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Palestine State",
+    "craft": "Embroidery",
+    "description": "Palestinian"
+  },
+  {
+    "country": "Panama",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Papua New Guinea",
+    "craft": "Shell Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Paraguay",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Peru",
+    "craft": "Silver Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Philippines",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Poland",
+    "craft": "Weaving",
+    "description": "Linen"
+  },
+  {
+    "country": "Portugal",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Qatar",
+    "craft": "Metalworking",
+    "description": ""
+  },
+  {
+    "country": "Romania",
+    "craft": "Embroidery",
+    "description": ""
+  },
+  {
+    "country": "Russian Federation",
+    "craft": "Metalworking",
+    "description": ""
+  },
+  {
+    "country": "Rwanda",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Saint Kitts and Nevis",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Saint Lucia",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Saint Vincent and the Grenadines",
+    "craft": "Basketry",
+    "description": ""
+  },
+  {
+    "country": "Samoa",
+    "craft": "Weaving",
+    "description": "Coconut Fiber"
+  },
+  {
+    "country": "San Marino",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Sao Tome and Principe",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Saudi Arabia",
+    "craft": "Silver Jewelry",
+    "description": ""
+  },
+  {
+    "country": "Senegal",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Serbia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Seychelles",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Sierra Leone",
+    "craft": "Weaving",
+    "description": "Grass Mats"
+  },
+  {
+    "country": "Singapore",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Slovakia",
+    "craft": "Embroidery",
+    "description": ""
+  },
+  {
+    "country": "Slovenia",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Solomon Islands",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Somalia",
+    "craft": "Jewelry",
+    "description": "Silver"
+  },
+  {
+    "country": "South Africa",
+    "craft": "Weaving",
+    "description": "Zulu Mats"
+  },
+  {
+    "country": "Korea, Republic of",
+    "craft": "Embroidery",
+    "description": "Traditional"
+  },
+  {
+    "country": "South Sudan",
+    "craft": "Pottery",
+    "description": ""
+  },
+  {
+    "country": "Spain",
+    "craft": "Lace",
+    "description": "Alpujarra Embroidery"
+  },
+  {
+    "country": "Sri Lanka",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Sudan",
+    "craft": "Jewelry",
+    "description": "Gold and Silver"
+  },
+  {
+    "country": "Suriname",
+    "craft": "Weaving",
+    "description": "Grass Mats"
+  },
+  {
+    "country": "Sweden",
+    "craft": "Glassblowing",
+    "description": "Swedish Crystal"
+  },
+  {
+    "country": "Switzerland",
+    "craft": "Leatherworking",
+    "description": ""
+  },
+  {
+    "country": "Syrian Arab Republic",
+    "craft": "Weaving",
+    "description": "Silk Carpets"
+  },
+  {
+    "country": "Tajikistan",
+    "craft": "Silk Weaving",
+    "description": ""
+  },
+  {
+    "country": "Tanzania, United Republic of",
+    "craft": "Textile Weaving",
+    "description": ""
+  },
+  {
+    "country": "Thailand",
+    "craft": "Traditional Painting",
+    "description": "Thai Art"
+  },
+  {
+    "country": "Timor-Leste",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Togo",
+    "craft": "Basketry",
+    "description": ""
+  },
+  {
+    "country": "Tonga",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Trinidad and Tobago",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Tunisia",
+    "craft": "Carpets",
+    "description": "Weaving"
+  },
+  {
+    "country": "Turkey",
+    "craft": "Calligraphy",
+    "description": "Ottoman Style"
+  },
+  {
+    "country": "Turkmenistan",
+    "craft": "Metalworking",
+    "description": "Bronze"
+  },
+  {
+    "country": "Tuvalu",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Uganda",
+    "craft": "Beadwork",
+    "description": ""
+  },
+  {
+    "country": "Ukraine",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "United Arab Emirates",
+    "craft": "Jewelry",
+    "description": "Gold and Silver"
+  },
+  {
+    "country": "United Kingdom",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "United States",
+    "craft": "Glassblowing",
+    "description": "Art Glass"
+  },
+  {
+    "country": "Uruguay",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Uzbekistan",
+    "craft": "Metalworking",
+    "description": "Bronze"
+  },
+  {
+    "country": "Vanuatu",
+    "craft": "Weaving",
+    "description": "Coconut Fiber"
+  },
+  {
+    "country": "Venezuela",
+    "craft": "Weaving",
+    "description": "Canoe-making"
+  },
+  {
+    "country": "Vietnam",
+    "craft": "Silk Weaving",
+    "description": ""
+  },
+  {
+    "country": "Yemen",
+    "craft": "Weaving",
+    "description": "Wool Rugs"
+  },
+  {
+    "country": "Zambia",
+    "craft": "Wood Carving",
+    "description": ""
+  },
+  {
+    "country": "Zimbabwe",
+    "craft": "Weaving",
+    "description": "Textiles"
+  }
+]

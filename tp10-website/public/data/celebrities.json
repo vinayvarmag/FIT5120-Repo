@@ -1,0 +1,2927 @@
+[
+  {
+    "country": "Afghanistan",
+    "name": "Ahmad Shah Durrani",
+    "occupation": "Founder of modern Afghanistan"
+  },
+  {
+    "country": "Afghanistan",
+    "name": "Khaled Hosseini",
+    "occupation": "Author"
+  },
+  {
+    "country": "Afghanistan",
+    "name": "Ghani Khan",
+    "occupation": "Poet and Philosopher"
+  },
+  {
+    "country": "Albania",
+    "name": "Ismail Kadare",
+    "occupation": "Author"
+  },
+  {
+    "country": "Albania",
+    "name": "Mother Teresa",
+    "occupation": "Humanitarian"
+  },
+  {
+    "country": "Albania",
+    "name": "Enver Hoxha",
+    "occupation": "Former Communist Leader"
+  },
+  {
+    "country": "Algeria",
+    "name": "Albert Camus",
+    "occupation": "Author"
+  },
+  {
+    "country": "Algeria",
+    "name": "Cheb Khaled",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Algeria",
+    "name": "Zinedine Zidane",
+    "occupation": "Footballer"
+  },
+  {
+    "country": "Andorra",
+    "name": "Joan Marti",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Andorra",
+    "name": "Marta Bayarri",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Andorra",
+    "name": "Xavier Roca",
+    "occupation": "Athlete"
+  },
+  {
+    "country": "Angola",
+    "name": "Agostinho Neto",
+    "occupation": "Poet, Politician"
+  },
+  {
+    "country": "Angola",
+    "name": "Eduardo dos Santos",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Angola",
+    "name": "Aníbal de Melo",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Antigua and Barbuda",
+    "name": "Sir Vivian Richards",
+    "occupation": "Cricketer"
+  },
+  {
+    "country": "Antigua and Barbuda",
+    "name": "Gregory Isaacs",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Antigua and Barbuda",
+    "name": "Louise Lake-Tack",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Argentina",
+    "name": "Eva Perón",
+    "occupation": "First Lady"
+  },
+  {
+    "country": "Argentina",
+    "name": "Lionel Messi",
+    "occupation": "Footballer"
+  },
+  {
+    "country": "Argentina",
+    "name": "Jorge Luis Borges",
+    "occupation": "Author"
+  },
+  {
+    "country": "Armenia",
+    "name": "Aram Khachaturian",
+    "occupation": "Composer"
+  },
+  {
+    "country": "Armenia",
+    "name": "Hovhannes Shiraz",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Armenia",
+    "name": "Serj Tankian",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Australia",
+    "name": "Nicole Kidman",
+    "occupation": "Actress"
+  },
+  {
+    "country": "Australia",
+    "name": "Steve Irwin",
+    "occupation": "Wildlife Expert"
+  },
+  {
+    "country": "Australia",
+    "name": "Hugh Jackman",
+    "occupation": "Actor"
+  },
+  {
+    "country": "Austria",
+    "name": "Wolfgang Amadeus Mozart",
+    "occupation": "Composer"
+  },
+  {
+    "country": "Austria",
+    "name": "Ludwig van Beethoven",
+    "occupation": "Composer"
+  },
+  {
+    "country": "Austria",
+    "name": "Arnold Schwarzenegger",
+    "occupation": "Actor"
+  },
+  {
+    "country": "Azerbaijan",
+    "name": "Mehriban Aliyeva",
+    "occupation": "First Lady"
+  },
+  {
+    "country": "Azerbaijan",
+    "name": "Garry Kasparov",
+    "occupation": "Chess Grandmaster"
+  },
+  {
+    "country": "Azerbaijan",
+    "name": "Jamal Aliyev",
+    "occupation": "Cellist"
+  },
+  {
+    "country": "Bahamas",
+    "name": "Sidney Poitier",
+    "occupation": "Actor"
+  },
+  {
+    "country": "Bahamas",
+    "name": "Lenny Kravitz",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Bahamas",
+    "name": "Timothy Gibson",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Bahrain",
+    "name": "Shaikh Isa bin Salman Al Khalifa",
+    "occupation": "Royal Figure"
+  },
+  {
+    "country": "Bahrain",
+    "name": "Huda Al-Hashimi",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Bahrain",
+    "name": "Abdulla Yousif",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Bangladesh",
+    "name": "Sheikh Mujibur Rahman",
+    "occupation": "Father of the Nation"
+  },
+  {
+    "country": "Bangladesh",
+    "name": "Satyajit Ray",
+    "occupation": "Filmmaker"
+  },
+  {
+    "country": "Bangladesh",
+    "name": "Runa Laila",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Barbados",
+    "name": "Rihanna",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Barbados",
+    "name": "George Lamming",
+    "occupation": "Author"
+  },
+  {
+    "country": "Barbados",
+    "name": "Sir Garfield Sobers",
+    "occupation": "Cricketer"
+  },
+  {
+    "country": "Belarus",
+    "name": "Svetlana Alexievich",
+    "occupation": "Author"
+  },
+  {
+    "country": "Belarus",
+    "name": "Marc Chagall",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Belarus",
+    "name": "Victor Tsoi",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Belgium",
+    "name": "Audrey Hepburn",
+    "occupation": "Actress"
+  },
+  {
+    "country": "Belgium",
+    "name": "Jacques Brel",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Belgium",
+    "name": "René Magritte",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Belize",
+    "name": "James A. Garbutt",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Belize",
+    "name": "George Price",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Belize",
+    "name": "Shyne",
+    "occupation": "Rapper"
+  },
+  {
+    "country": "Benin",
+    "name": "Mathieu Kérékou",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Benin",
+    "name": "Angélique Kidjo",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Benin",
+    "name": "Thomas Sankara",
+    "occupation": "Revolutionary"
+  },
+  {
+    "country": "Bhutan",
+    "name": "Jigme Dorji Wangchuck",
+    "occupation": "King"
+  },
+  {
+    "country": "Bhutan",
+    "name": "Chogyal Phuntso Wangdi",
+    "occupation": "Philosopher"
+  },
+  {
+    "country": "Bhutan",
+    "name": "Karma Phuntsho",
+    "occupation": "Scholar"
+  },
+  {
+    "country": "Bolivia",
+    "name": "Evo Morales",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Bolivia",
+    "name": "Túpac Katari",
+    "occupation": "Revolutionary Leader"
+  },
+  {
+    "country": "Bolivia",
+    "name": "Jaime Escalante",
+    "occupation": "Educator"
+  },
+  {
+    "country": "Bosnia and Herzegovina",
+    "name": "Ivo Andri?",
+    "occupation": "Author"
+  },
+  {
+    "country": "Bosnia and Herzegovina",
+    "name": "Edin Džeko",
+    "occupation": "Footballer"
+  },
+  {
+    "country": "Bosnia and Herzegovina",
+    "name": "Goran Bregovi?",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Botswana",
+    "name": "Ian Khama",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Botswana",
+    "name": "Desmond Tutu",
+    "occupation": "Clergyman, Activist"
+  },
+  {
+    "country": "Botswana",
+    "name": "Dolly Parton",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Brazil",
+    "name": "Pelé",
+    "occupation": "Footballer"
+  },
+  {
+    "country": "Brazil",
+    "name": "Oscar Niemeyer",
+    "occupation": "Architect"
+  },
+  {
+    "country": "Brazil",
+    "name": "Carmen Miranda",
+    "occupation": "Actress, Singer"
+  },
+  {
+    "country": "Brunei",
+    "name": "Hassanal Bolkiah",
+    "occupation": "Sultan"
+  },
+  {
+    "country": "Brunei",
+    "name": "Yang Di-Pertuan Agong",
+    "occupation": "Sultan"
+  },
+  {
+    "country": "Brunei",
+    "name": "Awang Haji Omar Ali Saifuddien",
+    "occupation": "Political Leader"
+  },
+  {
+    "country": "Bulgaria",
+    "name": "Dimitar Berbatov",
+    "occupation": "Footballer"
+  },
+  {
+    "country": "Bulgaria",
+    "name": "Asen Zlatarov",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Bulgaria",
+    "name": "Christo",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Burkina Faso",
+    "name": "Thomas Sankara",
+    "occupation": "Revolutionary"
+  },
+  {
+    "country": "Burkina Faso",
+    "name": "Norbert Zongo",
+    "occupation": "Journalist"
+  },
+  {
+    "country": "Burkina Faso",
+    "name": "Odile Sankara",
+    "occupation": "Humanitarian"
+  },
+  {
+    "country": "Burundi",
+    "name": "Pierre Nkurunziza",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Burundi",
+    "name": "Melchior Ndadaye",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Burundi",
+    "name": "Leonce Ngabo",
+    "occupation": "Activist"
+  },
+  {
+    "country": "Côte d'Ivoire",
+    "name": "Didier Drogba",
+    "occupation": "Footballer"
+  },
+  {
+    "country": "Côte d'Ivoire",
+    "name": "Amina Mama",
+    "occupation": "Scholar"
+  },
+  {
+    "country": "Côte d'Ivoire",
+    "name": "Alassane Ouattara",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Cape Verde",
+    "name": "Cesária Évora",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Cape Verde",
+    "name": "Mindelo Carnival",
+    "occupation": "Cultural Event"
+  },
+  {
+    "country": "Cape Verde",
+    "name": "Eugénio Tavares",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Cambodia",
+    "name": "Norodom Sihanouk",
+    "occupation": "King"
+  },
+  {
+    "country": "Cambodia",
+    "name": "Vann Phan",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Cambodia",
+    "name": "Hun Sen",
+    "occupation": "Prime Minister"
+  },
+  {
+    "country": "Cameroon",
+    "name": "Samuel Eto'o",
+    "occupation": "Footballer"
+  },
+  {
+    "country": "Cameroon",
+    "name": "Paul Biya",
+    "occupation": "President"
+  },
+  {
+    "country": "Cameroon",
+    "name": "Charlotte Dipanda",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Canada",
+    "name": "Justin Bieber",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Canada",
+    "name": "Celine Dion",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Canada",
+    "name": "Leonard Cohen",
+    "occupation": "Singer, Songwriter"
+  },
+  {
+    "country": "Central African Republic",
+    "name": "Barthélémy Boganda",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Central African Republic",
+    "name": "Ange-Félix Patassé",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Central African Republic",
+    "name": "David Dacko",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Chad",
+    "name": "Idriss Déby",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Chad",
+    "name": "Mahamat Idriss Déby",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Chad",
+    "name": "Hissène Habré",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Chile",
+    "name": "Pablo Neruda",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Chile",
+    "name": "Salvador Allende",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Chile",
+    "name": "Violeta Parra",
+    "occupation": "Folk Singer"
+  },
+  {
+    "country": "China",
+    "name": "Confucius",
+    "occupation": "Philosopher"
+  },
+  {
+    "country": "China",
+    "name": "Jackie Chan",
+    "occupation": "Actor"
+  },
+  {
+    "country": "China",
+    "name": "Zhang Yimou",
+    "occupation": "Filmmaker"
+  },
+  {
+    "country": "Colombia",
+    "name": "Shakira",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Colombia",
+    "name": "Gabriel García Márquez",
+    "occupation": "Author"
+  },
+  {
+    "country": "Colombia",
+    "name": "Juanes",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Comoros",
+    "name": "Ahmed Abdallah",
+    "occupation": "Political Leader"
+  },
+  {
+    "country": "Comoros",
+    "name": "Said Mohamed Cheikh",
+    "occupation": "Scholar"
+  },
+  {
+    "country": "Comoros",
+    "name": "Tadjidine Ben Said Massounde",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Congo",
+    "name": "Denis Sassou Nguesso",
+    "occupation": "President"
+  },
+  {
+    "country": "Congo",
+    "name": "Pierre Ngoua",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Congo",
+    "name": "Barthélémy Boganda",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Costa Rica",
+    "name": "Óscar Arias",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Costa Rica",
+    "name": "Franklin Chang-Díaz",
+    "occupation": "Astronaut"
+  },
+  {
+    "country": "Costa Rica",
+    "name": "Shirley Campbell",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Croatia",
+    "name": "Luka Modri?",
+    "occupation": "Footballer"
+  },
+  {
+    "country": "Croatia",
+    "name": "Ivan Meštrovi?",
+    "occupation": "Sculptor"
+  },
+  {
+    "country": "Croatia",
+    "name": "Janica Kosteli?",
+    "occupation": "Alpine Skier"
+  },
+  {
+    "country": "Cuba",
+    "name": "Fidel Castro",
+    "occupation": "Revolutionary"
+  },
+  {
+    "country": "Cuba",
+    "name": "Ernesto Che Guevara",
+    "occupation": "Revolutionary"
+  },
+  {
+    "country": "Cuba",
+    "name": "Celia Cruz",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Cyprus",
+    "name": "Makarios III",
+    "occupation": "Archbishop, Politician"
+  },
+  {
+    "country": "Cyprus",
+    "name": "Giorgos Seferis",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Cyprus",
+    "name": "Christofias",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Czech Republic",
+    "name": "Václav Havel",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Czech Republic",
+    "name": "Antonín Dvo?ák",
+    "occupation": "Composer"
+  },
+  {
+    "country": "Czech Republic",
+    "name": "Tomáš Garrigue Masaryk",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Congo, the Democratic Republic of the",
+    "name": "Joseph Kabila",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Congo, the Democratic Republic of the",
+    "name": "Papa Wemba",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Congo, the Democratic Republic of the",
+    "name": "Tshala Muana",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Denmark",
+    "name": "Hans Christian Andersen",
+    "occupation": "Author"
+  },
+  {
+    "country": "Denmark",
+    "name": "Mads Mikkelsen",
+    "occupation": "Actor"
+  },
+  {
+    "country": "Denmark",
+    "name": "Søren Kierkegaard",
+    "occupation": "Philosopher"
+  },
+  {
+    "country": "Djibouti",
+    "name": "Ismaël Omar Guelleh",
+    "occupation": "President"
+  },
+  {
+    "country": "Djibouti",
+    "name": "Djama Elmi",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Djibouti",
+    "name": "Hassan Gouled Aptidon",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Dominica",
+    "name": "Roosevelt Skerrit",
+    "occupation": "Prime Minister"
+  },
+  {
+    "country": "Dominica",
+    "name": "Jean Rhys",
+    "occupation": "Author"
+  },
+  {
+    "country": "Dominica",
+    "name": "Lennox Linton",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Dominican Republic",
+    "name": "Juan Pablo Duarte",
+    "occupation": "Founding Father"
+  },
+  {
+    "country": "Dominican Republic",
+    "name": "Oscar de la Renta",
+    "occupation": "Fashion Designer"
+  },
+  {
+    "country": "Dominican Republic",
+    "name": "Aventura",
+    "occupation": "Musical Group"
+  },
+  {
+    "country": "Ecuador",
+    "name": "Jefferson Pérez",
+    "occupation": "Athlete"
+  },
+  {
+    "country": "Ecuador",
+    "name": "Oswaldo Guayasamín",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Ecuador",
+    "name": "Gabriel García Márquez",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Egypt",
+    "name": "Naguib Mahfouz",
+    "occupation": "Author"
+  },
+  {
+    "country": "Egypt",
+    "name": "Umm Kulthum",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Egypt",
+    "name": "Cleopatra",
+    "occupation": "Historical Figure"
+  },
+  {
+    "country": "El Salvador",
+    "name": "Óscar Romero",
+    "occupation": "Archbishop"
+  },
+  {
+    "country": "El Salvador",
+    "name": "Francisco Gavidia",
+    "occupation": "Poet"
+  },
+  {
+    "country": "El Salvador",
+    "name": "Carlos Pena",
+    "occupation": "Actor"
+  },
+  {
+    "country": "Equatorial Guinea",
+    "name": "Teodoro Obiang Nguema Mbasogo",
+    "occupation": "President"
+  },
+  {
+    "country": "Equatorial Guinea",
+    "name": "María Nsue Angüe",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Equatorial Guinea",
+    "name": "Vicente Nguema",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Eritrea",
+    "name": "Isaias Afwerki",
+    "occupation": "President"
+  },
+  {
+    "country": "Eritrea",
+    "name": "Abraham T. Zere",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Eritrea",
+    "name": "Hanan Haji",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Estonia",
+    "name": "Arvo Pärt",
+    "occupation": "Composer"
+  },
+  {
+    "country": "Estonia",
+    "name": "Jaan Kross",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Estonia",
+    "name": "Kerli",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Swaziland",
+    "name": "King Mswati III",
+    "occupation": "Monarch"
+  },
+  {
+    "country": "Swaziland",
+    "name": "Shaka Zulu",
+    "occupation": "Warrior"
+  },
+  {
+    "country": "Swaziland",
+    "name": "Mbongeni Ngema",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Ethiopia",
+    "name": "Haile Selassie",
+    "occupation": "Emperor"
+  },
+  {
+    "country": "Ethiopia",
+    "name": "Mengistu Haile Mariam",
+    "occupation": "Political Leader"
+  },
+  {
+    "country": "Ethiopia",
+    "name": "Aster Aweke",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Fiji",
+    "name": "Sitiveni Rabuka",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Fiji",
+    "name": "Ratu Sir Lala Sukuna",
+    "occupation": "Chief"
+  },
+  {
+    "country": "Fiji",
+    "name": "Johnny Faa",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Finland",
+    "name": "Jean Sibelius",
+    "occupation": "Composer"
+  },
+  {
+    "country": "Finland",
+    "name": "Linus Torvalds",
+    "occupation": "Software Engineer"
+  },
+  {
+    "country": "Finland",
+    "name": "Tarja Turunen",
+    "occupation": "Singer"
+  },
+  {
+    "country": "France",
+    "name": "Victor Hugo",
+    "occupation": "Author"
+  },
+  {
+    "country": "France",
+    "name": "Edith Piaf",
+    "occupation": "Singer"
+  },
+  {
+    "country": "France",
+    "name": "Napoleon Bonaparte",
+    "occupation": "Emperor"
+  },
+  {
+    "country": "Gabon",
+    "name": "Omar Bongo",
+    "occupation": "President"
+  },
+  {
+    "country": "Gabon",
+    "name": "Pierre Mulele",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Gabon",
+    "name": "Patience Dabany",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Gambia",
+    "name": "Lamin Sanneh",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Gambia",
+    "name": "Banjul International Film Festival",
+    "occupation": "Cultural Event"
+  },
+  {
+    "country": "Gambia",
+    "name": "Sir Dawda Kairaba Jawara",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Georgia",
+    "name": "Nino Haratischwili",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Georgia",
+    "name": "Shota Rustaveli",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Georgia",
+    "name": "Giorgi Kvirikashvili",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Germany",
+    "name": "Ludwig van Beethoven",
+    "occupation": "Composer"
+  },
+  {
+    "country": "Germany",
+    "name": "Albert Einstein",
+    "occupation": "Physicist"
+  },
+  {
+    "country": "Germany",
+    "name": "Angela Merkel",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Ghana",
+    "name": "Kwame Nkrumah",
+    "occupation": "Political Leader"
+  },
+  {
+    "country": "Ghana",
+    "name": "Kofi Annan",
+    "occupation": "Diplomat"
+  },
+  {
+    "country": "Ghana",
+    "name": "Amakye Dede",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Greece",
+    "name": "Aristotle",
+    "occupation": "Philosopher"
+  },
+  {
+    "country": "Greece",
+    "name": "Zorba the Greek",
+    "occupation": "Cultural Icon"
+  },
+  {
+    "country": "Greece",
+    "name": "Maria Callas",
+    "occupation": "Opera Singer"
+  },
+  {
+    "country": "Grenada",
+    "name": "Maurice Bishop",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Grenada",
+    "name": "Errol Jones",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Grenada",
+    "name": "Paul Roberts",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Guatemala",
+    "name": "Rigoberta Menchú",
+    "occupation": "Activist"
+  },
+  {
+    "country": "Guatemala",
+    "name": "Carlos Mérida",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Guatemala",
+    "name": "Miguel Ángel Asturias",
+    "occupation": "Author"
+  },
+  {
+    "country": "Guinea",
+    "name": "Alpha Condé",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Guinea",
+    "name": "Mory Kanté",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Guinea",
+    "name": "Sekou Touré",
+    "occupation": "Political Leader"
+  },
+  {
+    "country": "Guinea-Bissau",
+    "name": "Amílcar Cabral",
+    "occupation": "Revolutionary"
+  },
+  {
+    "country": "Guinea-Bissau",
+    "name": "José Mário Vaz",
+    "occupation": "President"
+  },
+  {
+    "country": "Guinea-Bissau",
+    "name": "Beto Dias",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Guyana",
+    "name": "Cheddi Jagan",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Guyana",
+    "name": "Eusi Kwayana",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Guyana",
+    "name": "Jimmy Cliff",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Haiti",
+    "name": "Toussaint Louverture",
+    "occupation": "Revolutionary"
+  },
+  {
+    "country": "Haiti",
+    "name": "Wyclef Jean",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Haiti",
+    "name": "Jean-Bertrand Aristide",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Holy See (Vatican City State)",
+    "name": "Pope Francis",
+    "occupation": "Pope"
+  },
+  {
+    "country": "Holy See (Vatican City State)",
+    "name": "Pope John Paul II",
+    "occupation": "Pope"
+  },
+  {
+    "country": "Holy See (Vatican City State)",
+    "name": "Saint Peter",
+    "occupation": "Religious Figure"
+  },
+  {
+    "country": "Honduras",
+    "name": "Carlos Mencia",
+    "occupation": "Comedian"
+  },
+  {
+    "country": "Honduras",
+    "name": "Ricardo Arjona",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Honduras",
+    "name": "Roatán",
+    "occupation": "Tourist Destination"
+  },
+  {
+    "country": "Hungary",
+    "name": "Franz Liszt",
+    "occupation": "Composer"
+  },
+  {
+    "country": "Hungary",
+    "name": "Viktor Orban",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Hungary",
+    "name": "Zsa Zsa Gabor",
+    "occupation": "Actress"
+  },
+  {
+    "country": "Iceland",
+    "name": "Björk",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Iceland",
+    "name": "Halldór Laxness",
+    "occupation": "Author"
+  },
+  {
+    "country": "Iceland",
+    "name": "Jón Gnarr",
+    "occupation": "Politician"
+  },
+  {
+    "country": "India",
+    "name": "Mahatma Gandhi",
+    "occupation": "Leader"
+  },
+  {
+    "country": "India",
+    "name": "Ratan Tata",
+    "occupation": "Business Magnate"
+  },
+  {
+    "country": "India",
+    "name": "Amitabh Bachchan",
+    "occupation": "Actor"
+  },
+  {
+    "country": "Indonesia",
+    "name": "Gamelan",
+    "occupation": "Music Tradition"
+  },
+  {
+    "country": "Indonesia",
+    "name": "Sukarno",
+    "occupation": "First President"
+  },
+  {
+    "country": "Indonesia",
+    "name": "Anggun",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Iran, Islamic Republic of",
+    "name": "Rumi",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Iran, Islamic Republic of",
+    "name": "Shirin Ebadi",
+    "occupation": "Human Rights Lawyer"
+  },
+  {
+    "country": "Iran, Islamic Republic of",
+    "name": "Nima Yushij",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Iraq",
+    "name": "Saddam Hussein",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Iraq",
+    "name": "Omar Mukhtar",
+    "occupation": "Revolutionary"
+  },
+  {
+    "country": "Iraq",
+    "name": "Kadhim al-Saher",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Ireland",
+    "name": "James Joyce",
+    "occupation": "Author"
+  },
+  {
+    "country": "Ireland",
+    "name": "U2",
+    "occupation": "Musical Band"
+  },
+  {
+    "country": "Ireland",
+    "name": "Michael D. Higgins",
+    "occupation": "President"
+  },
+  {
+    "country": "Israel",
+    "name": "Shimon Peres",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Israel",
+    "name": "David Ben-Gurion",
+    "occupation": "Founder"
+  },
+  {
+    "country": "Israel",
+    "name": "Itzhak Perlman",
+    "occupation": "Violinist"
+  },
+  {
+    "country": "Italy",
+    "name": "Leonardo da Vinci",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Italy",
+    "name": "Sophia Loren",
+    "occupation": "Actress"
+  },
+  {
+    "country": "Italy",
+    "name": "Giuseppe Verdi",
+    "occupation": "Composer"
+  },
+  {
+    "country": "Jamaica",
+    "name": "Bob Marley",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Jamaica",
+    "name": "Usain Bolt",
+    "occupation": "Athlete"
+  },
+  {
+    "country": "Jamaica",
+    "name": "Marcus Garvey",
+    "occupation": "Activist"
+  },
+  {
+    "country": "Japan",
+    "name": "Akira Kurosawa",
+    "occupation": "Filmmaker"
+  },
+  {
+    "country": "Japan",
+    "name": "Hideki Matsui",
+    "occupation": "Baseball Player"
+  },
+  {
+    "country": "Japan",
+    "name": "Kenzo Takada",
+    "occupation": "Fashion Designer"
+  },
+  {
+    "country": "Jordan",
+    "name": "King Hussein",
+    "occupation": "Former King"
+  },
+  {
+    "country": "Jordan",
+    "name": "Queen Noor",
+    "occupation": "Queen"
+  },
+  {
+    "country": "Jordan",
+    "name": "Zaha Hadid",
+    "occupation": "Architect"
+  },
+  {
+    "country": "Kazakhstan",
+    "name": "Abai Kunanbayev",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Kazakhstan",
+    "name": "Gennady Golovkin",
+    "occupation": "Boxer"
+  },
+  {
+    "country": "Kazakhstan",
+    "name": "Dimash Kudaibergen",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Kenya",
+    "name": "Wangari Maathai",
+    "occupation": "Environmentalist"
+  },
+  {
+    "country": "Kenya",
+    "name": "Barack Obama",
+    "occupation": "Political Leader"
+  },
+  {
+    "country": "Kenya",
+    "name": "Jomo Kenyatta",
+    "occupation": "First President"
+  },
+  {
+    "country": "Kiribati",
+    "name": "Ieremia Tabai",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Kiribati",
+    "name": "Te Beretitenti",
+    "occupation": "Political Leader"
+  },
+  {
+    "country": "Kiribati",
+    "name": "Tiare Teta",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Kuwait",
+    "name": "Sheikh Jaber Al-Ahmad Al-Sabah",
+    "occupation": "Former Emir"
+  },
+  {
+    "country": "Kuwait",
+    "name": "Nasser Al-Din Al-Tusi",
+    "occupation": "Scholar"
+  },
+  {
+    "country": "Kuwait",
+    "name": "Mishaal Al-Omar",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Kyrgyzstan",
+    "name": "Tynchtykbek Tchoroev",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Kyrgyzstan",
+    "name": "Kurmanbek Bakiyev",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Kyrgyzstan",
+    "name": "Dina Nuraliyeva",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Lao People's Democratic Republic",
+    "name": "Kaysone Phomvihane",
+    "occupation": "Leader"
+  },
+  {
+    "country": "Lao People's Democratic Republic",
+    "name": "Phoumi Vongvichit",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Lao People's Democratic Republic",
+    "name": "Chao Anouvong",
+    "occupation": "King"
+  },
+  {
+    "country": "Latvia",
+    "name": "Vaira V??e-Freiberga",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Latvia",
+    "name": "M?ris Štrombergs",
+    "occupation": "Cyclist"
+  },
+  {
+    "country": "Latvia",
+    "name": "Guntis Ulmanis",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Lebanon",
+    "name": "Fairuz",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Lebanon",
+    "name": "Rafik Hariri",
+    "occupation": "Prime Minister"
+  },
+  {
+    "country": "Lebanon",
+    "name": "Walid Jumblatt",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Lesotho",
+    "name": "King Letsie III",
+    "occupation": "King"
+  },
+  {
+    "country": "Lesotho",
+    "name": "Thomas Mofolo",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Lesotho",
+    "name": "Ntsiki Mazwai",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Liberia",
+    "name": "Ellen Johnson Sirleaf",
+    "occupation": "President"
+  },
+  {
+    "country": "Liberia",
+    "name": "George Weah",
+    "occupation": "Footballer"
+  },
+  {
+    "country": "Liberia",
+    "name": "William V.S. Tubman",
+    "occupation": "President"
+  },
+  {
+    "country": "Libya",
+    "name": "Muammar Gaddafi",
+    "occupation": "Former Leader"
+  },
+  {
+    "country": "Libya",
+    "name": "Omar Mukhtar",
+    "occupation": "Revolutionary"
+  },
+  {
+    "country": "Libya",
+    "name": "Fadwa Tuqan",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Liechtenstein",
+    "name": "Prince Hans-Adam II",
+    "occupation": "Monarch"
+  },
+  {
+    "country": "Liechtenstein",
+    "name": "Marie of Liechtenstein",
+    "occupation": "Princess"
+  },
+  {
+    "country": "Liechtenstein",
+    "name": "Alois",
+    "occupation": "Crown Prince"
+  },
+  {
+    "country": "Lithuania",
+    "name": "Mikalojus Konstantinas ?iurlionis",
+    "occupation": "Composer"
+  },
+  {
+    "country": "Lithuania",
+    "name": "R?pintoj?lis",
+    "occupation": "Folk character"
+  },
+  {
+    "country": "Lithuania",
+    "name": "Dainius Šuliauskas",
+    "occupation": "Actor"
+  },
+  {
+    "country": "Luxembourg",
+    "name": "Jean-Claude Juncker",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Luxembourg",
+    "name": "Gaston Thorn",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Luxembourg",
+    "name": "Sophie Hunger",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Madagascar",
+    "name": "Jean-Jacques Rabearivelo",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Madagascar",
+    "name": "Marc Ravalomanana",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Madagascar",
+    "name": "Youssou N'Dour",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Malawi",
+    "name": "Bingu wa Mutharika",
+    "occupation": "President"
+  },
+  {
+    "country": "Malawi",
+    "name": "William Kamkwamba",
+    "occupation": "Inventor"
+  },
+  {
+    "country": "Malawi",
+    "name": "Joyce Banda",
+    "occupation": "President"
+  },
+  {
+    "country": "Malaysia",
+    "name": "Mahathir Mohamad",
+    "occupation": "Former Prime Minister"
+  },
+  {
+    "country": "Malaysia",
+    "name": "Lee Chong Wei",
+    "occupation": "Badminton Player"
+  },
+  {
+    "country": "Malaysia",
+    "name": "Siti Nurhaliza",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Maldives",
+    "name": "Mohamed Nasheed",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Maldives",
+    "name": "Fathimath Dhiyana Saeed",
+    "occupation": "Diplomat"
+  },
+  {
+    "country": "Maldives",
+    "name": "Mariyam Nazha",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Mali",
+    "name": "Amadou Hampâté Bâ",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Mali",
+    "name": "Ali Farka Touré",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Mali",
+    "name": "Oumou Sangaré",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Malta",
+    "name": "Joseph Muscat",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Malta",
+    "name": "Michela Pace",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Malta",
+    "name": "Edward de Bono",
+    "occupation": "Psychologist"
+  },
+  {
+    "country": "Marshall Islands",
+    "name": "Hilda Heine",
+    "occupation": "President"
+  },
+  {
+    "country": "Marshall Islands",
+    "name": "Tony de Brum",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Marshall Islands",
+    "name": "Kathy Jetnil-Kijiner",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Mauritania",
+    "name": "Mohamed Ould Abdel Aziz",
+    "occupation": "President"
+  },
+  {
+    "country": "Mauritania",
+    "name": "Mbarek Ould Beyrouk",
+    "occupation": "Author"
+  },
+  {
+    "country": "Mauritania",
+    "name": "Cheikh Ould Bady",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Mauritius",
+    "name": "Sir Seewoosagur Ramgoolam",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Mauritius",
+    "name": "Anil Bheenick",
+    "occupation": "Economist"
+  },
+  {
+    "country": "Mauritius",
+    "name": "Kailash Kher",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Mexico",
+    "name": "Frida Kahlo",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Mexico",
+    "name": "Diego Rivera",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Mexico",
+    "name": "Carlos Slim",
+    "occupation": "Businessman"
+  },
+  {
+    "country": "Micronesia, Federated States of",
+    "name": "Emelio U. N.",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Micronesia, Federated States of",
+    "name": "Simion A. de Pina",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Micronesia, Federated States of",
+    "name": "Ativie Samuel",
+    "occupation": "Historian"
+  },
+  {
+    "country": "Moldova, Republic of",
+    "name": "Eugen Doga",
+    "occupation": "Composer"
+  },
+  {
+    "country": "Moldova, Republic of",
+    "name": "Stefan Cel Mare",
+    "occupation": "Historical Figure"
+  },
+  {
+    "country": "Moldova, Republic of",
+    "name": "Irina Rimes",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Monaco",
+    "name": "Grace Kelly",
+    "occupation": "Actress"
+  },
+  {
+    "country": "Monaco",
+    "name": "Prince Albert II",
+    "occupation": "Monarch"
+  },
+  {
+    "country": "Monaco",
+    "name": "Jean-Luc Mélenchon",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Mongolia",
+    "name": "Genghis Khan",
+    "occupation": "Historical Figure"
+  },
+  {
+    "country": "Mongolia",
+    "name": "Kublai Khan",
+    "occupation": "Emperor"
+  },
+  {
+    "country": "Mongolia",
+    "name": "Zorigto Baatar",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Montenegro",
+    "name": "Nikola Tesla",
+    "occupation": "Inventor"
+  },
+  {
+    "country": "Montenegro",
+    "name": "Danilo Kiš",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Montenegro",
+    "name": "Milo ?ukanovi?",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Morocco",
+    "name": "Hassan II",
+    "occupation": "King"
+  },
+  {
+    "country": "Morocco",
+    "name": "Abdelaziz Bouteflika",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Morocco",
+    "name": "Malika Oufkir",
+    "occupation": "Author"
+  },
+  {
+    "country": "Mozambique",
+    "name": "Samora Machel",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Mozambique",
+    "name": "Graca Machel",
+    "occupation": "Activist"
+  },
+  {
+    "country": "Mozambique",
+    "name": "Alda do Espírito Santo",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Myanmar",
+    "name": "Aung San Suu Kyi",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Myanmar",
+    "name": "U Thant",
+    "occupation": "Diplomat"
+  },
+  {
+    "country": "Myanmar",
+    "name": "Zaw Win Htut",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Namibia",
+    "name": "Sam Nujoma",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Namibia",
+    "name": "Hage Geingob",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Namibia",
+    "name": "Johnny Clegg",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Nauru",
+    "name": "Baron Waqa",
+    "occupation": "President"
+  },
+  {
+    "country": "Nauru",
+    "name": "Matthew B. O'Connor",
+    "occupation": "Philanthropist"
+  },
+  {
+    "country": "Nauru",
+    "name": "Rene L. Shor",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Nepal",
+    "name": "King Prithvi Narayan Shah",
+    "occupation": "Founder"
+  },
+  {
+    "country": "Nepal",
+    "name": "Manjushri",
+    "occupation": "Buddhist Figure"
+  },
+  {
+    "country": "Nepal",
+    "name": "Sandeep Lamichhane",
+    "occupation": "Cricketer"
+  },
+  {
+    "country": "Netherlands",
+    "name": "Rembrandt",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Netherlands",
+    "name": "Anne Frank",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Netherlands",
+    "name": "Johan Cruyff",
+    "occupation": "Footballer"
+  },
+  {
+    "country": "New Zealand",
+    "name": "Sir Edmund Hillary",
+    "occupation": "Mountaineer"
+  },
+  {
+    "country": "New Zealand",
+    "name": "Lorde",
+    "occupation": "Musician"
+  },
+  {
+    "country": "New Zealand",
+    "name": "Taika Waititi",
+    "occupation": "Director"
+  },
+  {
+    "country": "Nicaragua",
+    "name": "Augusto César Sandino",
+    "occupation": "Revolutionary"
+  },
+  {
+    "country": "Nicaragua",
+    "name": "Ruben Dario",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Nicaragua",
+    "name": "Carlos Mejía Godoy",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Niger",
+    "name": "Hamani Diori",
+    "occupation": "First President"
+  },
+  {
+    "country": "Niger",
+    "name": "Zakari Maiga",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Niger",
+    "name": "Issoufou Mahamadou",
+    "occupation": "President"
+  },
+  {
+    "country": "Nigeria",
+    "name": "Chinua Achebe",
+    "occupation": "Author"
+  },
+  {
+    "country": "Nigeria",
+    "name": "Fela Kuti",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Nigeria",
+    "name": "Ngozi Okonjo-Iweala",
+    "occupation": "Economist"
+  },
+  {
+    "country": "Korea, Democratic People's Republic of",
+    "name": "Kim Il-sung",
+    "occupation": "Founder"
+  },
+  {
+    "country": "Korea, Democratic People's Republic of",
+    "name": "Kim Jong-un",
+    "occupation": "Current Leader"
+  },
+  {
+    "country": "Korea, Democratic People's Republic of",
+    "name": "Ri Sol-ju",
+    "occupation": "First Lady"
+  },
+  {
+    "country": "Macedonia, the former Yugoslav Republic of",
+    "name": "Mother Teresa",
+    "occupation": "Humanitarian"
+  },
+  {
+    "country": "Macedonia, the former Yugoslav Republic of",
+    "name": "Vlado Janevski",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Macedonia, the former Yugoslav Republic of",
+    "name": "Tose Proeski",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Norway",
+    "name": "Henrik Ibsen",
+    "occupation": "Playwright"
+  },
+  {
+    "country": "Norway",
+    "name": "Edvard Munch",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Norway",
+    "name": "Roald Amundsen",
+    "occupation": "Explorer"
+  },
+  {
+    "country": "Oman",
+    "name": "Sultan Qaboos bin Said",
+    "occupation": "Monarch"
+  },
+  {
+    "country": "Oman",
+    "name": "Said bin Taimur",
+    "occupation": "Former Sultan"
+  },
+  {
+    "country": "Oman",
+    "name": "Haitham bin Tariq",
+    "occupation": "Sultan"
+  },
+  {
+    "country": "Pakistan",
+    "name": "Malala Yousafzai",
+    "occupation": "Activist"
+  },
+  {
+    "country": "Pakistan",
+    "name": "Imran Khan",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Pakistan",
+    "name": "Benazir Bhutto",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Palau",
+    "name": "Tommy Remengesau",
+    "occupation": "President"
+  },
+  {
+    "country": "Palau",
+    "name": "Emelita A.",
+    "occupation": "Cultural Figure"
+  },
+  {
+    "country": "Palau",
+    "name": "Palauan Chiefs",
+    "occupation": "Historical Leaders"
+  },
+  {
+    "country": "Palestine State",
+    "name": "Yasser Arafat",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Palestine State",
+    "name": "Mahmoud Abbas",
+    "occupation": "President"
+  },
+  {
+    "country": "Palestine State",
+    "name": "Leila Khaled",
+    "occupation": "Activist"
+  },
+  {
+    "country": "Panama",
+    "name": "Rubén Blades",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Panama",
+    "name": "Omar Torrijos",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Panama",
+    "name": "Mariano Rivera",
+    "occupation": "Baseball Player"
+  },
+  {
+    "country": "Papua New Guinea",
+    "name": "Michael Somare",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Papua New Guinea",
+    "name": "Sir John Guise",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Papua New Guinea",
+    "name": "Jimmy Miringtoro",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Paraguay",
+    "name": "Alfredo Stroessner",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Paraguay",
+    "name": "Carlos Antonio López",
+    "occupation": "President"
+  },
+  {
+    "country": "Paraguay",
+    "name": "Andrés Rodríguez",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Peru",
+    "name": "Mario Vargas Llosa",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Peru",
+    "name": "Gastón Acurio",
+    "occupation": "Chef"
+  },
+  {
+    "country": "Peru",
+    "name": "Inca Pachacuti",
+    "occupation": "Historical Leader"
+  },
+  {
+    "country": "Philippines",
+    "name": "José Rizal",
+    "occupation": "National Hero"
+  },
+  {
+    "country": "Philippines",
+    "name": "Ferdinand Marcos",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Philippines",
+    "name": "Manny Pacquiao",
+    "occupation": "Boxer"
+  },
+  {
+    "country": "Poland",
+    "name": "Marie Curie",
+    "occupation": "Scientist"
+  },
+  {
+    "country": "Poland",
+    "name": "Andrzej Wajda",
+    "occupation": "Film Director"
+  },
+  {
+    "country": "Poland",
+    "name": "Lech Wa??sa",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Portugal",
+    "name": "Amália Rodrigues",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Portugal",
+    "name": "Fernando Pessoa",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Portugal",
+    "name": "Cristiano Ronaldo",
+    "occupation": "Footballer"
+  },
+  {
+    "country": "Qatar",
+    "name": "Sheikh Hamad bin Khalifa Al Thani",
+    "occupation": "Former Emir"
+  },
+  {
+    "country": "Qatar",
+    "name": "Nasser Al-Attiyah",
+    "occupation": "Athlete"
+  },
+  {
+    "country": "Qatar",
+    "name": "Mohammed bin Jassim Al-Thani",
+    "occupation": "Diplomat"
+  },
+  {
+    "country": "Romania",
+    "name": "Nadia Com?neci",
+    "occupation": "Gymnast"
+  },
+  {
+    "country": "Romania",
+    "name": "Constantin Brâncu?i",
+    "occupation": "Sculptor"
+  },
+  {
+    "country": "Romania",
+    "name": "Mircea Eliade",
+    "occupation": "Historian"
+  },
+  {
+    "country": "Russian Federation",
+    "name": "Fyodor Dostoevsky",
+    "occupation": "Author"
+  },
+  {
+    "country": "Russian Federation",
+    "name": "Vladimir Putin",
+    "occupation": "President"
+  },
+  {
+    "country": "Russian Federation",
+    "name": "Anna Kournikova",
+    "occupation": "Tennis Player"
+  },
+  {
+    "country": "Rwanda",
+    "name": "Paul Kagame",
+    "occupation": "President"
+  },
+  {
+    "country": "Rwanda",
+    "name": "Dian Fossey",
+    "occupation": "Primatologist"
+  },
+  {
+    "country": "Rwanda",
+    "name": "Richard G. Roberts",
+    "occupation": "Scientist"
+  },
+  {
+    "country": "Saint Kitts and Nevis",
+    "name": "Robert L. Bradshaw",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Saint Kitts and Nevis",
+    "name": "Timothy Harris",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Saint Kitts and Nevis",
+    "name": "Rachel Fuller",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Saint Lucia",
+    "name": "Derek Walcott",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Saint Lucia",
+    "name": "Saint Lucia Jazz Festival",
+    "occupation": "Cultural Event"
+  },
+  {
+    "country": "Saint Lucia",
+    "name": "Kenny Chesney",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Saint Vincent and the Grenadines",
+    "name": "Sir James Fitz-Allen Mitchell",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Saint Vincent and the Grenadines",
+    "name": "Arnhim Eustace",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Saint Vincent and the Grenadines",
+    "name": "Shaggy",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Samoa",
+    "name": "Tufuga Efi",
+    "occupation": "Former Prime Minister"
+  },
+  {
+    "country": "Samoa",
+    "name": "Aiono le Tagata",
+    "occupation": "Cultural Figure"
+  },
+  {
+    "country": "Samoa",
+    "name": "David Tua",
+    "occupation": "Boxer"
+  },
+  {
+    "country": "San Marino",
+    "name": "Federico Cesi",
+    "occupation": "Artist"
+  },
+  {
+    "country": "San Marino",
+    "name": "Sergio Zavoli",
+    "occupation": "Politician"
+  },
+  {
+    "country": "San Marino",
+    "name": "Loris Malaguzzi",
+    "occupation": "Educator"
+  },
+  {
+    "country": "Sao Tome and Principe",
+    "name": "Fradique de Menezes",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Sao Tome and Principe",
+    "name": "Alda do Espírito Santo",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Sao Tome and Principe",
+    "name": "João da Silva",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Saudi Arabia",
+    "name": "King Salman bin Abdulaziz Al Saud",
+    "occupation": "Monarch"
+  },
+  {
+    "country": "Saudi Arabia",
+    "name": "Abdulaziz Ibn Saud",
+    "occupation": "Founder"
+  },
+  {
+    "country": "Saudi Arabia",
+    "name": "Mohammad Abduh",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Senegal",
+    "name": "Leopold Sedar Senghor",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Senegal",
+    "name": "Youssou N'Dour",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Senegal",
+    "name": "Ousmane Sembene",
+    "occupation": "Filmmaker"
+  },
+  {
+    "country": "Serbia",
+    "name": "Nikola Tesla",
+    "occupation": "Inventor"
+  },
+  {
+    "country": "Serbia",
+    "name": "Emir Kusturica",
+    "occupation": "Filmmaker"
+  },
+  {
+    "country": "Serbia",
+    "name": "Novak Djokovic",
+    "occupation": "Tennis Player"
+  },
+  {
+    "country": "Seychelles",
+    "name": "James Michel",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Seychelles",
+    "name": "Anse Source d'Argent",
+    "occupation": "Landmark"
+  },
+  {
+    "country": "Seychelles",
+    "name": "Danny Faure",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Sierra Leone",
+    "name": "Ernest Bai Koroma",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Sierra Leone",
+    "name": "Bai Bureh",
+    "occupation": "Leader"
+  },
+  {
+    "country": "Sierra Leone",
+    "name": "Miatta Fahnbulleh",
+    "occupation": "Activist"
+  },
+  {
+    "country": "Singapore",
+    "name": "Lee Kuan Yew",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Singapore",
+    "name": "Chris Lee",
+    "occupation": "Actor"
+  },
+  {
+    "country": "Singapore",
+    "name": "Joseph Schooling",
+    "occupation": "Swimmer"
+  },
+  {
+    "country": "Slovakia",
+    "name": "Andy Warhol",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Slovakia",
+    "name": "Milan Rastislav Štefánik",
+    "occupation": "Aviator"
+  },
+  {
+    "country": "Slovakia",
+    "name": "Peter Sagan",
+    "occupation": "Cyclist"
+  },
+  {
+    "country": "Slovenia",
+    "name": "Melania Trump",
+    "occupation": "First Lady"
+  },
+  {
+    "country": "Slovenia",
+    "name": "Primož Rogli?",
+    "occupation": "Cyclist"
+  },
+  {
+    "country": "Slovenia",
+    "name": "Jože Ple?nik",
+    "occupation": "Architect"
+  },
+  {
+    "country": "Solomon Islands",
+    "name": "Sir Albert Miller",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Solomon Islands",
+    "name": "Eddie Mabo",
+    "occupation": "Activist"
+  },
+  {
+    "country": "Solomon Islands",
+    "name": "Laurie Zinn",
+    "occupation": "Actor"
+  },
+  {
+    "country": "Somalia",
+    "name": "Mo Farah",
+    "occupation": "Athlete"
+  },
+  {
+    "country": "Somalia",
+    "name": "Nuruddin Farah",
+    "occupation": "Author"
+  },
+  {
+    "country": "Somalia",
+    "name": "Hibo Nuura",
+    "occupation": "Singer"
+  },
+  {
+    "country": "South Africa",
+    "name": "Nelson Mandela",
+    "occupation": "Political Leader"
+  },
+  {
+    "country": "South Africa",
+    "name": "Desmond Tutu",
+    "occupation": "Cleric"
+  },
+  {
+    "country": "South Africa",
+    "name": "Charlize Theron",
+    "occupation": "Actress"
+  },
+  {
+    "country": "Korea, Republic of",
+    "name": "Kim Jong-un",
+    "occupation": "Leader"
+  },
+  {
+    "country": "Korea, Republic of",
+    "name": "Psy",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Korea, Republic of",
+    "name": "Lee Byung-hun",
+    "occupation": "Actor"
+  },
+  {
+    "country": "South Sudan",
+    "name": "Salva Kiir Mayardit",
+    "occupation": "President"
+  },
+  {
+    "country": "South Sudan",
+    "name": "John Garang",
+    "occupation": "Revolutionary Leader"
+  },
+  {
+    "country": "South Sudan",
+    "name": "Rebecca Nyandeng De Mabior",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Spain",
+    "name": "Pablo Picasso",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Spain",
+    "name": "Salvador Dalí",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Spain",
+    "name": "Antonio Banderas",
+    "occupation": "Actor"
+  },
+  {
+    "country": "Sri Lanka",
+    "name": "Kumar Sangakkara",
+    "occupation": "Cricketer"
+  },
+  {
+    "country": "Sri Lanka",
+    "name": "Muttiah Muralitharan",
+    "occupation": "Cricketer"
+  },
+  {
+    "country": "Sri Lanka",
+    "name": "Chitrasena",
+    "occupation": "Dancer"
+  },
+  {
+    "country": "Sudan",
+    "name": "Omar al-Bashir",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Sudan",
+    "name": "Abdel-Rahman el-Sayed",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Sudan",
+    "name": "Haider Ali",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Suriname",
+    "name": "Johan Adolf Pengel",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Suriname",
+    "name": "Anton de Kom",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Suriname",
+    "name": "Noni Gasa",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Sweden",
+    "name": "Greta Garbo",
+    "occupation": "Actress"
+  },
+  {
+    "country": "Sweden",
+    "name": "ABBA",
+    "occupation": "Band"
+  },
+  {
+    "country": "Sweden",
+    "name": "Alfred Nobel",
+    "occupation": "Inventor"
+  },
+  {
+    "country": "Switzerland",
+    "name": "Ursula Andress",
+    "occupation": "Actress"
+  },
+  {
+    "country": "Switzerland",
+    "name": "Jean-Luc Godard",
+    "occupation": "Filmmaker"
+  },
+  {
+    "country": "Switzerland",
+    "name": "Hermann Hesse",
+    "occupation": "Author"
+  },
+  {
+    "country": "Syrian Arab Republic",
+    "name": "Bashar al-Assad",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Syrian Arab Republic",
+    "name": "Fairouz",
+    "occupation": "Singer"
+  },
+  {
+    "country": "Syrian Arab Republic",
+    "name": "Omar Mukhtar",
+    "occupation": "Leader"
+  },
+  {
+    "country": "Tajikistan",
+    "name": "Ismail Samani",
+    "occupation": "Historian"
+  },
+  {
+    "country": "Tajikistan",
+    "name": "Mirzo Tursunzoda",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Tajikistan",
+    "name": "Daler Nazarov",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Tanzania, United Republic of",
+    "name": "Julius Nyerere",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Tanzania, United Republic of",
+    "name": "Diamond Platnumz",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Tanzania, United Republic of",
+    "name": "Hassan Mwakinyo",
+    "occupation": "Boxer"
+  },
+  {
+    "country": "Thailand",
+    "name": "King Bhumibol Adulyadej",
+    "occupation": "King"
+  },
+  {
+    "country": "Thailand",
+    "name": "Pridi Banomyong",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Thailand",
+    "name": "Tony Jaa",
+    "occupation": "Martial Artist"
+  },
+  {
+    "country": "Timor-Leste",
+    "name": "Xanana Gusmão",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Timor-Leste",
+    "name": "José Ramos-Horta",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Timor-Leste",
+    "name": "Martinho da Costa Lopes",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Togo",
+    "name": "Gnassingbé Eyadéma",
+    "occupation": "President"
+  },
+  {
+    "country": "Togo",
+    "name": "Togolese Traditional Dance",
+    "occupation": ""
+  },
+  {
+    "country": "Togo",
+    "name": "Kossi Efoui",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Tonga",
+    "name": "King Tupou IV",
+    "occupation": "Monarch"
+  },
+  {
+    "country": "Tonga",
+    "name": "Uliuli",
+    "occupation": "Cultural Icon"
+  },
+  {
+    "country": "Tonga",
+    "name": "Jason Taumalolo",
+    "occupation": "Rugby Player"
+  },
+  {
+    "country": "Trinidad and Tobago",
+    "name": "Brian Lara",
+    "occupation": "Cricketer"
+  },
+  {
+    "country": "Trinidad and Tobago",
+    "name": "Nicki Minaj",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Trinidad and Tobago",
+    "name": "Calypso Rose",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Tunisia",
+    "name": "Habib Bourguiba",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Tunisia",
+    "name": "Abou el-Kacem Chebbi",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Tunisia",
+    "name": "Dora",
+    "occupation": "Actress"
+  },
+  {
+    "country": "Turkey",
+    "name": "Mustafa Kemal Atatürk",
+    "occupation": "Founder"
+  },
+  {
+    "country": "Turkey",
+    "name": "Orhan Pamuk",
+    "occupation": "Author"
+  },
+  {
+    "country": "Turkey",
+    "name": "Nuri Bilge Ceylan",
+    "occupation": "Director"
+  },
+  {
+    "country": "Turkmenistan",
+    "name": "Saparmurat Niyazov",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Turkmenistan",
+    "name": "Magtymguly Pyragy",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Turkmenistan",
+    "name": "Rejepmyrat Agababayev",
+    "occupation": "Artist"
+  },
+  {
+    "country": "Tuvalu",
+    "name": "Sir Tomasi Puapua",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Tuvalu",
+    "name": "Iakoba Italeli",
+    "occupation": "Leader"
+  },
+  {
+    "country": "Tuvalu",
+    "name": "Malia Pau",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Uganda",
+    "name": "Idi Amin",
+    "occupation": "Dictator"
+  },
+  {
+    "country": "Uganda",
+    "name": "Bobi Wine",
+    "occupation": "Musician/Politician"
+  },
+  {
+    "country": "Uganda",
+    "name": "David Lutalo",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Ukraine",
+    "name": "Taras Shevchenko",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Ukraine",
+    "name": "Leonid Brezhnev",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Ukraine",
+    "name": "Milla Jovovich",
+    "occupation": "Actress"
+  },
+  {
+    "country": "United Arab Emirates",
+    "name": "Sheikh Zayed bin Sultan Al Nahyan",
+    "occupation": "Founding Father"
+  },
+  {
+    "country": "United Arab Emirates",
+    "name": "Mohammed bin Rashid Al Maktoum",
+    "occupation": "Vice President"
+  },
+  {
+    "country": "United Arab Emirates",
+    "name": "Dubai Expo 2020",
+    "occupation": "Cultural Event"
+  },
+  {
+    "country": "United Kingdom",
+    "name": "Winston Churchill",
+    "occupation": "Politician"
+  },
+  {
+    "country": "United Kingdom",
+    "name": "Queen Elizabeth II",
+    "occupation": "Monarch"
+  },
+  {
+    "country": "United Kingdom",
+    "name": "The Beatles",
+    "occupation": "Band"
+  },
+  {
+    "country": "United States",
+    "name": "Martin Luther King Jr.",
+    "occupation": "Activist"
+  },
+  {
+    "country": "United States",
+    "name": "Marilyn Monroe",
+    "occupation": "Actress"
+  },
+  {
+    "country": "United States",
+    "name": "Michael Jackson",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Uruguay",
+    "name": "Eduardo Galeano",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Uruguay",
+    "name": "Luis Suárez",
+    "occupation": "Footballer"
+  },
+  {
+    "country": "Uruguay",
+    "name": "Jorge Luis Borges",
+    "occupation": "Writer"
+  },
+  {
+    "country": "Uzbekistan",
+    "name": "Muhammad al-Khwarizmi",
+    "occupation": "Mathematician"
+  },
+  {
+    "country": "Uzbekistan",
+    "name": "Shah Rukh Khan",
+    "occupation": "Actor"
+  },
+  {
+    "country": "Uzbekistan",
+    "name": "Navoi",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Vanuatu",
+    "name": "Edward Natapei",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Vanuatu",
+    "name": "John Frum",
+    "occupation": "Spiritual Leader"
+  },
+  {
+    "country": "Vanuatu",
+    "name": "Paul Cleary",
+    "occupation": "Filmmaker"
+  },
+  {
+    "country": "Venezuela",
+    "name": "Hugo Chávez",
+    "occupation": "President"
+  },
+  {
+    "country": "Venezuela",
+    "name": "Simón Bolívar",
+    "occupation": "Revolutionary"
+  },
+  {
+    "country": "Venezuela",
+    "name": "Gustavo Dudamel",
+    "occupation": "Conductor"
+  },
+  {
+    "country": "Vietnam",
+    "name": "H? Chí Minh",
+    "occupation": "Revolutionary Leader"
+  },
+  {
+    "country": "Vietnam",
+    "name": "Nguy?n Du",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Vietnam",
+    "name": "Pham Tuan",
+    "occupation": "Pilot"
+  },
+  {
+    "country": "Yemen",
+    "name": "Ali Abdullah Saleh",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Yemen",
+    "name": "Nasser al-Saadi",
+    "occupation": "Poet"
+  },
+  {
+    "country": "Yemen",
+    "name": "Tawakkol Karman",
+    "occupation": "Activist"
+  },
+  {
+    "country": "Zambia",
+    "name": "Kenneth Kaunda",
+    "occupation": "Politician"
+  },
+  {
+    "country": "Zambia",
+    "name": "Koffi Olomide",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Zambia",
+    "name": "Emelda Mwewa",
+    "occupation": "Athlete"
+  },
+  {
+    "country": "Zimbabwe",
+    "name": "Robert Mugabe",
+    "occupation": "Former President"
+  },
+  {
+    "country": "Zimbabwe",
+    "name": "Oliver Mtukudzi",
+    "occupation": "Musician"
+  },
+  {
+    "country": "Zimbabwe",
+    "name": "Mbuya Nehanda",
+    "occupation": "Spirit Medium"
+  }
+]
