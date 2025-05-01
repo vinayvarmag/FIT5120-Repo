@@ -53,15 +53,28 @@ export default function Games() {
 
     const createQuiz = async () => {
         try {
-            const res = await fetch(API + "/quiz", {
+            // 1) create on HTTP
+            const res = await fetch(`${API}/quiz`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ cats, n }),
             });
             const d = await res.json();
+            console.log("Quiz created:", d);
             setSid(d.sessionId);
-            sockRef.current.emit("join_session", { sessionId: d.sessionId, role: "host" });
-            setView("lobby");
+
+            // 2) emit join only once the socket is truly connected
+            const sock = sockRef.current;
+            const doJoin = () => {
+                sock.emit("join_session", { sessionId: d.sessionId, role: "host" });
+                setView("lobby");
+            };
+
+            if (sock.connected) {
+                doJoin();
+            } else {
+                sock.once("connect", doJoin);
+            }
         } catch (e) {
             console.error(e);
             alert("Failed to reach backend.");
