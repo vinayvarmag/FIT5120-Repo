@@ -8,11 +8,11 @@ RUN apt-get update && \
 
 # ---------- python deps ----------
 WORKDIR /app
-COPY backend/requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ---------- copy source ----------
-COPY backend/ /app/
+COPY . /app/
 
 # ---------- run ----------
 ENV PORT=8000

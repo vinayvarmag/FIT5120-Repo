@@ -13,7 +13,7 @@ from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from .games_core import generate_quiz, pronounce, preload_whisper
+from games_core import generate_quiz, pronounce, preload_whisper
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
 log = logging.getLogger("culture-api")
