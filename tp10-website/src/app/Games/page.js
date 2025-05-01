@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import io from "socket.io-client";
 const QRCode = lazy(() => import("react-qr-code"));
 
-const API = "http://localhost:8000";
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Games() {
     const sockRef = useRef(null);
@@ -245,14 +245,14 @@ export default function Games() {
 
                 <table className="min-w-[260px] bg-white rounded shadow">
                     <tbody>
-                        {Object.entries(teams)
-                            .sort((a, b) => b[1] - a[1])
-                            .map(([t, sc]) => (
-                                <tr key={t} className="border-b last:border-0">
-                                    <td className="p-3 font-medium">{t}</td>
-                                    <td className="p-3 text-right">{sc}</td>
-                                </tr>
-                            ))}
+                    {Object.entries(teams)
+                        .sort((a, b) => b[1] - a[1])
+                        .map(([t, sc]) => (
+                            <tr key={t} className="border-b last:border-0">
+                                <td className="p-3 font-medium">{t}</td>
+                                <td className="p-3 text-right">{sc}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
 

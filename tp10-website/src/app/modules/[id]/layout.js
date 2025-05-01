@@ -1,94 +1,52 @@
-// File: src/app/modules/[id]/layout.js
-
 "use client";
 
-import React from "react";
-import { modulesById } from "@/lib/learningModules";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import ProgressBar from "@/components/ProgressBar";
-import { getProgress } from "@/utils/progress";
-import { useEffect, useState } from "react";
+import { notFound, usePathname } from "next/navigation";
+import Link                      from "next/link";
+import { modulesById }           from "@/lib/learningModules";
 
 export default function ModuleLayout({ children, params }) {
-    // Unwrap the promised params object
-    const { id } = React.use(params);
+    const module = modulesById[params.id];
+    if (!module) return notFound();
 
-    const currentModule = modulesById[id];
     const pathname = usePathname();
-    const [progress, setProgress] = useState(0);
 
-    useEffect(() => {
-        setProgress(getProgress(id));
-    }, [id, pathname]);
-
-    if (!currentModule) return <div className="p-10">Module not found</div>;
-
-    const tabs = ["overview", "objectives", "etiquette", "resources"];
-    const currentTab = pathname.split("/").pop();
-    const currentIndex = tabs.indexOf(currentTab);
-
-    const prevTab = currentIndex > 0 ? tabs[currentIndex - 1] : null;
-    const nextTab = currentIndex < tabs.length - 1 ? tabs[currentIndex + 1] : null;
+    const tabs = [
+        ["overview",   "Overview"],
+        ["objectives", "Objectives"],
+        ["resources",  "Resources"],
+        ["quiz",       "Quiz"]
+    ];
 
     return (
-        <div className="min-h-screen w-full bg-gradient-to-b from-orange-50 to-orange-100/60">
-            <main className="mx-auto max-w-4xl space-y-10 px-4 py-10">
-                {/* Header */}
-                <div className="space-y-4">
-                    <h1 className="text-3xl font-bold">{currentModule.title}</h1>
-                    <ProgressBar value={progress} />
-                    <p className="text-sm text-gray-700">{progress}% completed</p>
+        <div className="min-h-screen w-full bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-100">
+            {/* header */}
+            <header className="sticky top-0 z-20 border-b bg-white/80 backdrop-blur">
+                <div className="mx-auto flex max-w-4xl flex-col gap-2 px-4 py-4">
+                    <h1 className="text-2xl font-bold text-orange-700">{module.title}</h1>
+                    <nav className="flex gap-3">
+                        {tabs.map(([slug, label]) => {
+                            const href = `/modules/${module.id}/${slug}`;
+                            const active = pathname === href;
+                            return (
+                                <Link
+                                    key={slug}
+                                    href={href}
+                                    className={`rounded-full px-3 py-1 text-sm font-medium ${
+                                        active
+                                            ? "bg-orange-600 text-white"
+                                            : "bg-orange-100 text-orange-700 hover:bg-orange-200"
+                                    }`}
+                                >
+                                    {label}
+                                </Link>
+                            );
+                        })}
+                    </nav>
                 </div>
+            </header>
 
-                {/* Tab nav */}
-                <nav className="flex gap-4">
-                    {tabs.map((tab) => {
-                        const active = pathname.endsWith(`/${tab}`);
-                        return (
-                            <Link
-                                key={tab}
-                                href={`/modules/${id}/${tab}`}
-                                className={`rounded-full px-4 py-1.5 text-sm font-medium ${
-                                    active ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-700"
-                                }`}
-                            >
-                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                            </Link>
-                        );
-                    })}
-                </nav>
-
-                {/* Page content */}
-                {children}
-
-                {/* Prev / Next navigation */}
-                <div className="flex justify-between mt-8">
-                    {prevTab ? (
-                        <Link href={`/modules/${id}/${prevTab}`}>
-                            <button className="rounded-md bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300">
-                                ← {prevTab.charAt(0).toUpperCase() + prevTab.slice(1)}
-                            </button>
-                        </Link>
-                    ) : (
-                        <div />
-                    )}
-
-                    {nextTab ? (
-                        <Link href={`/modules/${id}/${nextTab}`}>
-                            <button className="rounded-md bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300">
-                                {nextTab.charAt(0).toUpperCase() + nextTab.slice(1)} →
-                            </button>
-                        </Link>
-                    ) : (
-                        <Link href="/Awareness">
-                            <button className="rounded-md bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700">
-                                Complete & Return
-                            </button>
-                        </Link>
-                    )}
-                </div>
-            </main>
+            {/* routed content */}
+            <main className="mx-auto max-w-4xl px-4 py-10">{children}</main>
         </div>
     );
 }

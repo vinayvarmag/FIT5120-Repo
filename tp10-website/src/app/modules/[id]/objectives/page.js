@@ -1,17 +1,18 @@
 "use client";
-import { modulesById } from "@/lib/learningModules";
-import useMarkComplete from "../_useMarkComplete";
 
-export default function Objectives({ params }) {
-    const currentModule = modulesById[params.id];
-    useMarkComplete(params.id, "objectives");
+import { notFound }    from "next/navigation";
+import { modulesById } from "@/lib/learningModules";
+
+export default function ObjectivesPage({ params }) {
+    const module = modulesById[params.id];
+    if (!module) return notFound();
 
     return (
         <section className="space-y-4">
-            <h2 className="text-xl font-semibold text-black">Objectives</h2>
-            <ul className="list-disc space-y-1 pl-5 text-black">
-                {currentModule.objectives.map((o) => (
-                    <li key={o}>{o}</li>
+            <h2 className="text-lg font-semibold">Learning objectives</h2>
+            <ul className="list-disc list-inside space-y-1 text-gray-800">
+                {module.objectives.map(obj => (
+                    <li key={obj}>{obj}</li>
                 ))}
             </ul>
         </section>

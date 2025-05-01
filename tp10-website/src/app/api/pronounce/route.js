@@ -2,7 +2,8 @@ export const runtime = "edge";
 
 export async function POST(req) {
     const form = await req.formData();
-    const res = await fetch("http://localhost:8000/pronounce", {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    const res = await fetch(`${API_URL}/pronounce`, {
         method: "POST",
         body: form
     });

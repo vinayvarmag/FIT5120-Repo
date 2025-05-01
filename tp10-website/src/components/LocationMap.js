@@ -1,38 +1,64 @@
 'use client';
 
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import useSWR from 'swr';
+import { useEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 
-const fetcher = (url) => fetch(url).then((res) => res.json());
+// SWR caching options for client-side speed
+const swrOptions = { dedupingInterval: 600000, revalidateOnFocus: false };
 
-export default function LocationMap() {
-    const { data } = useSWR('/api/locations', fetcher);
+// Simple data fetcher
+const fetcher = url => fetch(url).then(res => res.json());
+
+// Hook to update GeoJSON styles on map when styleFn changes
+function UpdateGeoJsonStyle({ styleFn }) {
+    const map = useMap();
+    useEffect(() => {
+        map.eachLayer(layer => {
+            if (layer.feature) {
+                layer.setStyle(styleFn(layer.feature));
+            }
+        });
+    }, [styleFn, map]);
+    return null;
+}
+
+/**
+ * LocationMap: renders a Leaflet map with GeoJSON boundaries.
+ * Props:
+ *  - center: [lat, lon]
+ *  - zoom: number
+ *  - bounds: [[lat1,lon1],[lat2,lon2]]
+ *  - className: CSS sizing
+ *  - styleFn: feature => style object
+ *  - onEachFn: (feature, layer) => void
+ */
+export default function LocationMap({ center, zoom, bounds, className, styleFn, onEachFn }) {
+    // Fetch boundaries with caching
+    const { data, error } = useSWR('/api/locations', fetcher, swrOptions);
+
+    if (error) {
+        console.error('Error loading locations:', error);
+        return null;
+    }
 
     return (
-        <MapContainer
-            center={[-37.81, 144.96]}   /* Melbourne */
-            zoom={6}
-            style={{ height: '100vh', width: '100%' }}
-        >
+        <MapContainer center={center} zoom={zoom} bounds={bounds} className={className}>
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution="© OpenStreetMap contributors"
             />
-
             {data && (
-                <GeoJSON
-                    data={data}
-                    onEachFeature={(feature, layer) => {
-                        if (feature.properties?.name) {
-                            layer.bindTooltip(feature.properties.name, {
-                                permanent: false,
-                                direction: 'top',
-                            });
-                        }
-                    }}
-                    style={{ weight: 2, color: '#3388ff', fillOpacity: 0.2 }}
-                />
+                <>
+                    <GeoJSON
+                        key={JSON.stringify(styleFn)}
+                        data={data}
+                        style={styleFn}
+                        onEachFeature={onEachFn}
+                    />
+                    <UpdateGeoJsonStyle styleFn={styleFn} />
+                </>
             )}
         </MapContainer>
     );
