@@ -23,11 +23,11 @@ except ImportError:
     log.error("groq SDK missing; pip install groq")
     sys.exit(1)
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY") 
 if not GROQ_API_KEY:
     raise RuntimeError("GROQ_API_KEY env-var is missing")
-client = Groq(api_key=GROQ_API_KEY)
-GROQ_MODEL = "llama3-8b-8192"
+client       = Groq(api_key=GROQ_API_KEY)
+GROQ_MODEL   = "llama3-8b-8192"
 
 # ---------- Whisper preload ----------
 _WHIP: tuple | None = None  # (proc, model)
@@ -37,8 +37,7 @@ def preload_whisper() -> None:
     if _WHIP is None:
         log.info("Loading Whisper-tiny (~150 MB)...")
         from transformers import WhisperProcessor, WhisperForConditionalGeneration
-
-        proc = WhisperProcessor.from_pretrained("openai/whisper-tiny.en")
+        proc  = WhisperProcessor.from_pretrained("openai/whisper-tiny.en")
         model = WhisperForConditionalGeneration.from_pretrained(
             "openai/whisper-tiny.en"
         ).to("cpu")
@@ -62,12 +61,12 @@ def _prompt(categories: List[str], n: int) -> str:
 
 def generate_quiz(cats: List[str], n: int):
     prompt = _prompt(cats, n)
-    t0 = time.time()
-    resp = client.chat.completions.create(
-        model=GROQ_MODEL,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.3,
-        max_tokens=1024,
+    t0     = time.time()
+    resp   = client.chat.completions.create(
+        model       = GROQ_MODEL,
+        messages    = [{"role": "user", "content": prompt}],
+        temperature = 0.3,
+        max_tokens  = 1024,
     )
     txt = resp.choices[0].message.content.strip()
     s, e = txt.find("["), txt.rfind("]")
@@ -116,58 +115,51 @@ def pronounce(word: str, sec: float, wav_path: Optional[str]):
         wav = tempfile.NamedTemporaryFile(delete=False, suffix=".wav").name
         sf.write(wav, audio, 16000)
 
-    # Decode based on extension
-    ext = os.path.splitext(wav)[1].lower()
-    audio = None
+    # 1) try soundfile
+    try:
+        audio, sr = sf.read(wav, dtype="float32")
+    except Exception:
+        audio = None
 
-    if ext == ".wav":
-        try:
-            audio, sr = sf.read(wav, dtype="float32")
-        except Exception:
-            audio = None
-
-    if audio is None and ext in {".wav", ".mp3", ".ogg", ".flac", ".m4a", ".webm"}:
+    # 2) try librosa (needs external ffmpeg)
+    if audio is None:
         try:
             audio, sr = librosa.load(wav, sr=16000, mono=True)
         except Exception:
             audio = None
 
+    # 3) try pydub
     if audio is None:
-        audio, sr = _decode_with_pydub(wav)
+        try:
+            audio, sr = _decode_with_pydub(wav)
+        except Exception as e:
+            raise RuntimeError(
+                "Could not decode audio. Install ffmpeg or record as WAV."
+            ) from e
 
     if audio.ndim > 1:
         audio = audio.mean(axis=1)
 
-    # Ask processor for both input_features and attention_mask
-    inputs = proc(
-        audio,
-        sampling_rate=sr,
-        return_tensors="pt",
-        return_attention_mask=True
-    )
-    feats = inputs.input_features
-    mask = inputs.attention_mask
-
-    ids = model.generate(feats, attention_mask=mask)
-    hyp = proc.batch_decode(ids, skip_special_tokens=True)[0].lower().strip()
+    feats = proc(audio, sampling_rate=sr, return_tensors="pt").input_features
+    ids   = model.generate(feats)
+    hyp   = proc.batch_decode(ids, skip_special_tokens=True)[0].lower().strip()
 
     score = 1 - Levenshtein.normalized_distance(
-        phonetics.metaphone(word.lower()),
-        phonetics.metaphone(hyp)
+        phonetics.metaphone(word.lower()), phonetics.metaphone(hyp)
     )
     return {
-        "target": word,
+        "target":     word,
         "transcript": hyp,
-        "score": round(score, 3),
-        "pass": score >= 0.7,
+        "score":      round(score, 3),
+        "pass":       score >= 0.7,
     }
 
 # ---------- CLI ----------
 def _cli():
-    p = argparse.ArgumentParser()
+    p   = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="cmd", required=True)
 
-    q = sub.add_parser("quiz")
+    q  = sub.add_parser("quiz")
     q.add_argument("--cats", nargs="+", choices=["flags", "food", "fest"], default=["flags"])
     q.add_argument("--n", type=int, default=3)
 
