@@ -11,6 +11,7 @@ import sys
 import time
 import tempfile
 from typing import List, Optional
+import os
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
 log = logging.getLogger("culture-games")
