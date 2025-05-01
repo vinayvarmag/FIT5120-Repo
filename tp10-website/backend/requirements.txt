@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+python-socketio[asgi]
+pydantic
+openai-whisper==20231117
+transformers
+pydub
+soundfile
+sounddevice
+librosa
+phonetics
+rapidfuzz
+groq
