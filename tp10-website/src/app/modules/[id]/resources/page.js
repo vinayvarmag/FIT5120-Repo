@@ -1,8 +1,8 @@
 "use client";
 
-import useSWR            from "swr";
-import { notFound }      from "next/navigation";
-import { modulesById }   from "@/lib/learningModules";
+import useSWR from "swr";
+import { notFound } from "next/navigation";
+import { modulesById } from "@/lib/learningModules";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -29,20 +29,22 @@ const topN = (rows, key, n = 5) =>
         .slice(0, n);
 
 export default function ResourcesPage({ params }) {
-    const module = modulesById[params.id];
-    if (!module) return notFound();
+    const currentModule = modulesById[params.id];
 
+    // Always call SWR hook at top level
     const { data: rows, isLoading, error } = useSWR(
-        () => `/data/${module.datasetKey}.json`,
+        currentModule ? `/data/${currentModule.datasetKey}.json` : null,
         fetcher
     );
 
+    if (!currentModule) return notFound();
+
     const pickField =
-        module.id === "global-icons"
+        currentModule.id === "global-icons"
             ? "occupation"
-            : module.id === "traditional-arts"
+            : currentModule.id === "traditional-arts"
                 ? "craft"
-                : module.id === "cultural-festivals"
+                : currentModule.id === "cultural-festivals"
                     ? "festival"
                     : "type";
 
@@ -70,8 +72,8 @@ export default function ResourcesPage({ params }) {
                 {
                     label: `Top 5 ${pickField}`,
                     data: pairs.map(([, c]) => c),
-                    backgroundColor: "rgba(186, 104, 200, 0.6)", // light-purple fill
-                    borderColor:     "rgba(156, 39, 176, 1)",     // deeper purple edge
+                    backgroundColor: "rgba(186, 104, 200, 0.6)",
+                    borderColor: "rgba(156, 39, 176, 1)",
                     borderWidth: 1,
                     borderRadius: 6
                 }

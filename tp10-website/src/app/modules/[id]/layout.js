@@ -5,10 +5,12 @@ import Link                      from "next/link";
 import { modulesById }           from "@/lib/learningModules";
 
 export default function ModuleLayout({ children, params }) {
-    const module = modulesById[params.id];
-    if (!module) return notFound();
-
+    // rename and hooks
+    const currentModule = modulesById[params.id];
     const pathname = usePathname();
+
+    // guard
+    if (!currentModule) return notFound();
 
     const tabs = [
         ["overview",   "Overview"],
@@ -22,10 +24,10 @@ export default function ModuleLayout({ children, params }) {
             {/* header */}
             <header className="sticky top-0 z-20 border-b bg-white/80 backdrop-blur">
                 <div className="mx-auto flex max-w-4xl flex-col gap-2 px-4 py-4">
-                    <h1 className="text-2xl font-bold text-orange-700">{module.title}</h1>
+                    <h1 className="text-2xl font-bold text-orange-700">{currentModule.title}</h1>
                     <nav className="flex gap-3">
                         {tabs.map(([slug, label]) => {
-                            const href = `/modules/${module.id}/${slug}`;
+                            const href = `/modules/${currentModule.id}/${slug}`;
                             const active = pathname === href;
                             return (
                                 <Link

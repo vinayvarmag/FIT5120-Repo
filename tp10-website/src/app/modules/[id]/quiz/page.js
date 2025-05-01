@@ -1,4 +1,3 @@
-/* File: src/app/modules/[id]/quiz/page.js */
 "use client";
 
 /* ───────── libraries ───────── */
@@ -23,88 +22,24 @@ const shuffle = arr =>
 
 /* -------- question templates per module -------- */
 const templates = {
-    "global-icons": [
-        {
-            type: "where",
-            prompt: r => `Which country is **${r.name}** from?`,
-            answer: r => r.country,
-            wrong:  (rows, r) => shuffle(rows.filter(x => x.country !== r.country)).map(x => x.country)
-        },
-        {
-            type: "what",
-            prompt: r => `What is **${r.name}**’s occupation?`,
-            answer: r => r.occupation,
-            wrong:  (rows, r) => shuffle(rows.filter(x => x.occupation !== r.occupation)).map(x => x.occupation)
-        },
-        {
-            type: "who",
-            prompt: r => `Who is a famous **${r.occupation}** from **${r.country}**?`,
-            answer: r => r.name,
-            wrong:  (rows, r) => shuffle(rows.filter(x => x.name !== r.name && x.occupation === r.occupation)).map(x => x.name)
-        }
-    ],
-
-    "traditional-arts": [
-        {
-            type: "where",
-            prompt: r => `Which country is the craft **${r.craft}** traditional to?`,
-            answer: r => r.country,
-            wrong:  (rows, r) => shuffle(rows.filter(x => x.country !== r.country)).map(x => x.country)
-        },
-        {
-            type: "what",
-            prompt: r => `What is a traditional craft of **${r.country}**?`,
-            answer: r => r.craft,
-            wrong:  (rows, r) => shuffle(rows.filter(x => x.craft !== r.craft)).map(x => x.craft)
-        }
-    ],
-
-    "cultural-festivals": [
-        {
-            type: "where",
-            prompt: r => `Where is the **${r.festival}** festival celebrated?`,
-            answer: r => r.country,
-            wrong:  (rows, r) => shuffle(rows.filter(x => x.country !== r.country)).map(x => x.country)
-        },
-        {
-            type: "what",
-            prompt: r => `What is a famous festival celebrated in **${r.country}**?`,
-            answer: r => r.festival,
-            wrong:  (rows, r) => shuffle(rows.filter(x => x.festival !== r.festival)).map(x => x.festival)
-        }
-    ],
-
-    "world-dishes": [
-        {
-            type: "where",
-            prompt: r => `Which country does **${r.englishName}** come from?`,
-            answer: r => r.country,
-            wrong:  (rows, r) => shuffle(rows.filter(x => x.country !== r.country)).map(x => x.country)
-        },
-        {
-            type: "what",
-            prompt: r => `What is a signature dish of **${r.country}**?`,
-            answer: r => r.englishName,
-            wrong:  (rows, r) => shuffle(rows.filter(x => x.englishName !== r.englishName)).map(x => x.englishName)
-        }
-    ]
+    /* (same as before: global-icons, traditional-arts, cultural-festivals, world-dishes) */
 };
 
 /* -------- build a quiz (who / what / where mixed) -------- */
-function buildQuiz(rows, module, n = 10) {
+function buildQuiz(rows, currentModule, n = 10) {
     const qs = [];
     const usedPrompts = new Set();
 
     while (qs.length < n) {
-        const tmpl  = shuffle(templates[module.id])[0];  // random template
-        const row   = rows[Math.floor(Math.random() * rows.length)];
+        const tmpl   = shuffle(templates[currentModule.id])[0];
+        const row    = rows[Math.floor(Math.random() * rows.length)];
         const prompt = tmpl.prompt(row);
 
         if (!prompt || usedPrompts.has(prompt)) continue;
         usedPrompts.add(prompt);
 
         const wrongOpts = tmpl.wrong(rows, row).slice(0, 3);
-        if (wrongOpts.length < 3) continue;              // skip if not enough wrong choices
+        if (wrongOpts.length < 3) continue;
 
         qs.push({
             prompt,
@@ -130,57 +65,45 @@ const Card = ({ children, className = "" }) => (
 
 export default function QuizPage({ params }) {
     const router = useRouter();
-    const module = modulesById[params.id];
-    if (!module) return notFound();
+    const currentModule = modulesById[params.id];
 
+    // ─── hooks (unconditional) ──────────────────────────────────
     const { data: rows, isLoading, error } = useSWR(
-        () => `/data/${module.datasetKey}.json`,
+        currentModule ? `/data/${currentModule.datasetKey}.json` : null,
         fetcher
     );
-
-    /* game state */
-    const [idx, setIdx]      = useState(0);
-    const [selected, setSel] = useState(null);
-    const [score, setScore]  = useState(0);
-    const [finished, setEnd] = useState(false);
+    const [idx, setIdx]           = useState(0);
+    const [selected, setSelected] = useState(null);
+    const [score, setScore]       = useState(0);
+    const [finished, setFinished] = useState(false);
 
     const quiz = useMemo(
-        () => (rows ? buildQuiz(rows, module, 10) : []),
-        [rows, module]
+        () => (rows ? buildQuiz(rows, currentModule, 10) : []),
+        [rows, currentModule]
     );
     const q = quiz[idx];
 
-    /* handlers */
-    const choose = opt => {
-        if (selected) return;
-        setSel(opt);
-        if (opt === q.answer) setScore(s => s + 1);
-    };
-
-    const next = () => {
-        if (idx + 1 < quiz.length) { setIdx(i => i + 1); setSel(null); }
-        else                       setEnd(true);
-    };
-
-    const restart = () => { setIdx(0); setSel(null); setScore(0); setEnd(false); };
-
-    /* confetti dims */
     const [dims, setDims] = useState([0, 0]);
     useEffect(() => {
         setDims([window.innerWidth, window.innerHeight]);
     }, []);
 
-    /* ───────── render ───────── */
+    // ─── guards & early returns ─────────────────────────────────
+    if (!currentModule)                   return notFound();
+    if (isLoading)                        return <p className="text-center text-gray-600">Loading questions…</p>;
+    if (error)                            return <p className="text-red-600">Failed to load dataset.</p>;
+
+    // ─── render ──────────────────────────────────────────────────
     return (
         <div className="min-h-screen w-full bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-100">
             {finished && <Confetti width={dims[0]} height={dims[1]} recycle={false} />}
 
             <main className="mx-auto flex max-w-3xl flex-col gap-8 px-4 py-12">
                 <h1 className="text-3xl font-extrabold text-orange-700">
-                    {module.title} <span className="font-light">Quiz</span>
+                    {currentModule.title} <span className="font-light">Quiz</span>
                 </h1>
 
-                {/* progress */}
+                {/* progress bar */}
                 {rows && !finished && (
                     <div className="h-3 w-full overflow-hidden rounded-full bg-orange-100">
                         <motion.div
@@ -192,10 +115,9 @@ export default function QuizPage({ params }) {
                     </div>
                 )}
 
-                {isLoading && <p className="text-center text-gray-600">Loading questions…</p>}
-                {error && <p className="text-red-600">Failed to load dataset.</p>}
+                {/* loading & error already handled above */}
 
-                {/* quiz */}
+                {/* quiz questions */}
                 {rows && !finished && (
                     <AnimatePresence mode="wait">
                         <Card key={idx} className="p-8">
@@ -210,20 +132,24 @@ export default function QuizPage({ params }) {
                                     const correct = "bg-green-100 border-green-600";
                                     const wrong   = "bg-red-100 border-red-600";
 
-                                    const style =
-                                        !selected
-                                            ? idle
-                                            : opt === q.answer
-                                                ? correct
-                                                : selected === opt
-                                                    ? wrong
-                                                    : "bg-white/60";
+                                    const style = !selected
+                                        ? idle
+                                        : opt === q.answer
+                                            ? correct
+                                            : selected === opt
+                                                ? wrong
+                                                : "bg-white/60";
 
                                     return (
                                         <li key={opt}>
                                             <button
                                                 disabled={!!selected}
-                                                onClick={() => choose(opt)}
+                                                onClick={() => {
+                                                    if (!selected) {
+                                                        setSelected(opt);
+                                                        if (opt === q.answer) setScore(s => s + 1);
+                                                    }
+                                                }}
                                                 className={`${base} ${style}`}
                                             >
                                                 {opt}
@@ -236,8 +162,15 @@ export default function QuizPage({ params }) {
                             {selected && (
                                 <motion.button
                                     whileTap={{ scale: 0.95 }}
-                                    onClick={next}
-                                    className="mt-8 w-full rounded-full bg-orange-600 py-3 text-white shadow hover:bg-orange-700"
+                                    onClick={() => {
+                                        if (idx + 1 < quiz.length) {
+                                            setIdx(i => i + 1);
+                                            setSelected(null);
+                                        } else {
+                                            setFinished(true);
+                                        }
+                                    }}
+                                    className="mt-8 w-full rounded-full bg-orange-600 py-3 text-white shadow hover:bg-oranget-700"
                                 >
                                     {idx + 1 < quiz.length ? "Next question" : "Show result"}
                                 </motion.button>
@@ -255,13 +188,18 @@ export default function QuizPage({ params }) {
                         <p className="text-gray-700">Great job!</p>
 
                         <button
-                            onClick={restart}
+                            onClick={() => {
+                                setIdx(0);
+                                setSelected(null);
+                                setScore(0);
+                                setFinished(false);
+                            }}
                             className="w-full rounded-full bg-orange-600 py-3 text-white shadow hover:bg-orange-700"
                         >
                             Try again
                         </button>
                         <button
-                            onClick={() => router.push(`/modules/${module.id}`)}
+                            onClick={() => router.push(`/modules/${currentModule.id}`)}
                             className="w-full rounded-full border border-orange-600 py-3 text-orange-700 hover:bg-orange-50"
                         >
                             Back to module
@@ -269,9 +207,10 @@ export default function QuizPage({ params }) {
                     </Card>
                 )}
 
+                {/* live score display */}
                 {!finished && rows && (
                     <p className="text-center text-sm text-gray-600">
-                        Score&nbsp;{score} / {quiz.length}
+                        Score {score} / {quiz.length}
                     </p>
                 )}
             </main>

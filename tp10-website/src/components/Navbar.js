@@ -36,12 +36,11 @@ export default function Navbar() {
 
     return (
         <nav
-            style={{ mixBlendMode: "multiply", backdropFilter: "blur(40px)" }}
-            className={`fixed top-0 left-0 w-full z-50 bg-white/60 shadow-lg transition-transform duration-300 ease-in-out ${
+            className={`fixed top-0 left-0 w-full z-50 bg-white shadow-lg transition-transform duration-300 ease-in-out   ${
                 isVisible ? "translate-y-0" : "-translate-y-full"
             }`}
         >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
                     <div className="flex-shrink-0">
@@ -52,10 +51,7 @@ export default function Navbar() {
 
                     {/* Desktop Links */}
                     <div className="hidden sm:flex sm:items-center sm:space-x-8 flex-1 justify-end ">
-                        <Link href="/" className={getLinkClasses("/")} >Home</Link>
                         <Link href="/Games" className={getLinkClasses("/Games")}>Games</Link>
-                        <Link href="/EventCalendar" className={getLinkClasses("/EventCalendar")}>Event Calendar</Link>
-                        <Link href="/ExchangeProgram" className={getLinkClasses("/ExchangeProgram")}>Exchange Program</Link>
                         <Link href="/EventPlanner" className={getLinkClasses("/EventPlanner")}>Culture Event Planner</Link>
                         <Link href="/Awareness" className={getLinkClasses("/Awareness")}>Culture Awareness</Link>
                     </div>
@@ -85,10 +81,7 @@ export default function Navbar() {
             {isOpen && (
                 <div className="sm:hidden">
                     <div className="pt-2 pb-3 space-y-1">
-                        <Link href="/" className={getMobileLinkClasses("/")}>Home</Link>
                         <Link href="/Games" className={getMobileLinkClasses("/Games")}>Games</Link>
-                        <Link href="/EventCalendar" className={getMobileLinkClasses("/EventCalendar")}>Event Calendar</Link>
-                        <Link href="/ExchangeProgram" className={getMobileLinkClasses("/ExchangeProgram")}>Exchange Program</Link>
                         <Link href="/EventPlanner" className={getMobileLinkClasses("/EventPlanner")}>Culture Event Planner</Link>
                         <Link href="/Awareness" className={getMobileLinkClasses("/Awareness")}>Culture Awareness</Link>
                     </div>

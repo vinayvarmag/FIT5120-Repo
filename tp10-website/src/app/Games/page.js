@@ -53,7 +53,7 @@ export default function Games() {
 
     const createQuiz = async () => {
         try {
-            const res = await fetch(API + "/quiz", {
+            const res = await fetch(API+"/quiz", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ cats, n }),
