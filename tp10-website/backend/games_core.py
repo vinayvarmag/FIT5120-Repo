@@ -22,7 +22,9 @@ except ImportError:
     log.error("groq SDK missing; pip install groq")
     sys.exit(1)
 
-GROQ_API_KEY = "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"
+GROQ_API_KEY = os.getenv("GROQ_API_KEY") 
+if not GROQ_API_KEY:
+    raise RuntimeError("GROQ_API_KEY env-var is missing")
 client       = Groq(api_key=GROQ_API_KEY)
 GROQ_MODEL   = "llama3-8b-8192"
 
