@@ -10,4 +10,5 @@ sounddevice
 librosa
 phonetics
 rapidfuzz
+python-multipart
 groq
