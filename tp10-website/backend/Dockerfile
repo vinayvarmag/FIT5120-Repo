@@ -12,7 +12,7 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ---------- copy source ----------
-COPY backend/ /app/
+COPY . /app/
 
 # ---------- run ----------
 ENV PORT=8000
