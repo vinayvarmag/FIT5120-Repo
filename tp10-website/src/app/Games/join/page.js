@@ -1,29 +1,39 @@
+/* File: src/app/Games/join/page.js */
 "use client";
-import { useState, useEffect, useRef } from "react";
+
+import { Suspense, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import io from "socket.io-client";
-const API = "http://localhost:8000";
 
-export default function Join() {
-    const search = useSearchParams();
-    const initialSid = search.get("session") || "";
+export const dynamic = "force-dynamic";        // skip static optimisation
 
-    const [sid, setSid] = useState(initialSid);
-    const [team, setTeam] = useState("");
-    const [joined, setJoined] = useState(false);
+const API = process.env.NEXT_PUBLIC_API_URL;
 
-    const [status, setStatus] = useState("lobby");
-    const [qs, setQs] = useState([]);
-    const [idx, setIdx] = useState(0);
-    const [deadline, setDeadline] = useState(null);
-    const [choice, setChoice] = useState(null);
-    const [score, setScore] = useState(0);
+/* ───────────────────────── inner component ─────────────────────────── */
+
+function JoinInner() {
+    const search         = useSearchParams();          // now safely in <Suspense>
+    const initialSid     = search.get("session") || "";
+
+    /* state ----------------------------------------------------------- */
+    const [sid, setSid]               = useState(initialSid);
+    const [team, setTeam]             = useState("");
+    const [joined, setJoined]         = useState(false);
+
+    const [status, setStatus]         = useState("lobby");
+    const [qs, setQs]                 = useState([]);
+    const [idx, setIdx]               = useState(0);
+    const [deadline, setDeadline]     = useState(null);
+    const [choice, setChoice]         = useState(null);
+    const [score, setScore]           = useState(0);
     const [answerFeedback, setAnswerFeedback] = useState(null);
 
+    /* socket ---------------------------------------------------------- */
     const sockRef = useRef(null);
+
     useEffect(() => {
-        sockRef.current = io(API);
-        const s = sockRef.current;
+        const s = io(API, { transports: ["websocket"] });
+        sockRef.current = s;
 
         s.on("session_state", d => {
             setStatus(d.status);
@@ -40,14 +50,16 @@ export default function Join() {
         });
 
         s.on("error_msg", e => alert(e.msg));
+
         return () => s.close();
     }, []);
 
+    /* handlers -------------------------------------------------------- */
     const join = () => {
         sockRef.current.emit("join_session", {
             sessionId: sid.trim(),
-            role: "player",
-            teamName: team.trim(),
+            role:      "player",
+            teamName:  team.trim(),
         });
         setJoined(true);
     };
@@ -60,15 +72,19 @@ export default function Join() {
         });
     };
 
+    /* derived --------------------------------------------------------- */
     const secsLeft = deadline
         ? Math.max(0, Math.round(deadline - Date.now() / 1000))
         : 0;
+
     const q = qs[idx] ?? { question: "", options: [] };
 
+    /* UI -------------------------------------------------------------- */
     if (!joined) {
         return (
             <main className="min-h-screen flex flex-col items-center justify-center gap-4 p-6">
                 <h1 className="text-3xl font-bold">Join Quiz</h1>
+
                 {!initialSid && (
                     <input
                         placeholder="Session ID"
@@ -77,12 +93,14 @@ export default function Join() {
                         className="border rounded px-3 py-2 w-64"
                     />
                 )}
+
                 <input
                     placeholder="Team Name"
                     value={team}
                     onChange={e => setTeam(e.target.value)}
                     className="border rounded px-3 py-2 w-64"
                 />
+
                 <button
                     onClick={join}
                     disabled={!sid.trim() || !team.trim()}
@@ -97,7 +115,7 @@ export default function Join() {
     if (status === "lobby") {
         return (
             <main className="min-h-screen flex flex-col items-center justify-center gap-4 p-6">
-                <h2 className="text-2xl font-bold">Waiting for host to start...</h2>
+                <h2 className="text-2xl font-bold">Waiting for host to start…</h2>
             </main>
         );
     }
@@ -127,11 +145,10 @@ export default function Join() {
                         key={i}
                         disabled={choice != null}
                         onClick={() => setChoice(i)}
-                        className={`w-full px-4 py-2 rounded-lg border text-lg md:text-xl font-normal
-              ${choice === i
+                        className={`w-full px-4 py-2 rounded-lg border text-lg md:text-xl
+                            ${choice === i
                                 ? "bg-purple-700 text-white"
-                                : "bg-white text-gray-800 hover:bg-gray-100"
-                            }`}
+                                : "bg-white text-gray-800 hover:bg-gray-100"}`}
                     >
                         {opt}
                     </button>
@@ -149,8 +166,9 @@ export default function Join() {
 
             {answerFeedback != null && (
                 <p
-                    className={`mt-4 text-lg font-medium ${answerFeedback ? "text-green-700" : "text-red-600"
-                        }`}
+                    className={`mt-4 text-lg font-medium ${
+                        answerFeedback ? "text-green-700" : "text-red-600"
+                    }`}
                 >
                     {answerFeedback ? "Correct!" : "Wrong!"}
                 </p>
@@ -159,10 +177,27 @@ export default function Join() {
             <div className="w-full max-w-md h-2 bg-gray-200 rounded mt-6">
                 <div
                     className="h-full bg-purple-700 rounded"
-                    style={{ width: `${(secsLeft / 10) * 100}%`, transition: "width 1s linear" }}
+                    style={{
+                        width: `${(secsLeft / 10) * 100}%`,
+                        transition: "width 1s linear",
+                    }}
                 />
             </div>
             <p className="text-sm text-gray-500">{secsLeft}s left</p>
         </main>
+    );
+}
+
+/* ───────────────────────── page wrapper ─────────────────────────────── */
+
+export default function JoinPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                Loading…
+            </div>
+        }>
+            <JoinInner />
+        </Suspense>
     );
 }
