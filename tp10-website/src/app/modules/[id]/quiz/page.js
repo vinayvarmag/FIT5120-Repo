@@ -1,56 +1,104 @@
+/* File: src/app/modules/[id]/quiz/page.js */
 "use client";
 
-/* ───────── libraries ───────── */
+/* ─── libraries ─── */
 import { useMemo, useState, useEffect } from "react";
-import { notFound, useRouter }         from "next/navigation";
-import useSWR                           from "swr";
-import dynamic                          from "next/dynamic";
-import { motion, AnimatePresence }      from "framer-motion";
-import { modulesById }                  from "@/lib/learningModules";
+import { useParams, useRouter, notFound } from "next/navigation";
+import useSWR from "swr";
+import dynamic from "next/dynamic";
+import { motion, AnimatePresence } from "framer-motion";
+import { modulesById } from "@/lib/learningModules";
 
-/* lazy-load confetti only on client → avoids SSR warnings */
+/* lazy-load confetti only on client */
 const Confetti = dynamic(() => import("react-confetti"), { ssr: false });
 
 const fetcher = url => fetch(url).then(r => r.json());
-
-/* ───────── helpers ───────── */
 const shuffle = arr =>
     arr
         .map(v => [Math.random(), v])
         .sort((a, b) => a[0] - b[0])
         .map(([, v]) => v);
 
-/* -------- question templates per module -------- */
+/* ─── question templates per module ───
+   Each string may contain {placeholders} that match
+   column names in the corresponding JSON dataset      */
 const templates = {
-    /* (same as before: global-icons, traditional-arts, cultural-festivals, world-dishes) */
+    "global-icons": [
+        "{name} is best known for which occupation?",
+        "Which country does {name} come from?",
+        "True or false: {name} was born in {country}."
+    ],
+
+    "traditional-arts": [
+        "{craft} originated in which country?",
+        "The traditional art of {craft} is most closely associated with which region?",
+        "True or false: {craft} began in {origin}."
+    ],
+
+    "cultural-festivals": [
+        "The festival of {festival} is celebrated in which month?",
+        "{festival} is primarily observed in which country?",
+        "{festival} takes place in {location}. True or false?"
+    ],
+
+    /* some datasets use id 'festivals' instead of 'cultural-festivals' */
+    festivals: [
+        "In what month does the {festival} festival occur?",
+        "{festival} is mainly celebrated in which location?",
+        "True or false: {festival} originated in {country}."
+    ],
+
+    celebrities: [
+        "{name} is famous for being a(n) _____.",
+        "{name} was born in which country?",
+        "True or false: {name} works primarily as a {profession}."
+    ],
+
+    dishes: [
+        "The dish {englishName} comes from which country?",
+        "What is the main ingredient in {englishName}?",
+        "True or false: {englishName} originated in {origin}."
+    ]
 };
 
-/* -------- build a quiz (who / what / where mixed) -------- */
-function buildQuiz(rows, currentModule, n = 10) {
+/* ─── build a quiz (returns up to n Q&A objects) ─── */
+function buildQuiz(rows, mod, n = 10) {
+    if (!rows || !mod) return [];
+
+    const moduleTemplates = templates[mod.id] || [];
+    if (!moduleTemplates.length) return []; // should never happen now
+
     const qs = [];
-    const usedPrompts = new Set();
+    const sampledRows = shuffle(rows).slice(0, n);
 
-    while (qs.length < n) {
-        const tmpl   = shuffle(templates[currentModule.id])[0];
-        const row    = rows[Math.floor(Math.random() * rows.length)];
-        const prompt = tmpl.prompt(row);
+    sampledRows.forEach(r => {
+        const tpl = shuffle(moduleTemplates)[0];
 
-        if (!prompt || usedPrompts.has(prompt)) continue;
-        usedPrompts.add(prompt);
+        /* fill placeholders */
+        const prompt = tpl.replace(/\{(\w+)}/g, (_, key) => r[key] ?? "—");
 
-        const wrongOpts = tmpl.wrong(rows, row).slice(0, 3);
-        if (wrongOpts.length < 3) continue;
+        /* answer is the first placeholder’s value */
+        const answerKey = tpl.match(/\{(\w+)}/)?.[1];
+        const answer = r[answerKey];
+
+        /* 3 wrong options */
+        const wrong = shuffle(
+            rows
+                .filter(o => o[answerKey] !== answer)
+                .map(o => o[answerKey])
+        ).slice(0, 3);
 
         qs.push({
             prompt,
-            answer: tmpl.answer(row),
-            options: shuffle([tmpl.answer(row), ...wrongOpts])
+            answer,
+            options: shuffle([answer, ...wrong])
         });
-    }
+    });
+
     return qs;
 }
 
-/* ───────── UI components ───────── */
+/* ─── lightweight card component ─── */
 const Card = ({ children, className = "" }) => (
     <motion.div
         initial={{ y: 30, opacity: 0 }}
@@ -63,37 +111,50 @@ const Card = ({ children, className = "" }) => (
     </motion.div>
 );
 
-export default function QuizPage({ params }) {
+export default function QuizPage() {
+    /* ── top-level hooks ── */
+    const params = useParams();
     const router = useRouter();
-    const currentModule = modulesById[params.id];
+    const id = params.id;
+    const currentModule = modulesById[id];
 
-    // ─── hooks (unconditional) ──────────────────────────────────
     const { data: rows, isLoading, error } = useSWR(
         currentModule ? `/data/${currentModule.datasetKey}.json` : null,
         fetcher
     );
-    const [idx, setIdx]           = useState(0);
-    const [selected, setSelected] = useState(null);
-    const [score, setScore]       = useState(0);
-    const [finished, setFinished] = useState(false);
 
-    const quiz = useMemo(
-        () => (rows ? buildQuiz(rows, currentModule, 10) : []),
-        [rows, currentModule]
-    );
-    const q = quiz[idx];
+    /* quiz state */
+    const [idx, setIdx] = useState(0);
+    const [selected, setSel] = useState(null);
+    const [score, setScore] = useState(0);
+    const [finished, setEnd] = useState(false);
 
+    const quiz = useMemo(() => buildQuiz(rows, currentModule, 10), [rows, currentModule]);
+    const quizReady = quiz.length > 0;
+    const q = quizReady ? quiz[idx] : null;
+
+    /* confetti size */
     const [dims, setDims] = useState([0, 0]);
     useEffect(() => {
         setDims([window.innerWidth, window.innerHeight]);
     }, []);
 
-    // ─── guards & early returns ─────────────────────────────────
-    if (!currentModule)                   return notFound();
-    if (isLoading)                        return <p className="text-center text-gray-600">Loading questions…</p>;
-    if (error)                            return <p className="text-red-600">Failed to load dataset.</p>;
+    /* handlers */
+    const choose = opt => {
+        if (!quizReady || selected) return;
+        setSel(opt);
+        if (opt === q.answer) setScore(s => s + 1);
+    };
+    const next = () => {
+        if (!quizReady) return;
+        if (idx + 1 < quiz.length) { setIdx(i => i + 1); setSel(null); }
+        else                       setEnd(true);
+    };
+    const restart = () => { setIdx(0); setSel(null); setScore(0); setEnd(false); };
 
-    // ─── render ──────────────────────────────────────────────────
+    if (!currentModule) return notFound();
+
+    /* ── UI ── */
     return (
         <div className="min-h-screen w-full bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-100">
             {finished && <Confetti width={dims[0]} height={dims[1]} recycle={false} />}
@@ -104,7 +165,7 @@ export default function QuizPage({ params }) {
                 </h1>
 
                 {/* progress bar */}
-                {rows && !finished && (
+                {quizReady && !finished && (
                     <div className="h-3 w-full overflow-hidden rounded-full bg-orange-100">
                         <motion.div
                             className="h-full bg-gradient-to-r from-orange-500 to-orange-600"
@@ -115,14 +176,19 @@ export default function QuizPage({ params }) {
                     </div>
                 )}
 
-                {/* loading & error already handled above */}
+                {isLoading && <p className="text-center text-gray-600">Loading questions…</p>}
+                {error      && <p className="text-red-600">Failed to load dataset.</p>}
 
-                {/* quiz questions */}
-                {rows && !finished && (
+                {/* main quiz panel */}
+                {quizReady && !finished && (
                     <AnimatePresence mode="wait">
                         <Card key={idx} className="p-8">
                             <p className="mb-6 text-lg font-medium text-gray-800">
-                                <span dangerouslySetInnerHTML={{ __html: `${idx + 1}. ${q.prompt}` }} />
+                                <span
+                                    dangerouslySetInnerHTML={{
+                                        __html: `${idx + 1}. ${q.prompt}`
+                                    }}
+                                />
                             </p>
 
                             <ul className="space-y-4">
@@ -132,24 +198,20 @@ export default function QuizPage({ params }) {
                                     const correct = "bg-green-100 border-green-600";
                                     const wrong   = "bg-red-100 border-red-600";
 
-                                    const style = !selected
-                                        ? idle
-                                        : opt === q.answer
-                                            ? correct
-                                            : selected === opt
-                                                ? wrong
-                                                : "bg-white/60";
+                                    const style =
+                                        !selected
+                                            ? idle
+                                            : opt === q.answer
+                                                ? correct
+                                                : selected === opt
+                                                    ? wrong
+                                                    : "bg-white/60";
 
                                     return (
                                         <li key={opt}>
                                             <button
                                                 disabled={!!selected}
-                                                onClick={() => {
-                                                    if (!selected) {
-                                                        setSelected(opt);
-                                                        if (opt === q.answer) setScore(s => s + 1);
-                                                    }
-                                                }}
+                                                onClick={() => choose(opt)}
                                                 className={`${base} ${style}`}
                                             >
                                                 {opt}
@@ -162,15 +224,8 @@ export default function QuizPage({ params }) {
                             {selected && (
                                 <motion.button
                                     whileTap={{ scale: 0.95 }}
-                                    onClick={() => {
-                                        if (idx + 1 < quiz.length) {
-                                            setIdx(i => i + 1);
-                                            setSelected(null);
-                                        } else {
-                                            setFinished(true);
-                                        }
-                                    }}
-                                    className="mt-8 w-full rounded-full bg-orange-600 py-3 text-white shadow hover:bg-oranget-700"
+                                    onClick={next}
+                                    className="mt-8 w-full rounded-full bg-orange-600 py-3 text-white shadow hover:bg-orange-700"
                                 >
                                     {idx + 1 < quiz.length ? "Next question" : "Show result"}
                                 </motion.button>
@@ -180,7 +235,7 @@ export default function QuizPage({ params }) {
                 )}
 
                 {/* final score */}
-                {rows && finished && (
+                {quizReady && finished && (
                     <Card className="p-10 text-center space-y-6">
                         <h2 className="text-3xl font-bold text-orange-700">
                             {score} / {quiz.length}
@@ -188,12 +243,7 @@ export default function QuizPage({ params }) {
                         <p className="text-gray-700">Great job!</p>
 
                         <button
-                            onClick={() => {
-                                setIdx(0);
-                                setSelected(null);
-                                setScore(0);
-                                setFinished(false);
-                            }}
+                            onClick={restart}
                             className="w-full rounded-full bg-orange-600 py-3 text-white shadow hover:bg-orange-700"
                         >
                             Try again
@@ -207,10 +257,10 @@ export default function QuizPage({ params }) {
                     </Card>
                 )}
 
-                {/* live score display */}
-                {!finished && rows && (
+                {/* live score footer */}
+                {quizReady && !finished && (
                     <p className="text-center text-sm text-gray-600">
-                        Score {score} / {quiz.length}
+                        Score&nbsp;{score} / {quiz.length}
                     </p>
                 )}
             </main>

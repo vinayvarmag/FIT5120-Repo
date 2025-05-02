@@ -1,8 +1,10 @@
-/* src/lib/learningModules.js  – runtime-fetch version */
+/* src/lib/learningModules.js  – now with thumbnail images */
 
 export const learningModules = [
     {
         id: "global-icons",
+        /* ⬇ put the image in /public/images/modules/1-global-icons.webp */
+        img: "/modules/1-global-icons.jpg",
         title: "Global Icons (2025)",
         overview:
             "Meet the public figures that shaped politics, science, sport and pop-culture in 2025.",
@@ -11,11 +13,12 @@ export const learningModules = [
             "Describe how their work affects global culture or policy.",
             "Compare contemporary influencers with historic icons from the same country."
         ],
-        datasetKey: "celebrities"          // <── tells UI which JSON to fetch
+        datasetKey: "celebrities"
     },
 
     {
         id: "traditional-arts",
+        img: "/modules/2-traditional-arts.jpg",
         title: "Traditional Arts & Handicrafts",
         overview:
             "Explore artisan skills that embody cultural identity and community memory.",
@@ -29,6 +32,7 @@ export const learningModules = [
 
     {
         id: "cultural-festivals",
+        img: "/modules/3-cultural-festivals.jpg",
         title: "Global Festival Almanac",
         overview:
             "Discover celebrations—ancient and modern—that bring communities together.",
@@ -42,6 +46,7 @@ export const learningModules = [
 
     {
         id: "world-dishes",
+        img: "/modules/4-world-dishes.jpg",
         title: "World Cuisine Explorer",
         overview:
             "A pantry of recipes, flavours and food customs for interactive quizzes and games.",
