@@ -4,11 +4,11 @@ import { notFound } from "next/navigation";
 import { modulesById } from "@/lib/learningModules";
 
 export default function ObjectivesPage({ params }) {
-    const module = modulesById[params.id];
-    if (!module) return notFound();
+    const currentModule = modulesById[params.id];
+    if (!currentModule) return notFound();
 
     /* Expecting module.objectives to be an array of strings */
-    const objectives = module.objectives ?? [];
+    const objectives = currentMmodule.objectives ?? [];
 
     return (
         <section className="space-y-6">
