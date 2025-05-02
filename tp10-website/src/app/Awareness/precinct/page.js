@@ -207,6 +207,7 @@ export default function PrecinctPage() {
     return (
         <div className="min-h-screen pt-20 bg-gradient-to-b from-orange-50 to-orange-100/60">
             <div className="mx-auto max-w-screen-xl px-4">
+                <h2 className="text-2xl font-bold">Cultural Precinct Exploration</h2>
                 {/* mode + dataset toggles */}
                 <div className="flex justify-between items-center mb-4">
                     {/* Overview / Map */}

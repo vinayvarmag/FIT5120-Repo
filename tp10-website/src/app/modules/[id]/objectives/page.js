@@ -1,18 +1,22 @@
 "use client";
 
-import { notFound }    from "next/navigation";
+import { notFound } from "next/navigation";
 import { modulesById } from "@/lib/learningModules";
 
 export default function ObjectivesPage({ params }) {
-    const currentModule = modulesById[params.id];
-    if (!currentModule) return notFound();
+    const module = modulesById[params.id];
+    if (!module) return notFound();
+
+    /* Expecting module.objectives to be an array of strings */
+    const objectives = module.objectives ?? [];
 
     return (
-        <section className="space-y-4">
-            <h2 className="text-lg font-semibold">Learning objectives</h2>
-            <ul className="list-disc list-inside space-y-1 text-gray-800">
-                {currentModule.objectives.map(obj => (
-                    <li key={obj}>{obj}</li>
+        <section className="space-y-6">
+            <h2 className="text-xl font-semibold text-orange-700">Learning objectives</h2>
+
+            <ul className="list-disc pl-6 space-y-2 text-gray-800">
+                {objectives.map((obj, i) => (
+                    <li key={i}>{obj}</li>
                 ))}
             </ul>
         </section>

@@ -4,6 +4,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --site-nav-h: 4rem;
 }
 
 @theme inline {

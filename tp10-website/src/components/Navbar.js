@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 /* how long to wait (ms) before hiding the submenu */
 const CLOSE_DELAY = 400;
 
-/* ───────────────────────────────────────── navbar ───────────────────────────────────────── */
+/* --------------------- navbar ------------------------------------------------- */
 export default function Navbar({ version }) {
     /* mobile burger ▸ scroll-hide ▸ submenu */
     const [burgerOpen,    setBurgerOpen]    = useState(false);
@@ -67,7 +67,7 @@ export default function Navbar({ version }) {
     };
     useEffect(() => () => clearTimeout(hideTimer.current), []);
 
-    /* ───────────────────────────── render ───────────────────────────── */
+    /* ----------------------- render ---------------------------- */
     return (
         <nav
             onMouseEnter={() => setBarPinned(true)}
@@ -89,8 +89,6 @@ export default function Navbar({ version }) {
                     <div className="hidden sm:flex gap-8 items-center">
                         <Link href={vPrefix || "/"}        className={linkCls(vPrefix || "/")}>Home</Link>
                         <Link href={`${vPrefix}/Games`}    className={linkCls(`${vPrefix}/Games`)}>Games</Link>
-                        <Link href={`${vPrefix}/EventPlanner`} className={linkCls(`${vPrefix}/EventPlanner`)}>Culture Event Planner</Link>
-
                         {/* Culture Awareness dropdown with linger delay */}
                         <div
                             className="relative"
@@ -115,6 +113,9 @@ export default function Navbar({ version }) {
                                 </div>
                             )}
                         </div>
+                        <Link href={`${vPrefix}/EventPlanner`} className={linkCls(`${vPrefix}/EventPlanner`)}>Culture Event Planner</Link>
+
+
                     </div>
 
                     {/* mobile burger */}
@@ -138,8 +139,6 @@ export default function Navbar({ version }) {
                 <div className="sm:hidden">
                     <Link href={vPrefix || "/"}            className={mobLinkCls(vPrefix || "/")}>Home</Link>
                     <Link href={`${vPrefix}/Games`}        className={mobLinkCls(`${vPrefix}/Games`)}>Games</Link>
-                    <Link href={`${vPrefix}/EventPlanner`} className={mobLinkCls(`${vPrefix}/EventPlanner`)}>Culture Event Planner</Link>
-
                     <details open className="border-t border-gray-200">
                         <summary className="pl-3 pr-4 py-2 text-base font-bold">Culture Awareness</summary>
                         <div className="space-y-1 bg-gray-50">
@@ -148,6 +147,9 @@ export default function Navbar({ version }) {
                             <Link href={`${vPrefix}/Awareness/etiquette`} className={mobLinkCls(`${vPrefix}/Awareness/etiquette`)}>Cultural Etiquette Guide</Link>
                         </div>
                     </details>
+                    <Link href={`${vPrefix}/EventPlanner`} className={mobLinkCls(`${vPrefix}/EventPlanner`)}>Culture Event Planner</Link>
+
+
                 </div>
             )}
         </nav>

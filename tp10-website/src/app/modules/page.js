@@ -11,6 +11,7 @@ function ModuleCard({ module }) {
     const preview = data?.slice(0, 3) ?? [];   // first 3 rows for a quick glance
 
     return (
+        <div className="min-h-screen bg-gray-50 pt-20 p-6 text-black">
         <Link
             href={`/modules/${module.id}`}
             className="block rounded-xl border p-5 shadow transition hover:shadow-md"
@@ -29,6 +30,7 @@ function ModuleCard({ module }) {
                 ))}
             </ul>
         </Link>
+        </div>
     );
 }
 
@@ -40,4 +42,5 @@ export default function ModuleListPage() {
             ))}
         </main>
     );
+
 }
