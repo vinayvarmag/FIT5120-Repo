@@ -8,7 +8,7 @@ export default function ObjectivesPage({ params }) {
     if (!currentModule) return notFound();
 
     /* Expecting module.objectives to be an array of strings */
-    const objectives = currentMmodule.objectives ?? [];
+    const objectives = currentModule.objectives ?? [];
 
     return (
         <section className="space-y-6">
