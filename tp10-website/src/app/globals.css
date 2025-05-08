@@ -39,3 +39,8 @@ body {
 .animate-fadeInOut {
   animation: fadeInOut 24s infinite;
 }
+
+.leaflet-container *:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}

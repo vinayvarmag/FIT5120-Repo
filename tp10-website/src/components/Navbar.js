@@ -39,16 +39,24 @@ export default function Navbar({ version }) {
     })();
     const vPrefix = currentVer ? `/${currentVer}` : "";
 
+    const isActive = (href) => {
+        if (href === "/") {
+            // Home: mark active only on the exact root
+            return pathname === "/";
+        }
+        return pathname === href || pathname.startsWith(`${href}/`);
+    };
+
     const linkCls = (href) =>
         `inline-flex items-center px-1 pt-1 border-b-2 text-lg font-semibold ${
-            pathname === href
+            isActive(href)
                 ? "border-indigo-500 text-black"
                 : "border-transparent text-black hover:text-black hover:border-gray-300"
         }`;
 
     const mobLinkCls = (href) =>
         `block pl-3 pr-4 py-2 border-l-4 text-lg font-bold ${
-            pathname === href
+            isActive(href)
                 ? "border-indigo-500 text-indigo-700 bg-indigo-50"
                 : "border-transparent text-black hover:text-black hover:bg-gray-50 hover:border-gray-300"
         }`;
