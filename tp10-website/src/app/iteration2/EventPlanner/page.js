@@ -825,7 +825,7 @@ END:VCALENDAR
                                         </div>
                                     )}
                                     {selectedVenue && (
-                                        <p className="text-sm text-gray-600 mt-1">
+                                        <p className="text-sm text-black mt-1">
                                             Selected Venue: {selectedVenue.venue_name}
                                         </p>
                                     )}
@@ -1066,7 +1066,7 @@ END:VCALENDAR
                                                                 setSelectedAgendaDetails(item);
                                                                 setAgendaDetailsModalOpen(true);
                                                             }}
-                                                            className="text-gray-500 hover:underline "
+                                                            className="text-black hover:underline "
                                                         >
                                                             View
                                                         </button>
@@ -1485,7 +1485,7 @@ END:VCALENDAR
                                         </tbody>
                                     </table>
                                 ) : (
-                                    <p className="text-sm text-gray-500">No participants found.</p>
+                                    <p className="text-sm text-black">No participants found.</p>
                                 )}
                             </div>
                             <button

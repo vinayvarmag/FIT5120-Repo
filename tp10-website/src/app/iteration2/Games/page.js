@@ -219,7 +219,7 @@ export default function Games() {
                             ))}
                         </ul>
                     ) : (
-                        <p className="text-gray-500 text-sm">None yet</p>
+                        <p className="text-black text-sm">None yet</p>
                     )}
                 </div>
 
@@ -241,7 +241,7 @@ export default function Games() {
                     Question {idx + 1}/{qs.length}
                 </h2>
 
-                <p className="mb-6 text-gray-700">Waiting on participants...</p>
+                <p className="mb-6 text-black">Waiting on participants...</p>
 
                 <div className="w-full max-w-sm h-3 bg-gray-200 rounded">
                     <div
@@ -249,7 +249,7 @@ export default function Games() {
                         style={{ width: `${(secsLeft / 10) * 100}%`, transition: "width 1s linear" }}
                     />
                 </div>
-                <p className="mt-2 text-sm text-gray-500">{secsLeft}s left</p>
+                <p className="mt-2 text-sm text-black">{secsLeft}s left</p>
             </main>
         );
     }

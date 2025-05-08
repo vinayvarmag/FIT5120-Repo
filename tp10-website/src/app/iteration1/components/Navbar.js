@@ -23,14 +23,14 @@ export default function Navbar() {
     const getLinkClasses = (href) => {
         const base = "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-high drop-shadow-lg outline outline-1 outline-white";
         const active = "border-indigo-500 text-black";
-        const inactive = "border-transparent text-black hover:text-gray-700 hover:border-gray-300";
+        const inactive = "border-transparent text-black hover:text-black hover:border-gray-300";
         return `${base} ${pathname === href ? active : inactive}`;
     };
 
     const getMobileLinkClasses = (href) => {
         const base = "block pl-3 pr-4 py-2 border-l-4 text-base font-medium font-bold drop-shadow-lg outline outline-1 outline-white";
         const active = "border-indigo-500 text-indigo-700 bg-indigo-50";
-        const inactive = "border-transparent text-black hover:text-gray-700 hover:bg-gray-50 hover:border-gray-300";
+        const inactive = "border-transparent text-black hover:text-black hover:bg-gray-50 hover:border-gray-300";
         return `${base} ${pathname === href ? active : inactive}`;
     };
 
@@ -64,7 +64,7 @@ export default function Navbar() {
                     <div className="flex sm:hidden">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none"
+                            className="p-2 rounded-md text-black hover:text-black hover:bg-gray-100 focus:outline-none"
                         >
                             <span className="sr-only">Open main menu</span>
                             {isOpen ? (

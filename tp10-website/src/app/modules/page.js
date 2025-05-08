@@ -17,9 +17,9 @@ function ModuleCard({ module }) {
             className="block rounded-xl border p-5 shadow transition hover:shadow-md"
         >
             <h3 className="mb-2 text-lg font-semibold">{module.title}</h3>
-            <p className="mb-4 text-sm text-gray-700">{module.overview}</p>
+            <p className="mb-4 text-sm text-black">{module.overview}</p>
 
-            <ul className="space-y-1 text-xs text-gray-600 ">
+            <ul className="space-y-1 text-xs text-black ">
                 {preview.map((row, i) => (
                     <li key={i}>
                         {module.id === "global-icons"      && `${row.name} — ${row.country}`}

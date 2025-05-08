@@ -1,47 +1,99 @@
+// File: src/app/modules/[id]/overview/page.js
 "use client";
 
-import useSWR from "swr";
+import React from "react";
 import { notFound } from "next/navigation";
 import { modulesById } from "@/lib/learningModules";
 
-const fetcher = url => fetch(url).then(r => r.json());
-
 export default function OverviewPage({ params }) {
-    // Rename module to avoid shadowing
     const currentModule = modulesById[params.id];
-
-    // Unconditionally call SWR
-    const { data: rows, isLoading, error } = useSWR(
-        currentModule ? `/data/${currentModule.datasetKey}.json` : null,
-        fetcher
-    );
-
-    // Guards
     if (!currentModule) return notFound();
-    if (isLoading)      return <p className="text-center text-gray-600">Loading overview…</p>;
-    if (error)          return <p className="text-red-600">Failed to load overview data.</p>;
 
-    const preview = (rows ?? []).slice(0, 3);
+    const {
+        overview,
+        objectives,
+        resourcesDescription,
+        resources,
+        quizDescription
+    } = currentModule;
 
     return (
-        <section className="space-y-6">
-            <p className="text-gray-800">{currentModule.overview}</p>
+        <div className="prose mx-auto px-4 py-10">
+            {/* Overview Section */}
+            <section>
+                <h2 className="text-2xl font-semibold mb-4">Overview</h2>
+                {Array.isArray(overview) ? (
+                    overview.map((line, idx) => <p key={idx}>{line}</p>)
+                ) : (
+                    <p>{overview}</p>
+                )}
+            </section>
 
-            {rows.length > 0 && (
-                <>
-                    <h2 className="text-lg font-semibold">Quick glimpse</h2>
-                    <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
-                        {preview.map((r, i) => (
-                            <li key={i}>
-                                {params.id === "global-icons"       && `${r.name} — ${r.country}`}
-                                {params.id === "traditional-arts"   && `${r.craft} — ${r.country}`}
-                                {params.id === "cultural-festivals" && `${r.festival} — ${r.country}`}
-                                {params.id === "world-dishes"       && `${r.englishName} — ${r.country}`}
-                            </li>
+            {/* Objectives Section */}
+            <section className="mt-10">
+                <h2 className="text-2xl font-semibold mb-4">Objectives</h2>
+                {Array.isArray(objectives) ? (
+                    <ul className="list-disc list-inside">
+                        {objectives.map((obj, i) => (
+                            <li key={i}>{obj}</li>
                         ))}
                     </ul>
-                </>
-            )}
-        </section>
+                ) : (
+                    <p>{objectives}</p>
+                )}
+            </section>
+
+            {/* Resources Section */}
+            <section className="mt-10">
+                <h2 className="text-2xl font-semibold mb-4">Resources</h2>
+                <p>{resourcesDescription}</p>
+
+                {resources?.articles && resources.articles.length > 0 && (
+                    <div className="mt-4">
+                        <h3 className="font-medium">Articles</h3>
+                        <ul className="list-disc list-inside">
+                            {resources.articles.map((a, idx) => (
+                                <li key={idx}>
+                                    <a
+                                        href={a.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:underline"
+                                    >
+                                        {a.title}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
+                {resources?.videos && resources.videos.length > 0 && (
+                    <div className="mt-4">
+                        <h3 className="font-medium">Videos</h3>
+                        <ul className="list-disc list-inside">
+                            {resources.videos.map((v, idx) => (
+                                <li key={idx}>
+                                    <a
+                                        href={v.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:underline"
+                                    >
+                                        {v.title}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </section>
+
+            {/* Quiz Section */}
+            <section className="mt-10">
+                <h2 className="text-2xl font-semibold mb-4">Quiz</h2>
+                <p>{quizDescription}</p>
+            </section>
+        </div>
     );
 }

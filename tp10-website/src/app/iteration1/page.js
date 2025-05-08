@@ -195,7 +195,7 @@ export default function Home() {
                                     />
                                     <h3 className="text-lg font-bold">{item.title}</h3>
                                 </div>
-                                <p className="text-sm text-gray-600 mt-2">{item.description}</p>
+                                <p className="text-sm text-black mt-2">{item.description}</p>
                             </div>
                         ))}
                     </div>

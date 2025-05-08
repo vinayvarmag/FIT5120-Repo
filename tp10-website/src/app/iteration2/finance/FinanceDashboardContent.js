@@ -169,7 +169,7 @@ export default function FinanceDashboardContent() {
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h1 className="text-2xl font-bold">Event Finance Dashboard</h1>
-                    <p className="text-sm text-gray-600">Track and manage your event expenses efficiently</p>
+                    <p className="text-sm text-black">Track and manage your event expenses efficiently</p>
                 </div>
                 <div>
                     <button className="bg-white border border-gray-200 px-4 py-2 rounded-lg flex items-center space-x-2 shadow-sm hover:bg-gray-100">
@@ -182,19 +182,19 @@ export default function FinanceDashboardContent() {
             {/* Cards */}
             <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <h3 className="text-sm text-gray-600">Total Budget Allocation</h3>
+                    <h3 className="text-sm text-black">Total Budget Allocation</h3>
                     <p className="text-2xl font-bold mt-1">${totalBudget.toLocaleString()}</p>
-                    <p className="text-xs text-gray-500 mt-1">100% of total allocation</p>
+                    <p className="text-xs text-black mt-1">100% of total allocation</p>
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <h3 className="text-sm text-gray-600">Current Expenses</h3>
+                    <h3 className="text-sm text-black">Current Expenses</h3>
                     <p className="text-2xl font-bold mt-1">${currentExpenses.toLocaleString()}</p>
-                    {totalBudget > 0 && (<p className="text-xs text-gray-500 mt-1">{((currentExpenses / totalBudget) * 100).toFixed(1)}% of total used</p>)}
+                    {totalBudget > 0 && (<p className="text-xs text-black mt-1">{((currentExpenses / totalBudget) * 100).toFixed(1)}% of total used</p>)}
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <h3 className="text-sm text-gray-600">Budget Remaining</h3>
+                    <h3 className="text-sm text-black">Budget Remaining</h3>
                     <p className="text-2xl font-bold mt-1">${remainingBudget.toLocaleString()}</p>
-                    {totalBudget > 0 && (<p className="text-xs text-gray-500 mt-1">{((remainingBudget / totalBudget) * 100).toFixed(1)}% of budget remaining</p>)}
+                    {totalBudget > 0 && (<p className="text-xs text-black mt-1">{((remainingBudget / totalBudget) * 100).toFixed(1)}% of budget remaining</p>)}
                 </div>
             </div>
 
@@ -202,7 +202,7 @@ export default function FinanceDashboardContent() {
             <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="bg-white p-4 rounded-lg shadow-sm">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-sm font-medium text-gray-800">Budget Distribution</h3>
+                        <h3 className="text-sm font-medium text-black">Budget Distribution</h3>
                         <button onClick={() => setBudgetDetailsModalOpen(true)} className="text-primary text-sm font-medium hover:underline">View Details</button>
                     </div>
                     <div className="flex items-center justify-center h-52 bg-gray-50 rounded-lg">
@@ -211,10 +211,10 @@ export default function FinanceDashboardContent() {
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow-sm">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-sm font-medium text-gray-800">Expense Timeline</h3>
+                        <h3 className="text-sm font-medium text-black">Expense Timeline</h3>
                         <div>
                             <button className="text-primary text-sm font-medium hover:underline mr-2">Monthly</button>
-                            <button className="text-gray-400 text-sm font-medium hover:underline">Yearly</button>
+                            <button className="text-black text-sm font-medium hover:underline">Yearly</button>
                         </div>
                     </div>
                     <div className="flex items-center justify-center h-52 bg-gray-50 rounded-lg">
@@ -226,7 +226,7 @@ export default function FinanceDashboardContent() {
             {/* Expense Table */}
             <div className="bg-white p-4 rounded-lg shadow-sm">
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-sm font-medium text-gray-800">Expense Items</h3>
+                    <h3 className="text-sm font-medium text-black">Expense Items</h3>
                     <div className="flex items-center space-x-2">
                         <input type="text" placeholder="Search expenses..." className="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none" />
                         <button onClick={() => { setEditingExpenseId(null); setNewExpense({ categoryId: "", title: "", amount: "", description: "" }); setExpenseModalOpen(true); }} className="bg-primary text-black px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-primary/90">Add Expense</button>
@@ -234,7 +234,7 @@ export default function FinanceDashboardContent() {
                 </div>
                 <table className="min-w-full">
                     <thead>
-                    <tr className="text-left text-xs text-gray-500 border-b border-gray-200">
+                    <tr className="text-left text-xs text-black border-b border-gray-200">
                         <th className="py-2">Category</th>
                         <th className="py-2">Title</th>
                         <th className="py-2">Amount</th>
@@ -242,7 +242,7 @@ export default function FinanceDashboardContent() {
                         <th className="py-2">Actions</th>
                     </tr>
                     </thead>
-                    <tbody className="text-sm text-gray-600">
+                    <tbody className="text-sm text-black">
                     {expenses.map((exp) => (
                         <tr key={exp.expense_id} className="border-b border-gray-100">
                             <td className="py-3">{exp.category}</td>

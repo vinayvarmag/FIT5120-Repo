@@ -1,19 +1,26 @@
 "use client";
 import React from "react";
+import { X } from "lucide-react";
 
 const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
     return (
         <div className="fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 relative w-full max-w-2xl border-2 border-black">
-                <h3 className="text-lg font-bold mb-4 text-black">{title}</h3>
+                {/* Close button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-2 right-2 hover:text-gray-800 text-black border-2 border-black"
+                    className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+                    aria-label="Close modal"
                 >
-                    <i className="ri-close-line ri-lg" />
+                    <X size={24} />
                 </button>
-                {children}
+
+                {/* Modal title */}
+                <h3 className="text-lg font-bold mb-4 text-black">{title}</h3>
+
+                {/* Content */}
+                <div>{children}</div>
             </div>
         </div>
     );

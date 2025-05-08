@@ -1,4 +1,4 @@
-/* src/lib/learningModules.js  – now with thumbnail images */
+/* src/lib/learningModules.js  – now with thumbnail images and enriched objectives */
 
 export const learningModules = [
     {
@@ -6,12 +6,18 @@ export const learningModules = [
         /* ⬇ put the image in /public/images/modules/1-global-icons.webp */
         img: "/modules/1-global-icons.jpg",
         title: "Global Icons (2025)",
-        overview:
+        overview:[
             "Meet the public figures that shaped politics, science, sport and pop-culture in 2025.",
+        "Identify at least one influential figure for every UN member state.",
+        "Describe how their work affects global culture or policy.",
+        "Compare contemporary influencers with historic icons from the same country.",
+        "Analyze the global impact of a selected icon's contributions.",
+            ],
         objectives: [
             "Identify at least one influential figure for every UN member state.",
             "Describe how their work affects global culture or policy.",
-            "Compare contemporary influencers with historic icons from the same country."
+            "Compare contemporary influencers with historic icons from the same country.",
+            "Analyze the global impact of a selected icon's contributions."
         ],
         datasetKey: "celebrities"
     },
@@ -25,7 +31,8 @@ export const learningModules = [
         objectives: [
             "Match a craft to its country/region of origin.",
             "Explain the social or ritual role each craft plays locally.",
-            "Evaluate how globalisation affects craft sustainability."
+            "Evaluate how globalisation affects craft sustainability.",
+            "Research the evolution of one traditional art form over time."
         ],
         datasetKey: "arts"
     },
@@ -39,7 +46,8 @@ export const learningModules = [
         objectives: [
             "Locate major annual festivals on a world map.",
             "Outline each festival’s historical roots and key rituals.",
-            "Compare cross-cultural themes such as harvest, new-year, or rites-of-passage."
+            "Compare cross-cultural themes such as harvest, new-year, or rites-of-passage.",
+            "Assess how contemporary festivals adapt tradition for modern audiences."
         ],
         datasetKey: "festivals"
     },
@@ -52,15 +60,28 @@ export const learningModules = [
             "A pantry of recipes, flavours and food customs for interactive quizzes and games.",
         objectives: [
             "Identify signature dishes in a timed challenge.",
-            "Discuss quiz around eating and serving food in different cultures.",
-            "Relate dishes to climate, geography and trade history."
+            "Discuss eating and serving customs in different cultures.",
+            "Relate dishes to climate, geography and trade history.",
+            "Create a recipe plan combining ingredients from multiple cuisines."
         ],
         datasetKey: "dishes",
-        resources: {}
+        resources: {
+            articles: [
+                {
+                    title: "The Science of Taste",
+                    url: "https://example.com/science-of-taste"
+                }
+            ],
+            videos: [
+                {
+                    title: "Street Food Around the World",
+                    url: "https://youtube.com/watch?v=example4"
+                }
+            ]
+        }
     }
 ];
 
-/* alias + fast look-up, same names your UI already uses */
 export const modulesIndex = learningModules;
 export const modulesById  = Object.fromEntries(
     learningModules.map(m => [m.id, m])

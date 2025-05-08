@@ -220,7 +220,7 @@ export default function PrecinctPage() {
                                 key={m}
                                 onClick={() => setMode(m)}
                                 className={`px-5 py-2 text-sm font-medium rounded-full transition ${
-                                    mode === m ? "bg-purple-600 text-white" : "text-gray-700 hover:bg-gray-300"
+                                    mode === m ? "bg-purple-600 text-white" : "text-black hover:bg-gray-300"
                                 }`}
                             >{m}</button>
                         ))}
@@ -232,7 +232,7 @@ export default function PrecinctPage() {
                                 key={ds}
                                 onClick={() => setDataset(ds)}
                                 className={`px-4 py-2 text-sm font-medium rounded-full transition ${
-                                    dataset === ds ? "bg-purple-600 text-white" : "text-gray-700 hover:bg-gray-300"
+                                    dataset === ds ? "bg-purple-600 text-white" : "text-black hover:bg-gray-300"
                                 }`}
                             >{ds}</button>
                         ))}
@@ -249,7 +249,7 @@ export default function PrecinctPage() {
                                 className={`px-2 py-1 text-xs font-medium rounded-full transition ${
                                     showHeatmap === (opt === "Heatmap")
                                         ? "bg-purple-600 text-white"
-                                        : "text-gray-700 hover:bg-gray-300"
+                                        : "text-black hover:bg-gray-300"
                                 }`}
                             >{opt}</button>
                         ))}
@@ -333,7 +333,7 @@ export default function PrecinctPage() {
                 )}
 
                 {/* ── disclaimer ──────────────────────────────── */}
-                <p className="mt-8 text-center text-xs italic text-gray-600">
+                <p className="mt-8 text-center text-xs italic text-black">
                     Disclaimer: The demographic data shown is for informational purposes only and cultural data highlighted does not reflect cultural importance.
                 </p>
             </div>

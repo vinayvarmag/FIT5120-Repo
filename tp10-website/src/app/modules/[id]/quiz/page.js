@@ -58,6 +58,16 @@ const templates = {
             prompt: "{englishName} is typically classified as which course or type?",
             answerKey: "type"
         }
+    ],
+    festivals: [
+        {
+            prompt: "{Festival} is celebrated in which country?",
+            answerKey: "country"
+        },
+        {
+            prompt: "What does the term \"{Festival}\" mean?",
+            answerKey: "description"
+        }
     ]
 };
 
@@ -165,6 +175,9 @@ export default function QuizPage() {
                 <h1 className="text-3xl font-extrabold text-purple-600">
                     {currentModule.title} <span className="font-light">Quiz</span>
                 </h1>
+                <p >
+                    Test your knowledge! Select the correct answers below and submit when you’re ready.
+                </p>
 
                 {/* progress bar */}
                 {quizReady && !finished && (
@@ -178,14 +191,14 @@ export default function QuizPage() {
                     </div>
                 )}
 
-                {isLoading && <p className="text-center text-gray-600">Loading questions…</p>}
+                {isLoading && <p className="text-center text-black">Loading questions…</p>}
                 {error      && <p className="text-red-600">Failed to load dataset.</p>}
 
                 {/* main quiz panel */}
                 {quizReady && !finished && (
                     <AnimatePresence mode="wait">
                         <Card key={idx} className="p-8">
-                            <p className="mb-6 text-lg font-medium text-gray-800">
+                            <p className="mb-6 text-lg font-medium text-black">
                                 <span
                                     dangerouslySetInnerHTML={{
                                         __html: `${idx + 1}. ${q.prompt}`
@@ -242,7 +255,7 @@ export default function QuizPage() {
                         <h2 className="text-3xl font-bold text-orange-700">
                             {score} / {quiz.length}
                         </h2>
-                        <p className="text-gray-700">Great job!</p>
+                        <p className="text-black">Great job!</p>
 
                         <button
                             onClick={restart}
@@ -261,7 +274,7 @@ export default function QuizPage() {
 
                 {/* live score footer */}
                 {quizReady && !finished && (
-                    <p className="text-center text-sm text-gray-600">
+                    <p className="text-center text-sm text-black">
                         Score&nbsp;{score} / {quiz.length}
                     </p>
                 )}

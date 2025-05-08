@@ -9,7 +9,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                 <h3 className="text-lg font-bold mb-4 text-black">{title}</h3>
                 <button
                     onClick={onClose}
-                    className="absolute top-2 right-2 hover:text-gray-800 text-black border-2 border-black"
+                    className="absolute top-2 right-2 hover:text-black text-black border-2 border-black"
                 >
                     <i className="ri-close-line ri-lg" />
                 </button>

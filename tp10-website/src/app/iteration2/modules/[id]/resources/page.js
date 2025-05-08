@@ -129,7 +129,7 @@ export default function ResourcesPage({ params }) {
                     </div>
 
                     {chart && (
-                        <p className="text-center text-sm text-gray-600">
+                        <p className="text-center text-sm text-black">
                             Bar chart showing the top 5 {pickField} counts.
                         </p>
                     )}
@@ -161,7 +161,7 @@ export default function ResourcesPage({ params }) {
                                 {Object.keys(rows[0] ?? {}).map(col => (
                                     <th
                                         key={col}
-                                        className="px-4 py-2 text-left font-medium text-gray-700"
+                                        className="px-4 py-2 text-left font-medium text-black"
                                     >
                                         {col}
                                     </th>
@@ -190,7 +190,7 @@ export default function ResourcesPage({ params }) {
                                 <tr>
                                     <td
                                         colSpan={Object.keys(rows[0] || {}).length}
-                                        className="px-4 py-2 text-center text-gray-500"
+                                        className="px-4 py-2 text-center text-black"
                                     >
                                         No matches found
                                     </td>

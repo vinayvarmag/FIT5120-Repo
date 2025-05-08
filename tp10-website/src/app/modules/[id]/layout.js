@@ -2,58 +2,54 @@
 "use client";
 
 import { useParams, usePathname, notFound } from "next/navigation";
-import Link                                from "next/link";
-import { modulesById }                     from "@/lib/learningModules";
+import Link from "next/link";
+import { modulesById } from "@/lib/learningModules";
 
 export default function ModuleLayout({ children }) {
-    const params   = useParams();
-    const pathname = usePathname();
-
-    const id            = params.id;
-    const currentModule = modulesById[id];
+    /* ── runtime data ───────────────────────────────────────── */
+    const { id }   = useParams();
+    const path     = usePathname();
+    const currentModule   = modulesById[id];
     if (!currentModule) return notFound();
 
+    /* ── sidebar tabs ──────────────────────────────────────── */
     const tabs = [
-        ["overview",   "Overview"],
-        ["objectives", "Objectives"],
-        ["resources",  "Resources"],
-        ["quiz",       "Quiz"],
+        ["overview",  "Overview"],
+        ["resources", "Resources"],
+        ["quiz",      "Quiz"],
     ];
 
     return (
-        <div className="min-h-screen w-full bg-white">
-            {/* module header (offset so it sits under the main navbar) */}
-            <header className="sticky top-20 z-30 bg-white/80 backdrop-blur">
-                {/*  ⬆ removed `border-b`  */}
-                <div className="mx-auto flex max-w-4xl flex-col gap-2 px-4 py-4">
-                    <h1 className="text-2xl font-bold text-purple-600">
-                        {currentModule.title}
-                    </h1>
+        <div className="flex min-h-screen bg-white">
+            {/* ── left sidebar / module navbar ───────────────────── */}
+            <aside
+                className="sticky top-16 z-40 flex h-[calc(100vh-4rem)] w-56 flex-col
+                   border-r border-gray-200 bg-white px-4 py-6"
+            >
+                <h1 className="mb-4 text-lg font-semibold">{currentModule.title}</h1>
 
-                    <nav className="flex gap-3">
-                        {tabs.map(([slug, label]) => {
-                            const href   = `/modules/${currentModule.id}/${slug}`;
-                            const active = pathname === href;
-                            return (
-                                <Link
-                                    key={slug}
-                                    href={href}
-                                    className={`rounded-full px-3 py-1 text-sm font-medium transition-colors  ${
-                                        active
-                                            ? "bg-purple-500 text-white"
-                                            : "bg-purple-50 bg-purple-900 text-white hover:bg-purple-100"
-                                    }`}
-                                >
-                                    {label}
-                                </Link>
-                            );
-                        })}
-                    </nav>
-                </div>
-            </header>
+                <nav className="flex flex-1 flex-col gap-2">
+                    {tabs.map(([slug, label]) => {
+                        const href   = `/modules/${id}/${slug}`;
+                        const active = path === href;
+                        return (
+                            <Link
+                                key={slug}
+                                href={href}
+                                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors
+                  ${active
+                                    ? "bg-purple-900 text-white"
+                                    : "text-purple-900 hover:bg-purple-100"}`}
+                            >
+                                {label}
+                            </Link>
+                        );
+                    })}
+                </nav>
+            </aside>
 
-            {/* page content */}
-            <main className="mx-auto max-w-4xl px-4 py-10">{children}</main>
+            {/* ── main page content ──────────────────────────────── */}
+            <main className="flex-1 px-6 py-8">{children}</main>
         </div>
     );
 }

@@ -178,14 +178,14 @@ export default function QuizPage() {
                     </div>
                 )}
 
-                {isLoading && <p className="text-center text-gray-600">Loading questions…</p>}
+                {isLoading && <p className="text-center text-black">Loading questions…</p>}
                 {error      && <p className="text-red-600">Failed to load dataset.</p>}
 
                 {/* main quiz panel */}
                 {quizReady && !finished && (
                     <AnimatePresence mode="wait">
                         <Card key={idx} className="p-8">
-                            <p className="mb-6 text-lg font-medium text-gray-800">
+                            <p className="mb-6 text-lg font-medium text-black">
                                 <span
                                     dangerouslySetInnerHTML={{
                                         __html: `${idx + 1}. ${q.prompt}`
@@ -242,7 +242,7 @@ export default function QuizPage() {
                         <h2 className="text-3xl font-bold text-orange-700">
                             {score} / {quiz.length}
                         </h2>
-                        <p className="text-gray-700">Great job!</p>
+                        <p className="text-black">Great job!</p>
 
                         <button
                             onClick={restart}
@@ -261,7 +261,7 @@ export default function QuizPage() {
 
                 {/* live score footer */}
                 {quizReady && !finished && (
-                    <p className="text-center text-sm text-gray-600">
+                    <p className="text-center text-sm text-black">
                         Score&nbsp;{score} / {quiz.length}
                     </p>
                 )}

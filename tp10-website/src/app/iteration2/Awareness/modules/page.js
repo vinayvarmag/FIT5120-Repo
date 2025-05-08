@@ -19,7 +19,7 @@ export default function LearningModulesPage() {
                 </header>
 
                 {/* description */}
-                <p className="mb-8 text-gray-700">
+                <p className="mb-8 text-black">
                     Explore a series of interactive modules designed to enhance your cultural awareness,
                     provide hands-on data exploration, and test your understanding through quizzes.
                     Each module dives into unique datasets and insights from around the world.
@@ -33,7 +33,7 @@ export default function LearningModulesPage() {
                 </section>
 
                 {/* disclaimer */}
-                <p className="mt-8 text-center text-xs italic text-gray-600">
+                <p className="mt-8 text-center text-xs italic text-black">
                     Disclaimer: The cultural data presented in this project is subject to
                     limitations in scope, categorization, and source bias. While every effort
                     has been made to ensure fair and respectful representation, some cultural

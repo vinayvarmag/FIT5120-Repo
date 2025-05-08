@@ -28,10 +28,10 @@ export default function ModuleCard({ module }) {
                 <h2 className="text-sm font-semibold">{module.title}</h2>
 
                 <ProgressBar value={progress} />
-                <p className="text-xs text-gray-600">{progress}% completed</p>
+                <p className="text-xs text-black">{progress}% completed</p>
 
                 <span className="mt-auto inline-block rounded-md border border-gray-800
-                         px-3 py-1.5 text-center text-sm font-medium text-gray-900
+                         px-3 py-1.5 text-center text-sm font-medium text-black
                          transition hover:bg-purple-900 hover:text-white">
           {buttonLabel}
         </span>

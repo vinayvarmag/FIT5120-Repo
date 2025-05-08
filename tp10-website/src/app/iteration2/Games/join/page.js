@@ -148,7 +148,7 @@ function JoinInner() {
                         className={`w-full px-4 py-2 rounded-lg border text-lg md:text-xl
                             ${choice === i
                                 ? "bg-purple-700 text-white"
-                                : "bg-white text-gray-800 hover:bg-gray-100"}`}
+                                : "bg-white text-black hover:bg-gray-100"}`}
                     >
                         {opt}
                     </button>
@@ -183,7 +183,7 @@ function JoinInner() {
                     }}
                 />
             </div>
-            <p className="text-sm text-gray-500">{secsLeft}s left</p>
+            <p className="text-sm text-black">{secsLeft}s left</p>
         </main>
     );
 }

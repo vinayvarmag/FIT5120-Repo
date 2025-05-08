@@ -10,7 +10,7 @@ export default function CulturalEtiquetteGuide() {
                     <h1 className="text-3xl font-bold text-orange-700">
                         Cultural Etiquette Guide
                     </h1>
-                    <p className="text-gray-700">
+                    <p className="text-black">
                         Victoria is home to hundreds of cultures, each with its own
                         traditions, greetings and social norms. This page gathers concise
                         etiquette tips so you can interact with respect and confidence.
@@ -19,7 +19,7 @@ export default function CulturalEtiquetteGuide() {
                 </header>
 
                 {/* sample etiquette blurb */}
-                <section className="space-y-4 text-sm leading-relaxed text-gray-800 bg-white/70 backdrop-blur-lg p-6 rounded-2xl shadow">
+                <section className="space-y-4 text-sm leading-relaxed text-black bg-white/70 backdrop-blur-lg p-6 rounded-2xl shadow">
                     <h2 className="text-lg font-semibold text-orange-700">
                         Quick universal courtesies
                     </h2>
@@ -48,7 +48,7 @@ export default function CulturalEtiquetteGuide() {
                             photographing people, religious sites or ceremonial events.
                         </li>
                     </ul>
-                    <p className="pt-2 text-xs italic text-gray-600">
+                    <p className="pt-2 text-xs italic text-black">
                         Note: these points are broad guidelines. Specific norms vary within
                         communities and families—when in doubt, ask politely.
                     </p>
@@ -90,7 +90,7 @@ export default function CulturalEtiquetteGuide() {
                 </aside>
 
                 {/* page disclaimer */}
-                <p className="text-center text-xs italic text-gray-600">
+                <p className="text-center text-xs italic text-black">
                     Disclaimer: The cultural information provided here is introductory. Norms
                     evolve and differ across regions, generations, and personal preference.
                     Always approach new interactions with curiosity and respect.
