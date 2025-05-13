@@ -131,7 +131,7 @@ export default function Navbar({ version }) {
                                 </div>
                             )}
                         </div>
-                        <Link href={`${vPrefix}/EventPlanner`} className={linkCls(`${vPrefix}/EventPlanner`)}>
+                        <Link href={`${vPrefix}/events`} className={linkCls(`${vPrefix}/events`)}>
                             Culture Event Planner
                         </Link>
                     </div>
@@ -171,7 +171,7 @@ export default function Navbar({ version }) {
                             </Link>
                         </div>
                     </details>
-                    <Link href={`${vPrefix}/EventPlanner`} className={mobLinkCls(`${vPrefix}/EventPlanner`)}>
+                    <Link href={`${vPrefix}/events`} className={mobLinkCls(`${vPrefix}/events`)}>
                         Culture Event Planner
                     </Link>
                 </div>

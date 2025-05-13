@@ -1,28 +1,24 @@
 import { NextResponse } from "next/server";
-import pool from "../db"; // ← Adjust the import path to match your actual db.js location
+import pool from "../db";
 
-// GET: Retrieve all events (with joined venue info)
+/* ─── GET  /api/event  → list every event with venue name ─── */
 export async function GET() {
     try {
-        const [rows] = await pool.query(`
-      SELECT
-        e.*,
-        v.venue_name,
-        v.venue_category,
-        v.venue_long,
-        v.venue_lat
-      FROM EVENT e
-      LEFT JOIN VENUE v ON e.venue_id = v.venue_id
-    `);
-
+        const [rows] = await pool.query(
+            `SELECT e.*,
+                    v.venue_name
+             FROM EVENT e
+                      LEFT JOIN VENUE v ON v.venue_id = e.venue_id
+             ORDER BY e.event_startdatetime`
+        );
         return NextResponse.json(rows);
-    } catch (error) {
-        console.error("Error fetching event:", error);
-        return NextResponse.json({ error: "Failed to fetch event" }, { status: 500 });
+    } catch (err) {
+        console.error("Error fetching events:", err);
+        return NextResponse.json({ error: "Failed to fetch events" }, { status: 500 });
     }
 }
 
-// POST: Create a new event
+/* ─── POST /api/event  → create a new event ─── */
 export async function POST(request) {
     try {
         const {
@@ -31,20 +27,30 @@ export async function POST(request) {
             event_startdatetime,
             event_enddatetime,
             venue_id,
-            event_budget,
+            event_budget = 0,
         } = await request.json();
 
-        // Insert into EVENT, using location_id = venue_id
-        await pool.query(
+        const [result] = await pool.query(
             `INSERT INTO EVENT
-             (event_title, event_description, event_startdatetime, event_enddatetime, venue_id, event_budget)
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [event_title, event_description, event_startdatetime, event_enddatetime, venue_id, event_budget]
+         (event_title, event_description, event_startdatetime,
+          event_enddatetime, venue_id, event_budget)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+            [
+                event_title,
+                event_description,
+                event_startdatetime,
+                event_enddatetime,
+                venue_id ?? null,
+                event_budget,
+            ]
         );
 
-        return NextResponse.json({ success: true });
-    } catch (error) {
-        console.error("Error creating event:", error);
+        const [created] = await pool.query("SELECT * FROM EVENT WHERE event_id = ?", [
+            result.insertId,
+        ]);
+        return NextResponse.json(created[0], { status: 201 });
+    } catch (err) {
+        console.error("Error creating event:", err);
         return NextResponse.json({ error: "Failed to create event" }, { status: 500 });
     }
 }
