@@ -1,10 +1,13 @@
 // File: src/app/events/[id]/edit/page.js
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/Modal";
 import "remixicon/fonts/remixicon.css";
+import jsPDF from "jspdf";
+import autoTable   from "jspdf-autotable";
+import dayjs       from "dayjs";
 
 export default function EditEventPage({ params }) {
     const router = useRouter();
@@ -60,6 +63,8 @@ export default function EditEventPage({ params }) {
     });
     const [isLogisticStatusOpen, setLogisticStatusModalOpen] = useState(false);
     const [selectedLogisticTaskForStatus, setSelectedLogisticTaskForStatus] = useState(null);
+
+    const printRef = useRef(null);
 
     /* ─── INITIAL LOAD ─── */
     useEffect(() => {
@@ -231,18 +236,139 @@ export default function EditEventPage({ params }) {
         );
     }
 
+    function exportStructuredPDF() {
+        if (!event) return;
+
+        const doc = new jsPDF({ unit: "mm", format: "a4" });
+        let cursorY = 20;
+
+        // —— 1.  TITLE
+        doc.setFontSize(18)
+            .text(eventTitle || "Untitled Event", 105, cursorY, { align: "center" });
+        cursorY += 10;
+
+        // — 2. DATE —
+        const formattedDate = dayjs(eventDateInput).format("DD MMM YYYY");
+        doc.setFontSize(12)
+            .text(`Date: ${formattedDate}`, 14, cursorY);
+        cursorY += 6;
+
+        // — 3. TIME —
+        doc.text(
+            `Time: ${eventStartTime} – ${eventEndTime}`,
+            14,
+            cursorY
+        );
+        cursorY += 6;
+
+        // — 4. VENUE —
+        const venueName = selectedVenue?.venue_name || "Not specified";
+        doc.text(`Venue: ${venueName}`, 14, cursorY);
+        cursorY += 6;
+
+        // — 5. DESCRIPTION —
+        if (eventDescription) {
+            doc.setFontSize(12)
+                .text("Description:", 14, cursorY);
+
+            // move down one line before printing the wrapped text:
+            cursorY += 6;
+
+            // wrap at 180 mm page-width (you can tweak this)
+            const wrapped = doc.splitTextToSize(eventDescription, 180);
+
+            // print each wrapped line, advancing Y by ~6 mm each
+            wrapped.forEach(line => {
+                doc.text(line, 14, cursorY);
+                cursorY += 6;
+
+                // if we hit the bottom, go to a new page
+                if (cursorY > 270) {
+                    doc.addPage();
+                    cursorY = 20;
+                }
+            });
+
+            // add a bit of breathing room before the next section
+            cursorY += 4;
+        } else {
+            cursorY += 4;
+        }
+
+        // — 6. TOTAL BUDGET —
+        const budgetValue = typeof eventBudget === "number"
+            ? eventBudget
+            : parseFloat(eventBudget) || 0;
+
+        doc.text(
+            `Total Budget: $${budgetValue.toFixed(2)}`,
+            14,
+            cursorY
+        );
+        cursorY += 8;
+
+        // helper – makes tables and pushes Y down
+        const makeTable = (title, head, rows) => {
+            if (!rows.length) return;
+            doc.setFontSize(13);
+            doc.text(title, 14, cursorY);
+            cursorY += 3;
+            autoTable(doc, {
+                head: [head],
+                body: rows,
+                startY: cursorY,
+                margin: { left: 14, right: 14 },
+                styles: { fontSize: 10 },
+            });
+            cursorY = doc.lastAutoTable.finalY + 8; // reserve some space
+            if (cursorY > 270) {                    // close to bottom? add a page
+                doc.addPage();
+                cursorY = 20;
+            }
+        };
+
+        // —— 3.  PARTICIPANTS
+        makeTable(
+            "Participants",
+            ["Name", "Role / Description"],
+            participants.map(p => [p.participant_fullname, p.participant_description ?? ""])
+        );
+
+        // —— 4.  AGENDA
+        makeTable(
+            "Agenda",
+            ["Timeframe", "Activity", "Notes", "Status"],
+            agendaItems.map(a => [
+                a.agenda_timeframe || "",
+                a.agenda_title     || "",
+                a.agenda_description || "",
+                a.agenda_status    || ""
+            ])
+        );
+
+        // —— 5.  LOGISTICS
+        makeTable(
+            "Logistics",
+            ["Item", "Details"],
+            logisticTasks.map(l => [l.item, l.details])
+        );
+
+        doc.save(`event-${id}.pdf`);
+    }
     /* ─── RENDER ─── */
     if (!event) return <p className="pt-24 px-4">Loading…</p>;
 
     return (
         <Suspense fallback={<p className="pt-24 px-4">Loading…</p>}>
             <div className="bg-gray-50 min-h-screen text-black">
-                <main className="max-w-3xl mx-auto px-4 pt-24 pb-8 space-y-8">
+                <main className="relative max-w-3xl mx-auto px-4 pt-24 pb-8 space-y-8">
 
                     {/* HEADER */}
                     <header className="text-center">
                         <h1 className="text-2xl font-bold">Edit Event – {eventTitle}</h1>
                     </header>
+
+
 
                     {/* EVENT DETAILS */}
                     <section className="bg-white shadow rounded-lg p-6">
@@ -330,6 +456,12 @@ export default function EditEventPage({ params }) {
                                 </button>
                                 <button type="button" onClick={handleDeleteEvent} className="flex-1 bg-red-600 text-white rounded-lg px-4 py-2">
                                     Delete Event
+                                </button>
+                                <button
+                                    onClick={exportStructuredPDF}
+                                    className="bg-purple-900 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg"
+                                >
+                                    Download PDF
                                 </button>
                             </div>
                         </form>

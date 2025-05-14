@@ -3,12 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 /* how long to wait (ms) before hiding the submenu */
 const CLOSE_DELAY = 400;
 
 export default function Navbar({ version }) {
+    const { user, setUser } = useAuth();
     const [burgerOpen, setBurgerOpen] = useState(false);
     const [hideBar, setHideBar] = useState(false);
     const [barPinned, setBarPinned] = useState(false);
@@ -17,7 +19,9 @@ export default function Navbar({ version }) {
     const hideTimer = useRef(null);
     const prevY = useRef(0);
     const pathname = usePathname();
+    const router = useRouter();
 
+    // scroll hide/show logic
     useEffect(() => {
         const onScroll = () => {
             const y = window.scrollY;
@@ -32,18 +36,44 @@ export default function Navbar({ version }) {
         return () => window.removeEventListener("scroll", onScroll);
     }, [barPinned]);
 
+    // fetch current user on mount
+    useEffect(() => {
+        async function fetchUser() {
+            try {
+                const res = await fetch("/api/auth/me");
+                if (res.ok) {
+                    const data = await res.json();
+                    setUser(data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch user", err);
+            }
+        }
+        fetchUser();
+    }, []);
+
+    // sign-out handler
+    const handleSignOut = async () => {
+        try {
+            await fetch("/api/auth/logout", { method: "POST" });
+            setUser(null);
+            router.push("/");
+        } catch (err) {
+            console.error("Sign out error", err);
+        }
+    };
+
+    // version prefix logic
     const currentVer = (() => {
-        if (version) return version.replace(/^\/|\/$/g, "");
+        if (version) return version.replace(/^\/|\/$/, "");
         const first = pathname.split("/")[1];
         return first?.startsWith("iteration") ? first : "";
     })();
     const vPrefix = currentVer ? `/${currentVer}` : "";
 
+    // active link detection
     const isActive = (href) => {
-        if (href === "/") {
-            // Home: mark active only on the exact root
-            return pathname === "/";
-        }
+        if (href === "/") return pathname === "/";
         return pathname === href || pathname.startsWith(`${href}/`);
     };
 
@@ -61,6 +91,7 @@ export default function Navbar({ version }) {
                 : "border-transparent text-black hover:text-black hover:bg-gray-50 hover:border-gray-300"
         }`;
 
+    // submenu open/close
     const openAwareness = () => {
         clearTimeout(hideTimer.current);
         setAwarenessOpen(true);
@@ -100,14 +131,21 @@ export default function Navbar({ version }) {
 
                     {/* desktop nav */}
                     <div className="hidden sm:flex gap-8 items-center text-2xl">
-                        <Link href={vPrefix || "/"} className={linkCls(vPrefix || "/")}>Home</Link>
-                        <Link href={`${vPrefix}/Games`} className={linkCls(`${vPrefix}/Games`)}>Games</Link>
+                        <Link href={vPrefix || "/"} className={linkCls(vPrefix || "/")}>
+                            Home
+                        </Link>
+                        <Link href={`${vPrefix}/Games`} className={linkCls(`${vPrefix}/Games`)}>
+                            Games
+                        </Link>
                         <div
                             className="relative"
                             onMouseEnter={openAwareness}
                             onMouseLeave={scheduleClose}
                         >
-                            <Link href={`${vPrefix}/Awareness`} className={linkCls(`${vPrefix}/Awareness`)}>
+                            <Link
+                                href={`${vPrefix}/Awareness`}
+                                className={linkCls(`${vPrefix}/Awareness`)}
+                            >
                                 Culture Awareness ▾
                             </Link>
 
@@ -118,13 +156,22 @@ export default function Navbar({ version }) {
                                     onMouseLeave={scheduleClose}
                                 >
                                     <div className="py-1">
-                                        <Link href={`${vPrefix}/Awareness/precinct`} className="block px-4 py-2 text-base hover:bg-gray-100">
+                                        <Link
+                                            href={`${vPrefix}/Awareness/precinct`}
+                                            className="block px-4 py-2 text-base hover:bg-gray-100"
+                                        >
                                             Cultural Precinct Exploration
                                         </Link>
-                                        <Link href={`${vPrefix}/Awareness/modules`} className="block px-4 py-2 text-base hover:bg-gray-100">
+                                        <Link
+                                            href={`${vPrefix}/Awareness/modules`}
+                                            className="block px-4 py-2 text-base hover:bg-gray-100"
+                                        >
                                             Learning Modules
                                         </Link>
-                                        <Link href={`${vPrefix}/Awareness/etiquette`} className="block px-4 py-2 text-base hover:bg-gray-100">
+                                        <Link
+                                            href={`${vPrefix}/Awareness/etiquette`}
+                                            className="block px-4 py-2 text-base hover:bg-gray-100"
+                                        >
                                             Cultural Etiquette Guide
                                         </Link>
                                     </div>
@@ -134,18 +181,53 @@ export default function Navbar({ version }) {
                         <Link href={`${vPrefix}/events`} className={linkCls(`${vPrefix}/events`)}>
                             Culture Event Planner
                         </Link>
+                        {!user ? (
+                            <>
+                                <Link href={`${vPrefix}/login`} className={linkCls(`${vPrefix}/login`)}>
+                                    Login
+                                </Link>
+                                <Link href={`${vPrefix}/register`} className={linkCls(`${vPrefix}/signup`)}>
+                                    Register
+                                </Link>
+                            </>
+                        ) : (
+                            <>
+                <span className="inline-flex items-center px-1 pt-1 text-lg font-semibold text-black">
+                  {user.id}
+                </span>
+                                <button
+                                    onClick={handleSignOut}
+                                    className="inline-flex items-center px-1 pt-1 text-lg font-semibold text-black hover:text-gray-700"
+                                >
+                                    Sign Out
+                                </button>
+                            </>
+                        )}
                     </div>
 
                     {/* mobile burger */}
-                    <button onClick={() => setBurgerOpen(!burgerOpen)} className="sm:hidden p-2 rounded-md">
+                    <button
+                        onClick={() => setBurgerOpen(!burgerOpen)}
+                        className="sm:hidden p-2 rounded-md"
+                    >
                         <span className="sr-only">Open main menu</span>
                         {burgerOpen ? (
                             <svg className="w-6 h-6" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
                             </svg>
                         ) : (
                             <svg className="w-6 h-6" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M4 6h16M4 12h16M4 18h16"
+                                />
                             </svg>
                         )}
                     </button>
@@ -155,18 +237,33 @@ export default function Navbar({ version }) {
             {/* mobile panel */}
             {burgerOpen && (
                 <div className="sm:hidden">
-                    <Link href={vPrefix || "/"} className={mobLinkCls(vPrefix || "/")}>Home</Link>
-                    <Link href={`${vPrefix}/Games`} className={mobLinkCls(`${vPrefix}/Games`)}>Games</Link>
+                    <Link href={vPrefix || "/"} className={mobLinkCls(vPrefix || "/")}>
+                        Home
+                    </Link>
+                    <Link href={`${vPrefix}/Games`} className={mobLinkCls(`${vPrefix}/Games`)}>
+                        Games
+                    </Link>
                     <details open className="border-t border-gray-200">
-                        <summary className="pl-3 pr-4 py-2 text-lg font-bold">Culture Awareness</summary>
+                        <summary className="pl-3 pr-4 py-2 text-lg font-bold">
+                            Culture Awareness
+                        </summary>
                         <div className="space-y-1 bg-gray-50">
-                            <Link href={`${vPrefix}/Awareness/precinct`} className={mobLinkCls(`${vPrefix}/Awareness/precinct`)}>
+                            <Link
+                                href={`${vPrefix}/Awareness/precinct`}
+                                className={mobLinkCls(`${vPrefix}/Awareness/precinct`)}
+                            >
                                 Cultural Precinct Exploration
                             </Link>
-                            <Link href={`${vPrefix}/Awareness/modules`} className={mobLinkCls(`${vPrefix}/Awareness/modules`)}>
+                            <Link
+                                href={`${vPrefix}/Awareness/modules`}
+                                className={mobLinkCls(`${vPrefix}/Awareness/modules`)}
+                            >
                                 Learning Modules
                             </Link>
-                            <Link href={`${vPrefix}/Awareness/etiquette`} className={mobLinkCls(`${vPrefix}/Awareness/etiquette`)}>
+                            <Link
+                                href={`${vPrefix}/Awareness/etiquette`}
+                                className={mobLinkCls(`${vPrefix}/Awareness/etiquette`)}
+                            >
                                 Cultural Etiquette Guide
                             </Link>
                         </div>
@@ -174,6 +271,34 @@ export default function Navbar({ version }) {
                     <Link href={`${vPrefix}/events`} className={mobLinkCls(`${vPrefix}/events`)}>
                         Culture Event Planner
                     </Link>
+                    {!user ? (
+                        <>
+                            <Link
+                                href={`${vPrefix}/login`}
+                                className={mobLinkCls(`${vPrefix}/login`)}
+                            >
+                                Login
+                            </Link>
+                            <Link
+                                href={`${vPrefix}/register`}
+                                className={mobLinkCls(`${vPrefix}/signup`)}
+                            >
+                                Sign Up
+                            </Link>
+                        </>
+                    ) : (
+                        <>
+              <span className="block pl-3 pr-4 py-2 text-lg font-bold">
+                {user.id}
+              </span>
+                            <button
+                                onClick={handleSignOut}
+                                className="block w-full text-left pl-3 pr-4 py-2 text-lg font-bold hover:bg-gray-100"
+                            >
+                                Sign Out
+                            </button>
+                        </>
+                    )}
                 </div>
             )}
         </nav>

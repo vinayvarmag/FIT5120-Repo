@@ -5,7 +5,7 @@ export const learningModules = [
         id: "global-icons",
         /* ⬇ put the image in /public/images/modules/1-global-icons.webp */
         img: "/modules/1-global-icons.jpg",
-        title: "Global Icons (2025)",
+        title: "Global Icons",
         overview:[
             "Meet the public figures that shaped politics, science, sport and pop-culture in 2025.",
         "Identify at least one influential figure for every UN member state.",
@@ -25,7 +25,7 @@ export const learningModules = [
     {
         id: "traditional-arts",
         img: "/modules/2-traditional-arts.jpg",
-        title: "Traditional Arts & Handicrafts",
+        title: "Traditional Arts",
         overview:
             "Explore artisan skills that embody cultural identity and community memory.",
         objectives: [
@@ -40,7 +40,7 @@ export const learningModules = [
     {
         id: "cultural-festivals",
         img: "/modules/3-cultural-festivals.jpg",
-        title: "Global Festival Almanac",
+        title: "Global Festivals",
         overview:
             "Discover celebrations—ancient and modern—that bring communities together.",
         objectives: [
@@ -55,7 +55,7 @@ export const learningModules = [
     {
         id: "world-dishes",
         img: "/modules/4-world-dishes.jpg",
-        title: "World Cuisine Explorer",
+        title: "World Cuisines",
         overview:
             "A pantry of recipes, flavours and food customs for interactive quizzes and games.",
         objectives: [

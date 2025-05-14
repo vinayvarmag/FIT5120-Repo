@@ -1,147 +1,86 @@
-/* File: src/app/events/page.js */
+// File: src/app/events/page.js
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import Image from "next/image";
+import Link   from "next/link";
+import { FaPlus, FaRegCalendarAlt } from "react-icons/fa";
 
-export default function EventsHome() {
-    const [events, setEvents] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [search, setSearch] = useState("");
+/* ---------- actions shown in the list ---------- */
+const actions = [
+    {
+        key: "create",
+        title: "Create Event",
+        icon: FaPlus,
+        description:
+            "Plan a new event in seconds. Set a date, venue, budget and more—all in one place.",
+        href: "/events/create",      // adjust if your form route is different
+    },
+    {
+        key: "calendar",
+        title: "View Events",
+        icon: FaRegCalendarAlt,
+        description:
+            "See every event you’ve planned in a beautiful calendar view and make quick edits.",
+        href: "/events/view",           // adjust if your listing route is different
+    },
+];
 
-    /* ─── initial load ─── */
-    useEffect(() => {
-        async function load() {
-            setLoading(true);
-            const data = await fetch("/api/event").then((r) => r.json());
-            setEvents(data);
-            setLoading(false);
-        }
-        load();
-    }, []);
-
-    /* ─── helpers ─── */
-    function formatRange(ev) {
-        if (!ev.event_startdatetime) return "Date TBA";
-        const start = new Date(ev.event_startdatetime);
-        const end = ev.event_enddatetime ? new Date(ev.event_enddatetime) : null;
-        const opts = { day: "2-digit", month: "short", year: "numeric" };
-        const sStr = start.toLocaleDateString(undefined, opts);
-        if (!end) return sStr;
-        const sameDay = start.toDateString() === end.toDateString();
-        return sameDay
-            ? sStr
-            : `${sStr} – ${end.toLocaleDateString(undefined, opts)}`;
-    }
-
-    async function copyRsvpLink(ev) {
-        const link = `${location.origin}/events/${ev.event_id}/rsvp`;
-        await navigator.clipboard.writeText(link);
-        alert("Public RSVP link copied to clipboard!");
-    }
-
-    async function deleteEvent(ev) {
-        if (
-            !confirm(`Are you sure you want to delete the event "${ev.event_title}"?`)
-        ) {
-            return;
-        }
-
-        const res = await fetch(`/api/event/${ev.event_id}`, {
-            method: "DELETE",
-        });
-
-        if (res.ok) {
-            // remove from local state
-            setEvents((prev) =>
-                prev.filter((e) => e.event_id !== ev.event_id)
-            );
-        } else {
-            alert("Failed to delete event.");
-        }
-    }
-
-    const filtered = events.filter((ev) =>
-        ev.event_title.toLowerCase().includes(search.toLowerCase())
-    );
-
+/* -------------------------------------------------------------------------- */
+export default function EventsLanding() {
     return (
-        <main className="min-h-screen bg-gray-50 text-black pt-24 pb-10">
-            <div className="max-w-7xl mx-auto px-4">
-                <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-                    <h1 className="text-3xl font-bold">Events</h1>
+        <main className="min-h-screen flex flex-col">
+            {/* ---------- hero banner ---------- */}
+            <section className="relative w-full h-[300px] md:h-[450px] lg:h-[550px]">
+                {/* background image */}
+                <Image
+                    src="/events_hero.jpg"
+                    alt="People collaborating at a workshop"
+                    fill
+                    priority
+                    className="object-cover object-center"
+                />
+                {/* dark overlay */}
+                <div className="absolute inset-0 bg-black/25" />
+                {/* title overlay */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center px-4 space-y-4">
+                    <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg text-center mb-12">
+                        Events Hub
+                    </h1>
+                    <p className="text-center max-w-3xl text-white text-xl font-semibold">
+                        Organise, track and celebrate your activities with a simple yet powerful
+                        event‑management workflow.
+                    </p>
+                </div>
+            </section>
 
-                    <div className="flex-1 flex gap-4 md:justify-end">
-                        <input
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Search title…"
-                            className="flex-1 md:flex-none md:w-64 border rounded-lg px-3 py-2"
-                        />
+            {/* ---------- introductory copy ---------- */}
+            <section className="flex flex-col items-center px-4 py-12">
+                <p className="text-center max-w-3xl font-bold text-black text-xl mb-6">
+                    Choose an action to get started!
+                </p>
+
+                {/* ---------- action cards ---------- */}
+                <div className="flex flex-col gap-6 w-full max-w-4xl">
+                    {actions.map(({ key, title, icon: Icon, description, href }) => (
                         <Link
-                            href="/events/create"
-                            className="bg-purple-900 text-white px-4 py-2 rounded-lg hover:bg-purple-800 flex-none"
+                            key={key}
+                            href={href}
+                            className="flex items-start bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition"
                         >
-                            + Create Event
-                        </Link>
-                    </div>
-                </header>
-
-                {loading ? (
-                    <p>Loading…</p>
-                ) : filtered.length === 0 ? (
-                    <p>No events found.</p>
-                ) : (
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filtered.map((ev) => (
-                            <div
-                                key={ev.event_id}
-                                className="bg-white shadow rounded-lg p-6 flex flex-col justify-between"
-                            >
-                                {/* title + date */}
-                                <div>
-                                    <h2 className="text-xl font-semibold mb-1 truncate">
-                                        {ev.event_title}
-                                    </h2>
-                                    <p className="text-sm text-gray-600">{formatRange(ev)}</p>
-                                    {ev.venue_name && (
-                                        <p className="text-sm text-gray-600 mt-1">
-                                            {ev.venue_name}
-                                        </p>
-                                    )}
-                                </div>
-
-                                {/* actions */}
-                                <div className="mt-6 flex flex-col gap-2">
-                                    {/* Edit */}
-                                    <Link
-                                        href={`/events/${ev.event_id}/edit`}
-                                        className="w-full text-center bg-purple-900 text-white py-2 rounded-lg hover:bg-purple-800"
-                                    >
-                                        Edit
-                                    </Link>
-
-                                    {/* Delete */}
-                                    <button
-                                        onClick={() => deleteEvent(ev)}
-                                        className="w-full text-center bg-red-600 text-white py-2 rounded-lg hover:bg-red-700"
-                                    >
-                                        Delete
-                                    </button>
-
-                                    {/* Copy RSVP */}
-                                    <button
-                                        onClick={() => copyRsvpLink(ev)}
-                                        className="w-full bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 text-sm"
-                                    >
-                                        Copy RSVP Link
-                                    </button>
-                                </div>
+                            {/* icon + title */}
+                            <div className="flex-none w-64 flex items-center space-x-4 mr-8">
+                                <Icon className="text-4xl text-purple-900" />
+                                <h3 className="text-xl font-semibold text-black">{title}</h3>
                             </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+
+                            {/* description */}
+                            <div className="flex-1">
+                                <p className="text-black">{description}</p>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+            </section>
         </main>
     );
 }
