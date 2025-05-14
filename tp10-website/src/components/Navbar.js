@@ -109,7 +109,7 @@ export default function Navbar({ version }) {
                 hideBar ? "-translate-y-full" : "translate-y-0"
             }`}
         >
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="w-full px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* logo */}
                     <Link href={vPrefix || "/"} className="flex items-center gap-2">
@@ -130,7 +130,7 @@ export default function Navbar({ version }) {
                     </Link>
 
                     {/* desktop nav */}
-                    <div className="hidden sm:flex gap-8 items-center text-2xl">
+                    <div className="hidden sm:flex items-center gap-8 ml-auto text-2xl px-8">
                         <Link href={vPrefix || "/"} className={linkCls(vPrefix || "/")}>
                             Home
                         </Link>
@@ -179,7 +179,13 @@ export default function Navbar({ version }) {
                             )}
                         </div>
                         <Link href={`${vPrefix}/events`} className={linkCls(`${vPrefix}/events`)}>
-                            Culture Event Planner
+                            Event Planner
+                        </Link>
+                        <Link href={`${vPrefix}/EventCalendar`} className={linkCls(`${vPrefix}/EventCalendar`)}>
+                            Event Calendar
+                        </Link>
+                        <Link href={`${vPrefix}/ExchangeProgram`} className={linkCls(`${vPrefix}/ExchangeProgram`)}>
+                            Exchange Program
                         </Link>
                         {!user ? (
                             <>
@@ -269,7 +275,13 @@ export default function Navbar({ version }) {
                         </div>
                     </details>
                     <Link href={`${vPrefix}/events`} className={mobLinkCls(`${vPrefix}/events`)}>
-                        Culture Event Planner
+                        Event Planner
+                    </Link>
+                    <Link href={`${vPrefix}/EventCalendar`} className={linkCls(`${vPrefix}/EventCalendar`)}>
+                        Event Calendar
+                    </Link>
+                    <Link href={`${vPrefix}/ExchangeProgram`} className={linkCls(`${vPrefix}/ExchangeProgram`)}>
+                        Exchange Program
                     </Link>
                     {!user ? (
                         <>

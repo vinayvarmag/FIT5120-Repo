@@ -70,8 +70,7 @@ export default function EventCalendarLanding() {
                         Event Calendar
                     </h1>
                     <p className="text-center max-w-3xl text-white text-xl font-semibold">
-                        Discover what’s on, save the events you love, and keep track of everything
-                        that matters – all in one place.
+                        This is an all-in-one cultural calendar. Easily keep track of saved or planned events, and browse public holidays from around the world to better organize cultural activities and personal schedules.
                     </p>
                 </div>
             </section>
@@ -79,7 +78,7 @@ export default function EventCalendarLanding() {
             {/* ---------- introductory copy ---------- */}
             <section className="flex flex-col items-center px-4 py-12">
                 <p className="text-center max-w-3xl font-bold text-black text-xl mb-6">
-                    Select a section below to explore!
+                    Explore events from the list of events and add to "My Event" by clicking on the "bookmark" icon. Add an event to the top of your list by selecting the "star" icon.
                 </p>
 
                 {/* ---------- section cards ---------- */}

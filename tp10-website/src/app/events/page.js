@@ -47,8 +47,7 @@ export default function EventsLanding() {
                         Events Hub
                     </h1>
                     <p className="text-center max-w-3xl text-white text-xl font-semibold">
-                        Organise, track and celebrate your activities with a simple yet powerful
-                        event‑management workflow.
+                        Welcome to the all-in-one cultural event planning space! Create events, set time, location, and budget, add agendas, participants, and logistics—and set reminders or sync with the calendar. With a built-in finance dashboard, track expenses and budget at a glance. Whether it's a small gathering or a large celebration, this planner helps keep everything organized.
                     </p>
                 </div>
             </section>

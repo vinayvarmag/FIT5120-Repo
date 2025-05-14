@@ -36,7 +36,7 @@ const features = [
         title: 'Event Planner',
         description: 'Plan events across the world!',
         icon: FiUsers,
-        link: '/EventPlanner',
+        link: '/events',
     },
     {
         title: 'Culture Awareness',
