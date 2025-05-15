@@ -96,7 +96,6 @@ export default function Games() {
             setRes(d);
             const origin = (API?.startsWith("https://") ? API : window.location.origin).replace(/\/$/, "");
             setTts(`${origin}${d.tts}`);
-            setTts(`${base.replace(/\/$/, "")}${d.tts}`);
             setRec(false);
             setView("pronounce-result");
         };
