@@ -94,7 +94,7 @@ async def tts(word: str):
         path,
         media_type="audio/mpeg",
         filename=f"{word}.mp3",
-        headers={"Cache-Control": "public, max-age=86400"},
+        headers={"Cache-Control": "public, max-age=86400","Access-Control-Allow-Origin": "*"},
     )
 
 # --------------------------------------------------------------------------- #
