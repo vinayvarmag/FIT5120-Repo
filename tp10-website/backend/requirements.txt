@@ -12,3 +12,4 @@ phonetics
 rapidfuzz
 python-multipart
 groq
+gTTS
