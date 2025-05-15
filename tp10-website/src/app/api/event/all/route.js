@@ -1,16 +1,26 @@
-/* GET /api/event/all  →  every event in the system */
+// File: src/app/api/event/all/route.js
 import { NextResponse } from "next/server";
-import pool from "../../db";            //  ← same pool you already use
+import pool from "../../db";
 
+/* GET /api/event/all  →  every event in the system (no JOIN with VENUE) */
 export async function GET() {
     try {
         const [rows] = await pool.query(
-            `SELECT  e.*,
-                     v.venue_name
-               FROM  EVENT e
-               LEFT JOIN VENUE v ON v.venue_id = e.venue_id
-              ORDER BY e.event_startdatetime`
+            `SELECT
+                 event_id,
+                 user_id,
+                 event_title,
+                 event_description,
+                 event_startdatetime,
+                 event_enddatetime,
+                 event_budget,
+                 venue_place_id,
+                 venue_name,
+                 venue_address
+             FROM EVENT
+             ORDER BY event_startdatetime`
         );
+
         return NextResponse.json(rows);
     } catch (err) {
         console.error("GET /api/event/all", err);

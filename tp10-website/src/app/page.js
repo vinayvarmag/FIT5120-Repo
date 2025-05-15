@@ -12,6 +12,13 @@ const heroSlides = ['/slide1.jpg', '/slide2.jpg', '/slide3.jpg'];
 /* ─── feature cards ──────────────────────────────── */
 const features = [
     {
+        title: 'Culture Awareness',
+        description:
+            'Uncover stories, traditions, and values from different cultures.',
+        icon: FaGlobe,
+        link: '/Awareness',
+    },
+    {
         title: 'Games',
         description:
             'Step into a world of fun cultural games! From language match‑ups to global trivia and role‑play adventures.',
@@ -26,25 +33,20 @@ const features = [
         link: '/EventCalendar',
     },
     {
-        title: 'Exchange Program',
-        description:
-            'Make friends across the world! Join global classrooms, exchange letters, or team up on cultural projects.',
-        icon: FiMapPin,
-        link: '/ExchangeProgram',
-    },
-    {
         title: 'Event Planner',
         description: 'Plan events across the world!',
         icon: FiUsers,
         link: '/events',
     },
     {
-        title: 'Culture Awareness',
+        title: 'Exchange Program',
         description:
-            'Uncover stories, traditions, and values from different cultures.',
-        icon: FaGlobe,
-        link: '/Awareness',
+            'Make friends across the world! Join global classrooms, exchange letters, or team up on cultural projects.',
+        icon: FiMapPin,
+        link: '/ExchangeProgram',
     },
+
+
 ];
 
 /* ─── hero section ───────────────────────────────── */

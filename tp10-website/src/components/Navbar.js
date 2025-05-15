@@ -134,9 +134,7 @@ export default function Navbar({ version }) {
                         <Link href={vPrefix || "/"} className={linkCls(vPrefix || "/")}>
                             Home
                         </Link>
-                        <Link href={`${vPrefix}/Games`} className={linkCls(`${vPrefix}/Games`)}>
-                            Games
-                        </Link>
+
                         <div
                             className="relative"
                             onMouseEnter={openAwareness}
@@ -178,11 +176,14 @@ export default function Navbar({ version }) {
                                 </div>
                             )}
                         </div>
-                        <Link href={`${vPrefix}/events`} className={linkCls(`${vPrefix}/events`)}>
-                            Event Planner
+                        <Link href={`${vPrefix}/Games`} className={linkCls(`${vPrefix}/Games`)}>
+                            Games
                         </Link>
                         <Link href={`${vPrefix}/EventCalendar`} className={linkCls(`${vPrefix}/EventCalendar`)}>
                             Event Calendar
+                        </Link>
+                        <Link href={`${vPrefix}/events`} className={linkCls(`${vPrefix}/events`)}>
+                            Event Planner
                         </Link>
                         <Link href={`${vPrefix}/ExchangeProgram`} className={linkCls(`${vPrefix}/ExchangeProgram`)}>
                             Exchange Program
@@ -246,9 +247,6 @@ export default function Navbar({ version }) {
                     <Link href={vPrefix || "/"} className={mobLinkCls(vPrefix || "/")}>
                         Home
                     </Link>
-                    <Link href={`${vPrefix}/Games`} className={mobLinkCls(`${vPrefix}/Games`)}>
-                        Games
-                    </Link>
                     <details open className="border-t border-gray-200">
                         <summary className="pl-3 pr-4 py-2 text-lg font-bold">
                             Culture Awareness
@@ -274,11 +272,14 @@ export default function Navbar({ version }) {
                             </Link>
                         </div>
                     </details>
-                    <Link href={`${vPrefix}/events`} className={mobLinkCls(`${vPrefix}/events`)}>
-                        Event Planner
+                    <Link href={`${vPrefix}/Games`} className={mobLinkCls(`${vPrefix}/Games`)}>
+                        Games
                     </Link>
                     <Link href={`${vPrefix}/EventCalendar`} className={linkCls(`${vPrefix}/EventCalendar`)}>
                         Event Calendar
+                    </Link>
+                    <Link href={`${vPrefix}/events`} className={mobLinkCls(`${vPrefix}/events`)}>
+                        Event Planner
                     </Link>
                     <Link href={`${vPrefix}/ExchangeProgram`} className={linkCls(`${vPrefix}/ExchangeProgram`)}>
                         Exchange Program

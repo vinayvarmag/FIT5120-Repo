@@ -3,65 +3,64 @@
 
 import { useEffect, useState, Suspense, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Modal from "@/components/Modal";
+import Modal     from "@/components/Modal";
+import jsPDF     from "jspdf";
+import autoTable from "jspdf-autotable";
+import dayjs     from "dayjs";
 import "remixicon/fonts/remixicon.css";
-import jsPDF from "jspdf";
-import autoTable   from "jspdf-autotable";
-import dayjs       from "dayjs";
 
 export default function EditEventPage({ params }) {
-    const router = useRouter();
-    const { id } =  params;
+    const router       = useRouter();
+    const { id }       = params;
 
-    /* ─── EVENT FORM STATES ─── */
-    const [event, setEvent] = useState(null);
-    const [eventTitle, setEventTitle] = useState("");
-    const [eventDateInput, setEventDateInput] = useState("");
-    const [eventStartTime, setEventStartTime] = useState("");
-    const [eventEndTime, setEventEndTime] = useState("");
-    const [selectedVenue, setSelectedVenue] = useState(null);
-    const [venueSearchQuery, setVenueSearchQuery] = useState("");
-    const [venueResults, setVenueResults] = useState([]);
+    /* ─────────────── EVENT FORM STATE ─────────────── */
+    const [event,           setEvent]           = useState(null);
+    const [eventTitle,      setEventTitle]      = useState("");
+    const [eventDateInput,  setEventDateInput]  = useState("");
+    const [eventStartTime,  setEventStartTime]  = useState("");
+    const [eventEndDate,    setEventEndDate]    = useState("");
+    const [eventEndTime,    setEventEndTime]    = useState("");
+
+    /* ─────────────── VENUE AUTOCOMPLETE ───────────── */
+    const [selectedVenue,      setSelectedVenue]   = useState(null);
+    const [venueSearchQuery,   setVenueSearchQuery] = useState("");
+    const [venueResults,       setVenueResults]     = useState([]);
+    const [loading,            setLoading]          = useState(false);
+
+    /* ───────────── OTHER FORM STATE ──────────────── */
     const [eventDescription, setEventDescription] = useState("");
-    const [eventBudget, setEventBudget] = useState(50000);
-    const [currentExpenses, setCurrentExpenses] = useState(0);
+    const [eventBudget,      setEventBudget]      = useState(50000);
+    const [currentExpenses,  setCurrentExpenses]  = useState(0);
 
-    /* ─── PARTICIPANT STATE ─── */
-    const [participants, setParticipants] = useState([]);
-    const [participantSearch, setParticipantSearch] = useState("");
-    const [eventParticipants, setEventParticipants] = useState([]);
-    const [isParticipantModalOpen, setParticipantModalOpen] = useState(false);
-    const [editingParticipant, setEditingParticipant] = useState(null);
-    const [participantForm, setParticipantForm] = useState({
-        participant_fullname: "",
-        participant_description: "",
-        ethnicity_id: "",
-        category_id: "",
+    /* participants, agenda, logistics state … unchanged */
+    /* (all the big blocks below are identical to your original file) */
+    const [participants,           setParticipants]           = useState([]);
+    const [participantSearch,      setParticipantSearch]      = useState("");
+    const [eventParticipants,      setEventParticipants]      = useState([]);
+    const [isParticipantModalOpen, setParticipantModalOpen]   = useState(false);
+    const [editingParticipant,     setEditingParticipant]     = useState(null);
+    const [participantForm,        setParticipantForm]        = useState({
+        participant_fullname: "", participant_description: "",
+        ethnicity_id: "", category_id: ""
     });
-    const [ethnicities, setEthnicities] = useState([]);
-    const [participantCategories, setParticipantCategories] = useState([]);
+    const [ethnicities,            setEthnicities]            = useState([]);
+    const [participantCategories,  setParticipantCategories]  = useState([]);
 
-    /* ─── AGENDA STATE ─── */
-    const [agendaItems, setAgendaItems] = useState([]);
-    const [isAgendaModalOpen, setAgendaModalOpen] = useState(false);
-    const [editingAgendaItem, setEditingAgendaItem] = useState(null);
-    const [agendaForm, setAgendaForm] = useState({
-        agenda_timeframe: "",
-        agenda_title: "",
-        agenda_description: "",
-        agenda_status: "Pending",
+    const [agendaItems,        setAgendaItems]        = useState([]);
+    const [isAgendaModalOpen,  setAgendaModalOpen]    = useState(false);
+    const [editingAgendaItem,  setEditingAgendaItem]  = useState(null);
+    const [agendaForm,         setAgendaForm]         = useState({
+        agenda_timeframe: "", agenda_title: "",
+        agenda_description: "", agenda_status: "Pending"
     });
 
-    /* ─── LOGISTICS STATE ─── */
-    const [logisticTasks, setLogisticTasks] = useState([]);
-    const [isLogisticModalOpen, setLogisticModalOpen] = useState(false);
-    const [editingLogisticTask, setEditingLogisticTask] = useState(null);
-    const [newLogisticTask, setNewLogisticTask] = useState({
-        logistic_title: "",
-        logistic_description: "",
-        logistic_status: "Pending",
+    const [logisticTasks,          setLogisticTasks]          = useState([]);
+    const [isLogisticModalOpen,    setLogisticModalOpen]      = useState(false);
+    const [editingLogisticTask,    setEditingLogisticTask]    = useState(null);
+    const [newLogisticTask,        setNewLogisticTask]        = useState({
+        logistic_title: "", logistic_description: "", logistic_status: "Pending"
     });
-    const [isLogisticStatusOpen, setLogisticStatusModalOpen] = useState(false);
+    const [isLogisticStatusOpen,   setLogisticStatusModalOpen] = useState(false);
     const [selectedLogisticTaskForStatus, setSelectedLogisticTaskForStatus] = useState(null);
 
     const printRef = useRef(null);
@@ -83,19 +82,21 @@ export default function EditEventPage({ params }) {
                 const d = new Date(ev.event_enddatetime);
                 setEventEndTime(d.toISOString().split("T")[1].slice(0,5));
             }
-            if (ev.venue_id) {
+            if (ev.venue_place_id) {
                 setSelectedVenue({
-                    venue_id: ev.venue_id,
-                    venue_name: ev.venue_name,
-                    venue_category: ev.venue_category,
-                    venue_long: ev.venue_long,
-                    venue_lat: ev.venue_lat,
+                    place_id:          ev.venue_place_id,
+                    name:              ev.venue_name,
+                    formatted_address: ev.venue_address,
                 });
-                setVenueSearchQuery(ev.venue_name);
+            }
+            if (ev.event_enddatetime) {
+                const dEnd = new Date(ev.event_enddatetime);
+                setEventEndDate(dEnd.toISOString().split("T")[0]);
+                setEventEndTime(dEnd.toISOString().split("T")[1].slice(0,5));
             }
             setEventDescription(ev.event_description || "");
-            setEventBudget(ev.event_budget || 50000);
-            setCurrentExpenses(ev.current_expenses || 0);
+            setEventBudget(ev.event_budget ?? 50000);
+            setCurrentExpenses(ev.current_expenses ?? 0);
 
             const [parts, agendas, logs] = await Promise.all([
                 fetch(`/api/event_participant?event_id=${id}`).then(r => r.json()),
@@ -114,11 +115,28 @@ export default function EditEventPage({ params }) {
         const data = await fetch(`/api/participant`).then(r => r.json());
         setParticipants(data);
     };
-    const reloadVenueResults = async q => {
-        if (q.length <= 2) { setVenueResults([]); return; }
+    const reloadVenueResults = async (q) => {
+        if (q.trim().length <= 2) { setVenueResults([]); return; }
+        setLoading(true);
         const data = await fetch(`/api/venue?search=${encodeURIComponent(q)}`).then(r => r.json());
         setVenueResults(data);
+        setLoading(false);
     };
+    useEffect(() => {                      // debounce user typing
+        const t = setTimeout(() => reloadVenueResults(venueSearchQuery), 300);
+        return () => clearTimeout(t);
+    }, [venueSearchQuery]);
+
+    /** User picks one prediction from the dropdown. */
+    function choosePrediction(pred) {
+        setSelectedVenue({
+            place_id:          pred.place_id,
+            name:              pred.structured_formatting.main_text,
+            formatted_address: pred.description,     // full line
+        });
+        setVenueSearchQuery("");
+        setVenueResults([]);
+    }
 
     useEffect(() => { reloadParticipants(); }, []);
     useEffect(() => {
@@ -130,17 +148,23 @@ export default function EditEventPage({ params }) {
     async function handleSaveEvent(e) {
         e.preventDefault();
         const body = {
-            event_title: eventTitle,
+            event_title:       eventTitle,
             event_description: eventDescription,
-            event_startdatetime: eventDateInput && eventStartTime ? `${eventDateInput} ${eventStartTime}:00` : null,
-            event_enddatetime:   eventDateInput && eventEndTime   ? `${eventDateInput} ${eventEndTime}:00`   : null,
-            venue_id: selectedVenue ? selectedVenue.venue_id : null,
-            event_budget: eventBudget,
+            event_startdatetime: eventDateInput && eventStartTime
+                ? `${eventDateInput} ${eventStartTime}:00` : null,
+            event_enddatetime:   eventDateInput && eventEndTime
+                ? `${eventDateInput} ${eventEndTime}:00`   : null,
+            event_budget:      eventBudget,
         };
+        if (selectedVenue) {
+            body.venue_place_id = selectedVenue.place_id;
+            body.venue_name     = selectedVenue.name;
+            body.venue_address  = selectedVenue.formatted_address;
+        }
         await fetch(`/api/event/${id}`, {
-            method: "PUT",
+            method:  "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
+            body:    JSON.stringify(body),
         });
         router.refresh();
     }
@@ -202,6 +226,8 @@ export default function EditEventPage({ params }) {
         await fetch(`/api/agenda?agenda_id=${agendaId}`, { method: "DELETE" });
         setAgendaItems(prev => prev.filter(a => a.agenda_id !== agendaId));
     }
+
+
 
     /* ─── LOGISTICS HANDLERS ─── */
     async function saveLogistic(e) {
@@ -383,27 +409,51 @@ export default function EditEventPage({ params }) {
                                     required
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <input
-                                    type="date"
-                                    value={eventDateInput}
-                                    onChange={e => setEventDateInput(e.target.value)}
-                                    className="border rounded-lg px-4 py-2"
-                                    required
-                                />
-                                <div className="grid grid-cols-2 gap-2">
+                            <div className="grid grid-cols-4 gap-4">
+                                {/* Start Date */}
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">Start Date</label>
+                                    <input
+                                        type="date"
+                                        value={eventDateInput}
+                                        onChange={e => setEventDateInput(e.target.value)}
+                                        className="w-full border rounded-lg px-4 py-2"
+                                        required
+                                    />
+                                </div>
+
+                                {/* End Date */}
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">End Date</label>
+                                    <input
+                                        type="date"
+                                        value={eventEndDate}
+                                        onChange={e => setEventEndDate(e.target.value)}
+                                        className="w-full border rounded-lg px-4 py-2"
+                                        required
+                                    />
+                                </div>
+
+                                {/* Start Time */}
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">Start Time</label>
                                     <input
                                         type="time"
                                         value={eventStartTime}
                                         onChange={e => setEventStartTime(e.target.value)}
-                                        className="border rounded-lg px-4 py-2"
+                                        className="w-full border rounded-lg px-4 py-2"
                                         required
                                     />
+                                </div>
+
+                                {/* End Time */}
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">End Time</label>
                                     <input
                                         type="time"
                                         value={eventEndTime}
                                         onChange={e => setEventEndTime(e.target.value)}
-                                        className="border rounded-lg px-4 py-2"
+                                        className="w-full border rounded-lg px-4 py-2"
                                         required
                                     />
                                 </div>
@@ -411,26 +461,44 @@ export default function EditEventPage({ params }) {
                             <div>
                                 <label className="block text-sm font-medium mb-1">Venue</label>
                                 <input
-                                    value={venueSearchQuery}
-                                    onChange={e => { setVenueSearchQuery(e.target.value); setSelectedVenue(null); }}
+                                    type="text"
+                                    value={
+                                        // if the user has typed something, show that;
+                                        // otherwise show the selected venue’s name (or empty)
+                                        venueSearchQuery.length > 0
+                                            ? venueSearchQuery
+                                            : (selectedVenue?.name || "")
+                                    }
+                                    onChange={e => {
+                                        setVenueSearchQuery(e.target.value);
+                                        // clear out the previous selection if they start a new search
+                                        setSelectedVenue(null);
+                                    }}
+                                    placeholder="Search venue by name"
                                     className="w-full border rounded-lg px-4 py-2"
-                                    placeholder="Search by name"
                                 />
-                                {!selectedVenue && venueResults.length > 0 && (
-                                    <div className="border rounded-lg mt-1 bg-white max-h-40 overflow-y-auto">
-                                        {venueResults.map(v => (
-                                            <div
-                                                key={v.venue_id}
-                                                onClick={() => { setSelectedVenue(v); setVenueSearchQuery(v.venue_name); }}
-                                                className="p-2 cursor-pointer hover:bg-gray-200"
-                                            >
-                                                {v.venue_name} ({v.venue_category})
-                                            </div>
-                                        ))}
-                                    </div>
+                                {loading && (
+                                    <p className="text-sm text-gray-500">Loading…</p>
                                 )}
+                                <div className="border rounded-lg mt-1 max-h-60 overflow-auto">
+                                    {venueResults.map(pred => (
+                                        <div
+                                            key={pred.place_id}
+                                            onClick={() => choosePrediction(pred)}
+                                            className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                                        >
+                                            {pred.structured_formatting.main_text}
+                                            <span className="block text-xs text-gray-500">
+                                                {pred.structured_formatting.secondary_text}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+
                                 {selectedVenue && (
-                                    <p className="text-sm mt-1">Selected: {selectedVenue.venue_name}</p>
+                                    <p className="mt-2 text-xs text-green-700">
+                                        Selected: {selectedVenue.name} — {selectedVenue.formatted_address}
+                                    </p>
                                 )}
                             </div>
                             <textarea

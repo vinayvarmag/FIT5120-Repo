@@ -1,3 +1,4 @@
+// File: src/app/events/create/page.js
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,54 +8,75 @@ import { FaPlus, FaTimes } from "react-icons/fa";
 export default function CreateEventPage() {
     const router = useRouter();
 
-    /* ─── form state ─── */
-    const [title,       setTitle]       = useState("");
-    const [date,        setDate]        = useState("");
-    const [start,       setStart]       = useState("");
-    const [end,         setEnd]         = useState("");
+    // ─── form fields ─────────────────────────────────────────
+    const [title, setTitle]             = useState("");
+    const [startDate, setStartDate]     = useState("");
+    const [endDate, setEndDate]         = useState("");
+    const [startTime, setStartTime]     = useState("");
+    const [endTime, setEndTime]         = useState("");
     const [description, setDescription] = useState("");
-    const [budget,      setBudget]      = useState(50000);
+    const [budget, setBudget]           = useState(50000);
 
-    /* ─── venue search controls ─── */
-    const [venueQuery,  setVenueQuery]  = useState("");
-    const [venueResults,setVenueResults]= useState([]);
-    const [selectedVenue,setSelectedVenue]=useState(null);
+    // ─── venue autocomplete ──────────────────────────────────
+    const [venueQuery, setVenueQuery]       = useState("");
+    const [venueResults, setVenueResults]   = useState([]);
+    const [selectedVenue, setSelectedVenue] = useState(null);
+    const [loadingVenues, setLoadingVenues] = useState(false);
 
-    const todayISO = new Date().toISOString().split("T")[0];
-
-    /* ─── live venue search (debounced to 300 ms) ─── */
+    // debounce + fetch predictions
     useEffect(() => {
-        if (venueQuery.length < 3) {
+        if (venueQuery.trim().length < 3) {
             setVenueResults([]);
             return;
         }
-        const t = setTimeout(async () => {
+        const handle = setTimeout(async () => {
+            setLoadingVenues(true);
             try {
-                const res = await fetch(`/api/venue?search=${encodeURIComponent(venueQuery)}`);
-                const data = await res.json();
-                setVenueResults(data);
+                const res  = await fetch(
+                    `/api/venue?search=${encodeURIComponent(venueQuery)}`
+                );
+                const json = await res.json();
+                setVenueResults(Array.isArray(json) ? json : []);
             } catch (err) {
-                console.error("Venue search failed:", err);
+                console.error("Venue fetch error", err);
+                setVenueResults([]);
+            } finally {
+                setLoadingVenues(false);
             }
         }, 300);
-        return () => clearTimeout(t);
+        return () => clearTimeout(handle);
     }, [venueQuery]);
 
-    /* ─── submit ─── */
+    // choose one prediction
+    function choosePrediction(pred) {
+        setSelectedVenue({
+            place_id:          pred.place_id,
+            name:              pred.structured_formatting.main_text,
+            formatted_address: pred.description,
+        });
+        setVenueQuery("");
+        setVenueResults([]);
+    }
+
+    // ─── submit form ─────────────────────────────────────────
     async function handleSubmit(e) {
         e.preventDefault();
         if (!selectedVenue) {
-            alert("Please pick a venue from the list.");
-            return;
+            return alert("Please select a venue from the list.");
+        }
+        if (!startDate || !endDate || !startTime || !endTime) {
+            return alert("Please fill in both start and end date/time.");
         }
 
         const body = {
-            event_title:       title,
-            venue_id:          selectedVenue.venue_id,   // <-- key change
-            event_description: description,
-            event_startdatetime:`${date} ${start}:00`,
-            event_enddatetime:  `${date} ${end}:00`,
-            event_budget:      budget,
+            event_title:        title,
+            venue_place_id:     selectedVenue.place_id,
+            venue_name:         selectedVenue.name,
+            venue_address:      selectedVenue.formatted_address,
+            event_description:  description,
+            event_startdatetime:`${startDate} ${startTime}:00`,
+            event_enddatetime:  `${endDate} ${endTime}:00`,
+            event_budget:       budget,
         };
 
         const res = await fetch("/api/event", {
@@ -67,170 +89,173 @@ export default function CreateEventPage() {
             console.error("Failed to create event");
             return;
         }
-
-        const created = await res.json();           // expects { id: … }
-        router.push(`/events/edit/${created.id}`);
+        const created = await res.json();
+        router.push(`/events/${created.event_id}/edit`);
     }
 
-    /* ─── render ─── */
+    const todayISO = new Date().toISOString().split("T")[0];
+
     return (
-        <main className="max-w-2xl mx-auto px-4 pt-24">
+        <main className="max-w-2xl mx-auto px-4 pt-24 text-black">
             <h1 className="text-2xl font-bold mb-6">Create New Event</h1>
 
-            <form
-                onSubmit={handleSubmit}
-                className="bg-white p-6 rounded-lg shadow-md space-y-6"
-            >
+            <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md space-y-6">
                 {/* Title */}
                 <div>
-                    <label htmlFor="title" className="block text-sm font-medium mb-1">
-                        Event Title
-                    </label>
+                    <label htmlFor="title" className="block text-sm font-medium mb-1">Event Title</label>
                     <input
                         id="title"
                         type="text"
                         value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        onChange={e => setTitle(e.target.value)}
                         placeholder="Enter event title"
                         required
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2 placeholder-gray-400"
+                        className="w-full border rounded-lg px-4 py-2"
                     />
                 </div>
 
-                {/* Date / Times */}
-                <div className="grid grid-cols-3 gap-4">
+                {/* Dates & Times */}
+                <div className="grid grid-cols-4 gap-4">
                     <div>
-                        <label htmlFor="date" className="block text-sm font-medium mb-1">
-                            Date
-                        </label>
+                        <label htmlFor="startDate" className="block text-sm font-medium mb-1">Start Date</label>
                         <input
-                            id="date"
+                            id="startDate"
                             type="date"
                             min={todayISO}
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
+                            value={startDate}
+                            onChange={e => setStartDate(e.target.value)}
                             required
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                            className="w-full border rounded-lg px-4 py-2"
                         />
                     </div>
                     <div>
-                        <label htmlFor="start" className="block text-sm font-medium mb-1">
-                            Start Time
-                        </label>
+                        <label htmlFor="endDate" className="block text-sm font-medium mb-1">End Date</label>
                         <input
-                            id="start"
-                            type="time"
-                            value={start}
-                            onChange={(e) => setStart(e.target.value)}
+                            id="endDate"
+                            type="date"
+                            min={startDate || todayISO}
+                            value={endDate}
+                            onChange={e => setEndDate(e.target.value)}
                             required
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                            className="w-full border rounded-lg px-4 py-2"
                         />
                     </div>
                     <div>
-                        <label htmlFor="end" className="block text-sm font-medium mb-1">
-                            End Time
-                        </label>
+                        <label htmlFor="startTime" className="block text-sm font-medium mb-1">Start Time</label>
                         <input
-                            id="end"
+                            id="startTime"
                             type="time"
-                            value={end}
-                            onChange={(e) => setEnd(e.target.value)}
+                            value={startTime}
+                            onChange={e => setStartTime(e.target.value)}
                             required
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                            className="w-full border rounded-lg px-4 py-2"
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="endTime" className="block text-sm font-medium mb-1">End Time</label>
+                        <input
+                            id="endTime"
+                            type="time"
+                            value={endTime}
+                            onChange={e => setEndTime(e.target.value)}
+                            required
+                            className="w-full border rounded-lg px-4 py-2"
                         />
                     </div>
                 </div>
 
-                {/* Venue (search & select) */}
+                {/* Venue Autocomplete */}
                 <div className="relative">
-                    <label htmlFor="venue" className="block text-sm font-medium mb-1">
-                        Venue
-                    </label>
-
-                    {/* search box */}
+                    <label htmlFor="venue" className="block text-sm font-medium mb-1">Venue</label>
                     <input
                         id="venue"
                         type="text"
-                        value={selectedVenue ? selectedVenue.venue_name : venueQuery}
-                        onChange={(e) => {
+                        value={venueQuery.length > 0
+                            ? venueQuery
+                            : (selectedVenue?.name || "")
+                        }
+                        onChange={e => {
                             setVenueQuery(e.target.value);
                             setSelectedVenue(null);
                         }}
                         placeholder="Search venue by name"
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2 placeholder-gray-400"
+                        className="w-full border rounded-lg px-4 py-2"
+                        required
                     />
 
-                    {/* clear selected */}
+                    {/* clear icon */}
                     {selectedVenue && (
                         <button
                             type="button"
-                            className="absolute top-8 right-3 text-gray-400 hover:text-gray-600"
+                            className="absolute top-8 right-3"
                             onClick={() => {
                                 setSelectedVenue(null);
                                 setVenueQuery("");
                             }}
                         >
-                            <FaTimes className="h-4 w-4" />
+                            <FaTimes />
                         </button>
                     )}
 
+                    {/* loading indicator */}
+                    {loadingVenues && (
+                        <p className="text-sm text-gray-500 mt-1">Loading…</p>
+                    )}
+
                     {/* dropdown */}
-                    {!selectedVenue && venueResults.length > 0 && (
-                        <div className="absolute z-10 mt-1 w-full bg-white border rounded-lg max-h-40 overflow-y-auto shadow-lg">
-                            {venueResults.map((v) => (
+                    {Array.isArray(venueResults) && venueResults.length > 0 && !selectedVenue && (
+                        <div className="absolute z-10 mt-1 w-full bg-white border rounded-lg max-h-48 overflow-y-auto shadow-lg">
+                            {venueResults.map(p => (
                                 <div
-                                    key={v.venue_id}
-                                    onClick={() => {
-                                        setSelectedVenue(v);
-                                        setVenueQuery("");
-                                        setVenueResults([]);
-                                    }}
-                                    className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-black"
+                                    key={p.place_id}
+                                    onClick={() => choosePrediction(p)}
+                                    className="px-4 py-2 cursor-pointer hover:bg-gray-100"
                                 >
-                                    {v.venue_name} &nbsp;
-                                    <span className="text-xs text-gray-500">
-                    ({v.venue_category})
-                  </span>
+                                    {p.structured_formatting.main_text}
+                                    <span className="block text-xs text-gray-500">
+                                        {p.structured_formatting.secondary_text}
+                                    </span>
                                 </div>
                             ))}
                         </div>
                     )}
 
+                    {/* selected info */}
                     {selectedVenue && (
-                        <p className="text-sm text-gray-600 mt-1">
-                            Selected Venue: {selectedVenue.venue_name}
-                        </p>
+                        <div className="mt-2 space-y-1">
+                            <p className="text-sm font-medium text-gray-800">
+                                Selected: {selectedVenue.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                                {selectedVenue.formatted_address}
+                            </p>
+                        </div>
                     )}
                 </div>
 
                 {/* Description */}
                 <div>
-                    <label htmlFor="description" className="block text-sm font-medium mb-1">
-                        Description
-                    </label>
+                    <label htmlFor="description" className="block text-sm font-medium mb-1">Description</label>
                     <textarea
                         id="description"
                         value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Enter event description"
+                        onChange={e => setDescription(e.target.value)}
                         rows={4}
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2 placeholder-gray-400"
+                        className="w-full border rounded-lg px-4 py-2"
                     />
                 </div>
 
                 {/* Budget */}
                 <div>
-                    <label htmlFor="budget" className="block text-sm font-medium mb-1">
-                        Total Budget
-                    </label>
+                    <label htmlFor="budget" className="block text-sm font-medium mb-1">Total Budget</label>
                     <input
                         id="budget"
                         type="number"
-                        value={budget}
-                        onChange={(e) => setBudget(Number(e.target.value))}
                         min={0}
+                        value={budget}
+                        onChange={e => setBudget(Number(e.target.value))}
                         required
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                        className="w-full border rounded-lg px-4 py-2"
                     />
                 </div>
 
