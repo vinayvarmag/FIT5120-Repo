@@ -31,7 +31,8 @@ export default function JoinClient() {
 
     const sockRef = useRef(null);
     useEffect(() => {
-        sockRef.current = io(API);
+        const sockURL = API?.startsWith("https://")? API : window.location.origin;
+        sockRef.current = io(sockURL, { transports: ["websocket"] });
         const s = sockRef.current;
 
         s.on("session_state", (d) => {
