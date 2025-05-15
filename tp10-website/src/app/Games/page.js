@@ -52,7 +52,7 @@ export default function Games() {
     const [showTut, setShowTut] = useState(false);
 
     useEffect(() => {
-        const seen = localStorage.getItem(TUT_KEY);
+        const seen = sessionStorage.getItem(TUT_KEY);
         setShowTut(!seen);
     }, []);
 
@@ -94,8 +94,7 @@ export default function Games() {
             const resp = await fetch(API + "/pronounce", { method: "POST", body: fd });
             const d = await resp.json();
             setRes(d);
-            const origin = (API?.startsWith("https://") ? API : window.location.origin).replace(/\/$/, "");
-            setTts(`${origin}${d.tts}`);
+            setTts(new URL(d.tts, API).href);
             setRec(false);
             setView("pronounce-result");
         };
