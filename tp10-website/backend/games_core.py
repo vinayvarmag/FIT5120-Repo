@@ -1,179 +1,229 @@
-#!/usr/bin/env python3
 """
-Logic for Cultural Games - CLI + importable.
+backend/main.py - FastAPI + Socket.IO server
+Auto-advances questions (10 s or all-answered) and streams scores.
 """
 from __future__ import annotations
 
-import argparse
-import json
-import logging
-import sys
-import time
-import tempfile
-import os
-from typing import List, Optional
-import os
+import asyncio, logging, os, shutil, tempfile, time
+from asyncio import to_thread
+from typing import Dict, Any
+from uuid import uuid4
+
+import socketio
+from fastapi import FastAPI, File, Form, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse          # <- NEW
+from pydantic import BaseModel
+from gtts import gTTS                               # <- NEW  (pip install gTTS)
+
+from .games_core import generate_quiz, pronounce, preload_whisper
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-log = logging.getLogger("culture-games")
+log = logging.getLogger("culture-api")
 
-# ---------- Groq ----------
-try:
-    from groq import Groq
-except ImportError:
-    log.error("groq SDK missing; pip install groq")
-    sys.exit(1)
+# --------------------------------------------------------------------------- #
+# FastAPI - ordinary HTTP
+# --------------------------------------------------------------------------- #
+api = FastAPI(title="Cultural Games API")
+api.add_middleware(
+    CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
+)
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-if not GROQ_API_KEY:
-    raise RuntimeError("GROQ_API_KEY env-var is missing")
-client       = Groq(api_key=GROQ_API_KEY)
-GROQ_MODEL   = "llama3-8b-8192"
+@api.on_event("startup")
+async def _warm():
+    """Load Whisper once (off-thread so we don't block the event loop)."""
+    await to_thread(preload_whisper)
 
-# ---------- Whisper preload ----------
-_WHIP: tuple | None = None  # (proc, model)
+class QuizCreate(BaseModel):
+    cats: list[str]
+    n:   int
 
-def preload_whisper() -> None:
-    global _WHIP
-    if _WHIP is None:
-        log.info("Loading Whisper-tiny (~150 MB)...")
-        from transformers import WhisperProcessor, WhisperForConditionalGeneration
-        proc  = WhisperProcessor.from_pretrained("openai/whisper-tiny.en")
-        model = WhisperForConditionalGeneration.from_pretrained(
-            "openai/whisper-tiny.en"
-        ).to("cpu")
-        _WHIP = (proc, model)
+# ------------------------------  IN-MEMORY STATE  --------------------------- #
+SESSIONS: Dict[str, Dict[str, Any]] = {}
+TEAM_BY_SID: Dict[str, tuple[str, str]] = {}        # sid -> (session_id, team_name)
 
-preload_whisper()
+PER_Q_SEC = 10                                      # seconds per quiz question
 
-# ---------- Quiz ----------
-def _prompt(categories: List[str], n: int) -> str:
-    cats = ", ".join(categories)
-    return (
-        f"Generate {n} cultural quiz questions as a JSON array.\n"
-        '{ "question":"...", "options":["A","B","C","D"], "answer":0 }\n'
-        f"Categories: {cats}\n"
-        "Rules:\n"
-        "- Real cultural facts only\n"
-        "- Exactly 4 options\n"
-        "- answer is 0-based index of correct option\n"
-        "- Output ONLY the JSON array"
-    )
-
-def generate_quiz(cats: List[str], n: int):
-    prompt = _prompt(cats, n)
-    t0     = time.time()
-    resp   = client.chat.completions.create(
-        model       = GROQ_MODEL,
-        messages    = [{"role": "user", "content": prompt}],
-        temperature = 0.3,
-        max_tokens  = 1024,
-    )
-    txt = resp.choices[0].message.content.strip()
-    s, e = txt.find("["), txt.rfind("]")
-    if s == -1 or e == -1:
-        raise RuntimeError("Groq did not return JSON array")
-    return json.loads(txt[s:e+1])
-
-# ---------- Pronunciation ----------
-def _decode_with_pydub(path: str):
-    """
-    Decode any ffmpeg-supported file with pydub.
-    Works on Windows even when system ffmpeg is absent,
-    because pydub wheels bundle their own binary.
-    """
-    from pydub import AudioSegment
-    import numpy as np
-
-    seg = AudioSegment.from_file(path)
-    seg = seg.set_frame_rate(16000).set_channels(1)
-    sample_width = seg.sample_width            # bytes per sample
-    scale = float(1 << (8 * sample_width - 1)) # 32768 for 16-bit
-    samples = seg.get_array_of_samples()
-    audio = np.array(samples).astype("float32") / scale
-    return audio, 16000
-
-def pronounce(word: str, sec: float, wav_path: Optional[str]):
-    """
-    Return dict {target, transcript, score, pass}
-    Accepts WAV or browser WebM/Opus.
-    """
-    import sounddevice as sd
-    import soundfile as sf
-    import librosa
-    import numpy as np
-    import phonetics
-    from rapidfuzz.distance import Levenshtein
-
-    proc, model = _WHIP
-
-    # record if called from CLI without file
-    wav = wav_path
-    if wav is None:
-        log.info("Recording %.1f s ...", sec)
-        audio = sd.rec(int(sec * 16000), 16000, 1, dtype="float32")
-        sd.wait()
-        wav = tempfile.NamedTemporaryFile(delete=False, suffix=".wav").name
-        sf.write(wav, audio, 16000)
-
-    # 1) try soundfile
-    try:
-        audio, sr = sf.read(wav, dtype="float32")
-    except Exception:
-        audio = None
-
-    # 2) try librosa (needs external ffmpeg)
-    if audio is None:
-        try:
-            audio, sr = librosa.load(wav, sr=16000, mono=True)
-        except Exception:
-            audio = None
-
-    # 3) try pydub
-    if audio is None:
-        try:
-            audio, sr = _decode_with_pydub(wav)
-        except Exception as e:
-            raise RuntimeError(
-                "Could not decode audio. Install ffmpeg or record as WAV."
-            ) from e
-
-    if audio.ndim > 1:
-        audio = audio.mean(axis=1)
-
-    feats = proc(audio, sampling_rate=sr, return_tensors="pt").input_features
-    ids   = model.generate(feats)
-    hyp   = proc.batch_decode(ids, skip_special_tokens=True)[0].lower().strip()
-
-    score = 1 - Levenshtein.normalized_distance(
-        phonetics.metaphone(word.lower()), phonetics.metaphone(hyp)
-    )
-    return {
-        "target":     word,
-        "transcript": hyp,
-        "score":      round(score, 3),
-        "pass":       score >= 0.7,
+# --------------------------------------------------------------------------- #
+# POST /quiz  ->  create session
+# --------------------------------------------------------------------------- #
+@api.post("/quiz")
+async def create_quiz(req: QuizCreate):
+    session_id = str(uuid4())
+    qs = await to_thread(generate_quiz, req.cats, req.n)
+    SESSIONS[session_id] = {
+        "status":   "lobby",
+        "teams":    {},          # team_name -> score
+        "questions": qs,
+        "idx":      0,
+        "answered": {},          # team_name -> idx answered
+        "deadline": None,        # float | None - epoch seconds
+        "task":     None         # asyncio.Task that advances when timer fires
     }
+    return {"sessionId": session_id}
 
-# ---------- CLI ----------
-def _cli():
-    p   = argparse.ArgumentParser()
-    sub = p.add_subparsers(dest="cmd", required=True)
+# --------------------------------------------------------------------------- #
+# POST /pronounce  - score user recording
+# --------------------------------------------------------------------------- #
+@api.post("/pronounce")
+async def pronounce_ep(word: str = Form(...), wav: UploadFile = File(...)):
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as tmp:
+        shutil.copyfileobj(wav.file, tmp)
+        path = tmp.name
 
-    q  = sub.add_parser("quiz")
-    q.add_argument("--cats", nargs="+", choices=["flags", "food", "fest"], default=["flags"])
-    q.add_argument("--n", type=int, default=3)
+    res = await to_thread(pronounce, word, 2.0, path)
+    os.unlink(path)
 
-    pr = sub.add_parser("pronounce")
-    pr.add_argument("word")
-    pr.add_argument("--sec", type=float, default=2.0)
-    pr.add_argument("--wav")
+    # link to cached reference recording so the frontend can play it
+    res["tts"] = f"/tts/{word}"
+    return res
 
-    args = p.parse_args()
-    if args.cmd == "quiz":
-        print(json.dumps(generate_quiz(args.cats, args.n), indent=2))
+# --------------------------------------------------------------------------- #
+# GET /tts/{word}  -  cached MP3 pronunciation (reference audio)
+# --------------------------------------------------------------------------- #
+@api.get("/tts/{word}")
+async def tts(word: str):
+    cache_dir = "/tmp/tts-cache"
+    os.makedirs(cache_dir, exist_ok=True)
+    path = os.path.join(cache_dir, f"{word.lower()}.mp3")
+
+    if not os.path.exists(path):                      # generate once, then reuse
+        gTTS(word, lang="en", slow=False).save(path)
+
+    return FileResponse(
+        path,
+        media_type="audio/mpeg",
+        filename=f"{word}.mp3",
+        headers={"Cache-Control": "public, max-age=86400"},
+    )
+
+# --------------------------------------------------------------------------- #
+# Socket.IO (quiz real-time)
+# --------------------------------------------------------------------------- #
+sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*",
+                           ping_interval=20, ping_timeout=10)
+app = socketio.ASGIApp(sio, other_asgi_app=api)      # bind FastAPI + SIO
+
+# ----------------------------  HELPER FUNCTIONS  --------------------------- #
+async def _broadcast(session_id: str):
+    s = SESSIONS[session_id]
+    await sio.emit("session_state", {
+        "status":    s["status"],
+        "idx":       s["idx"],
+        "teams":     s["teams"],
+        "questions": s["questions"],
+        "deadline":  s["deadline"],
+    }, room=session_id)
+
+async def _schedule_advance(session_id: str):
+    """
+    Create / replace a background task that sleeps until PER_Q_SEC expires,
+    then moves to next question.
+    """
+    s = SESSIONS[session_id]
+    # cancel previous task if it exists
+    if t := s.get("task"):
+        t.cancel()
+
+    async def _wait():
+        await asyncio.sleep(PER_Q_SEC)
+        if s["status"] != "running":                 # quiz ended meanwhile
+            return
+        await _advance(session_id)
+
+    s["deadline"] = time.time() + PER_Q_SEC
+    s["task"]     = asyncio.create_task(_wait())
+
+async def _advance(session_id: str):
+    s = SESSIONS[session_id]
+    s["idx"] += 1
+    s["answered"] = {}
+    if s["idx"] >= len(s["questions"]):             # finished quiz
+        s["idx"]    = len(s["questions"]) - 1
+        s["status"] = "ended"
+        if t := s.get("task"):
+            t.cancel()
+        s["deadline"] = None
     else:
-        print(json.dumps(pronounce(args.word, args.sec, args.wav), indent=2))
+        await _schedule_advance(session_id)
+    await _broadcast(session_id)
 
-if __name__ == "__main__":
-    _cli()
+# -----------------------------  EVENTS  ------------------------------------ #
+@sio.event
+async def connect(sid, environ):
+    log.info("socket %s connected", sid)
+
+@sio.event
+async def disconnect(sid):
+    if sid in TEAM_BY_SID:
+        session_id, team = TEAM_BY_SID.pop(sid)
+        sess = SESSIONS.get(session_id)
+        if sess and sess["status"] == "lobby":
+            sess["teams"].pop(team, None)
+            await _broadcast(session_id)
+    log.info("socket %s disconnected", sid)
+
+@sio.event
+async def join_session(sid, data):
+    """
+    {sessionId, role: host|player, teamName?}
+    """
+    session_id = data["sessionId"]
+    sess = SESSIONS.get(session_id)
+    if not sess:
+        return await sio.emit("error_msg", {"msg": "Session not found"}, to=sid)
+
+    await sio.enter_room(sid, session_id)
+
+    if data["role"] == "player":
+        team = (data.get("teamName") or "").strip()
+        if not team:
+            return await sio.emit("error_msg", {"msg": "Team name required"}, to=sid)
+        sess["teams"][team] = 0
+        TEAM_BY_SID[sid]   = (session_id, team)
+
+    await _broadcast(session_id)
+
+@sio.event
+async def start_quiz(sid, data):
+    session_id = data["sessionId"]
+    sess = SESSIONS.get(session_id)
+    if sess:
+        sess.update(idx=0, status="running", answered={})
+        await _schedule_advance(session_id)
+        await _broadcast(session_id)
+
+@sio.event
+async def answer(sid, data):
+    """
+    {sessionId, choice:int}
+    """
+    session_id = data["sessionId"]
+    sess = SESSIONS.get(session_id)
+    if not sess or sess["status"] != "running":
+        return
+    tb = TEAM_BY_SID.get(sid)
+    if not tb or tb[0] != session_id:
+        return
+
+    team = tb[1]
+    idx  = sess["idx"]
+    if sess["answered"].get(team) == idx:
+        return                                      # already answered
+
+    if data["choice"] == sess["questions"][idx]["answer"]:
+        sess["teams"][team] += 1
+        correct = True
+    else:
+        correct = False
+    sess["answered"][team] = idx
+
+    await sio.emit("answer_result",
+                   {"correct": correct, "score": sess["teams"][team]},
+                   to=sid)
+
+    # all teams done?
+    if len(sess["answered"]) == len(sess["teams"]):
+        await _advance(session_id)
+    else:
+        await _broadcast(session_id)
