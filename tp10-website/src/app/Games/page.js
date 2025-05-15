@@ -94,7 +94,8 @@ export default function Games() {
             const resp = await fetch(API + "/pronounce", { method: "POST", body: fd });
             const d = await resp.json();
             setRes(d);
-            const base = API;
+            const origin = (API?.startsWith("https://") ? API : window.location.origin).replace(/\/$/, "");
+            setTts(`${origin}${d.tts}`);
             setTts(`${base.replace(/\/$/, "")}${d.tts}`);
             setRec(false);
             setView("pronounce-result");
