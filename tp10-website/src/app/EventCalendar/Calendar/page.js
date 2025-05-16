@@ -99,7 +99,7 @@ export default function CalendarPage() {
         let ignore = false;
         (async () => {
             setLoading(true);
-            const raw = await fetch("/api/event/all").then(r => r.json());
+            const raw = await fetch("/api/event/").then(r => r.json());
             if (ignore) return;
             setEvents(
                 raw.map(ev => ({
