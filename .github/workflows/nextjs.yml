@@ -1,19 +1,15 @@
 name: Deploy Next.js site to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Permissions to deploy to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Only one deployment at a time; don’t cancel in-progress runs
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -22,10 +18,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # 1) Detect package manager in the subfolder
       - name: Detect package manager
         id: detect-package-manager
         run: |
@@ -43,20 +37,18 @@ jobs:
             exit 1
           fi
 
-      # 2) Setup Node
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
+          cache-dependency-path: tp10-website/${{ steps.detect-package-manager.outputs.manager == 'yarn' && 'yarn.lock' || 'package-lock.json' }}
 
-      # 3) Configure GitHub Pages for Next.js
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
           static_site_generator: next
 
-      # 4) Restore cache from subfolder
       - name: Restore cache
         uses: actions/cache@v4
         with:
@@ -65,22 +57,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('tp10-website/**/package-lock.json', 'tp10-website/**/yarn.lock') }}-
 
-      # 5) Install dependencies
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
         working-directory: tp10-website
 
-      # 6) Build with Next.js
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
         working-directory: tp10-website
 
-      # 7) Export static site (if using `next export`)
       - name: Export static site
         run: ${{ steps.detect-package-manager.outputs.runner }} next export
         working-directory: tp10-website
 
-      # 8) Upload the built artifacts
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
