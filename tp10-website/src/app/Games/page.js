@@ -1,81 +1,97 @@
 "use client";
+export const dynamic = "force-dynamic";       // skip static optimisation
 
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import io from "socket.io-client";
 const QRCode = lazy(() => import("react-qr-code"));
 
-const API = process.env.NEXT_PUBLIC_API_URL;
-const PER_Q_SEC = 10;
-
+/* ------------------------------------------------------------------ */
+const API        = process.env.NEXT_PUBLIC_API_URL;
+const PER_Q_SEC  = 10;
 const CAT_OPTIONS = [
-    "flags", "food", "fest", "music", "landmarks", "clothing", "language", "sports",
+  "flags", "food", "fest", "music",
+  "landmarks", "clothing", "language", "sports",
 ];
-
 const TUT_KEY = "tutSeen-v2";
+/* ------------------------------------------------------------------ */
 
 export default function Games() {
-    const sockRef = useRef(null);
-    useEffect(() => {
-        sockRef.current = io(API, { transports: ["websocket"] });
-        const onState = (d) => {
-            setTeams(d.teams);
-            setStat(d.status);
-            setQs(d.questions);
-            setIdx(d.idx);
-            setDeadline(d.deadline);
-            if (d.status === "running") setView("host-play");
-            if (d.status === "ended") setView("host-end");
-        };
-        const s = sockRef.current;
-        s.on("session_state", onState);
-        s.on("error_msg", (x) => alert(x.msg));
-        return () => {
-            s.off("session_state", onState);
-            s.close();
-        };
-    }, []);
-    
-    useEffect(() => {                                           
-        const s = sockRef.current;
-        if (!s || !sid) return;
+  /* --------------------- state first (rule-of-hooks) --------------- */
+  const [view,      setView]    = useState("menu");
+  const [cats,      setCats]    = useState([]);
+  const [n,         setN]       = useState(4);
+  const [sid,       setSid]     = useState("");
+  const [teams,     setTeams]   = useState({});
+  const [status,    setStat]    = useState("lobby");
+  const [qs,        setQs]      = useState([]);
+  const [idx,       setIdx]     = useState(0);
+  const [deadline,  setDeadline]= useState(null);
 
-        const rejoin = () =>
-            s.emit("join_session", { sessionId: sid, role: "host" });
+  /* pronunciation */
+  const [word,      setWord]    = useState("sushi");
+  const [recording, setRec]     = useState(false);
+  const [result,    setRes]     = useState(null);
+  const [audioUrl,  setAudio]   = useState(null);
+  const [ttsUrl,    setTts]     = useState(null);
 
-        rejoin();                  // first time
-        s.on("connect", rejoin);   // any reconnect
-        s.on("reconnect", rejoin);
+  /* tutorial / countdown */
+  const [showTut,   setShowTut]  = useState(false);
+  const [countdown, setCountdown] = useState(null);
 
-        return () => {
-            s.off("connect",   rejoin);
-            s.off("reconnect", rejoin);
-        };
-    }, [sid]);
-    const [view, setView] = useState("menu");
-    const [cats, setCats] = useState([]);
-    const [n, setN] = useState(4);
-    const [sid, setSid] = useState("");
-    const [teams, setTeams] = useState({});
-    const [status, setStat] = useState("lobby");
-    const [qs, setQs] = useState([]);
-    const [idx, setIdx] = useState(0);
-    const [deadline, setDeadline] = useState(null);
-    const [word, setWord] = useState("sushi");
-    const [recording, setRec] = useState(false);
-    const [result, setRes] = useState(null);
-    const [audioUrl, setAudio] = useState(null);
-    const [ttsUrl, setTts] = useState(null);
-    const [showTut, setShowTut] = useState(false);
+  /* ----------------------- socket refs & effects ------------------- */
+  const sockRef = useRef(null);
 
-    useEffect(() => {
-        const seen = sessionStorage.getItem(TUT_KEY);
-        setShowTut(!seen);
-    }, []);
+  /* create socket once */
+  useEffect(() => {
+    sockRef.current = io(API, { transports: ["websocket"] });
+    const s = sockRef.current;
 
-    const dismissTut = () => {
-        localStorage.setItem(TUT_KEY, "y");
-        setShowTut(false);
+    const onState = d => {
+      setTeams(d.teams);
+      setStat(d.status);
+      setQs(d.questions);
+      setIdx(d.idx);
+      setDeadline(d.deadline);
+      if (d.status === "running") setView("host-play");
+      if (d.status === "ended")   setView("host-end");
     };
+
+    s.on("session_state", onState);
+    s.on("error_msg", e => alert(e.msg));
+
+    return () => {
+      s.off("session_state", onState);
+      s.close();
+    };
+  }, []);
+
+  /* join the room immediately and on reconnect */
+  useEffect(() => {
+    const s = sockRef.current;
+    if (!s || !sid) return;
+
+    const join = () =>
+      s.emit("join_session", { sessionId: sid, role: "host" });
+
+    join();                        // first time
+    s.on("connect",   join);       // later reconnects
+    s.on("reconnect", join);
+
+    return () => {
+      s.off("connect",   join);
+      s.off("reconnect", join);
+    };
+  }, [sid]);
+
+  /* tutorial overlay */
+  useEffect(() => {
+    const seen = sessionStorage.getItem(TUT_KEY);
+    setShowTut(!seen);
+  }, []);
+  const dismissTut = () => {
+    localStorage.setItem(TUT_KEY, "y");
+    setShowTut(false);
+  };
 
     const toggleCat = (c) =>
         setCats((p) => (p.includes(c) ? p.filter((x) => x !== c) : [...p, c]));
