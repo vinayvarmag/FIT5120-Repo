@@ -16,7 +16,7 @@ const TUT_KEY = "tutSeen-v2";
 export default function Games() {
     const sockRef = useRef(null);
     useEffect(() => {
-        sockRef.current = io(API);
+        sockRef.current = io(API, { transports: ["websocket"] });
         const onState = (d) => {
             setTeams(d.teams);
             setStat(d.status);
@@ -34,7 +34,23 @@ export default function Games() {
             s.close();
         };
     }, []);
+    
+    useEffect(() => {                                           
+        const s = sockRef.current;
+        if (!s || !sid) return;
 
+        const rejoin = () =>
+            s.emit("join_session", { sessionId: sid, role: "host" });
+
+        rejoin();                  // first time
+        s.on("connect", rejoin);   // any reconnect
+        s.on("reconnect", rejoin);
+
+        return () => {
+            s.off("connect",   rejoin);
+            s.off("reconnect", rejoin);
+        };
+    }, [sid]);
     const [view, setView] = useState("menu");
     const [cats, setCats] = useState([]);
     const [n, setN] = useState(4);
