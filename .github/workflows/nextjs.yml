@@ -4,31 +4,28 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+# Permissions to deploy to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+# Only one deployment at a time; don’t cancel in-progress runs
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 1) Detect package manager in the subfolder --------------------------
+      # 1) Detect package manager in the subfolder
       - name: Detect package manager
         id: detect-package-manager
         run: |
@@ -44,8 +41,9 @@ jobs:
           else
             echo "Unable to determine package manager"
             exit 1
+          fi
 
-      # 2) Setup Node with the discovered package manager
+      # 2) Setup Node
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -56,43 +54,44 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
-          # Automatically inject basePath in your Next.js configuration file
-          # and disable server side image optimization.
           static_site_generator: next
 
-      # 4) Restore cache (point it at subfolder)
+      # 4) Restore cache from subfolder
       - name: Restore cache
         uses: actions/cache@v4
         with:
-          path: my-next-site/.next/cache
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('my-next-site/**/package-lock.json', 'my-next-site/**/yarn.lock') }}-${{ hashFiles('my-next-site/**/*.js', 'my-next-site/**/*.jsx', 'my-next-site/**/*.ts', 'my-next-site/**/*.tsx') }}
+          path: tp10-website/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('tp10-website/**/package-lock.json', 'tp10-website/**/yarn.lock') }}-${{ hashFiles('tp10-website/**/*.js', 'tp10-website/**/*.jsx', 'tp10-website/**/*.ts', 'tp10-website/**/*.tsx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('my-next-site/**/package-lock.json', 'my-next-site/**/yarn.lock') }}-
+            ${{ runner.os }}-nextjs-${{ hashFiles('tp10-website/**/package-lock.json', 'tp10-website/**/yarn.lock') }}-
 
-      # 5) Install dependencies from subfolder
+      # 5) Install dependencies
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
         working-directory: tp10-website
 
-      # 6) Build Next.js from subfolder
+      # 6) Build with Next.js
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
         working-directory: tp10-website
 
-      # 7) Upload the built artifacts from subfolder (e.g. out/)
+      # 7) Export static site (if using `next export`)
+      - name: Export static site
+        run: ${{ steps.detect-package-manager.outputs.runner }} next export
+        working-directory: tp10-website
+
+      # 8) Upload the built artifacts
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: tp10-website/out
 
-  # Deployment job
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
