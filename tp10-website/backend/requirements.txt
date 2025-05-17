@@ -1,15 +1,22 @@
+# web stack
 fastapi
 uvicorn[standard]
 python-socketio[asgi]
 pydantic
-openai-whisper==20231117
+
+# ML + Whisper
+torch                  # CPU wheel auto-picked by pip
 transformers
-pydub
-soundfile
-sounddevice
-librosa
+accelerate             # tiny helper for transformers
+
+# scoring utils
+soundfile              # reads WAV / WebM
+pydub                  # ffmpeg-backed fallback
 phonetics
 rapidfuzz
-python-multipart
-groq
+
+# text-to-speech cache
 gTTS
+
+# Groq SDK
+groq
