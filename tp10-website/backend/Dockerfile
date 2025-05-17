@@ -4,8 +4,8 @@ FROM python:3.11-slim
 # ---------- system deps ----------
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        ffmpeg \               # used by pydub for WebM/Opus decode
-        libsndfile1 &&         # used by soundfile
+        ffmpeg \               
+        libsndfile1 &&         
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ---------- python deps ----------
