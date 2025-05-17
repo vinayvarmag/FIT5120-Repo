@@ -23,7 +23,7 @@ except ImportError:
     log.error("groq SDK missing; pip install groq")
     sys.exit(1)
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY = "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"
 if not GROQ_API_KEY:
     raise RuntimeError("GROQ_API_KEY env-var is missing")
 client       = Groq(api_key=GROQ_API_KEY)
