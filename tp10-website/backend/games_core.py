@@ -1,22 +1,17 @@
 #!/usr/bin/env python3
 """
 Logic for Cultural Games - CLI + importable.
+Slimmed down for headless deployment (no sounddevice, no librosa).
 """
 from __future__ import annotations
 
-import argparse
-import json
-import logging
-import sys
-import time
-import tempfile
+import argparse, json, logging, sys, time, tempfile, os
 from typing import List, Optional
-import os
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
 log = logging.getLogger("culture-games")
 
-# ---------- Groq ----------
+# ---------- Groq ---------- #
 try:
     from groq import Groq
 except ImportError:
@@ -26,10 +21,10 @@ except ImportError:
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
     raise RuntimeError("GROQ_API_KEY env-var is missing")
-client       = Groq(api_key=GROQ_API_KEY)
-GROQ_MODEL   = "llama3-8b-8192"
+client     = Groq(api_key=GROQ_API_KEY)
+GROQ_MODEL = "llama3-8b-8192"
 
-# ---------- Whisper preload ----------
+# ---------- Whisper preload ---------- #
 _WHIP: tuple | None = None  # (proc, model)
 
 def preload_whisper() -> None:
@@ -45,7 +40,7 @@ def preload_whisper() -> None:
 
 preload_whisper()
 
-# ---------- Quiz ----------
+# ---------- Quiz ---------- #
 def _prompt(categories: List[str], n: int) -> str:
     cats = ", ".join(categories)
     return (
@@ -61,7 +56,6 @@ def _prompt(categories: List[str], n: int) -> str:
 
 def generate_quiz(cats: List[str], n: int):
     prompt = _prompt(cats, n)
-    t0     = time.time()
     resp   = client.chat.completions.create(
         model       = GROQ_MODEL,
         messages    = [{"role": "user", "content": prompt}],
@@ -72,70 +66,47 @@ def generate_quiz(cats: List[str], n: int):
     s, e = txt.find("["), txt.rfind("]")
     if s == -1 or e == -1:
         raise RuntimeError("Groq did not return JSON array")
-    return json.loads(txt[s:e+1])
+    return json.loads(txt[s : e + 1])
 
-# ---------- Pronunciation ----------
+# ---------- Pronunciation ---------- #
 def _decode_with_pydub(path: str):
     """
-    Decode any ffmpeg-supported file with pydub.
-    Works on Windows even when system ffmpeg is absent,
-    because pydub wheels bundle their own binary.
+    Decode any ffmpeg-supported file with pydub (bundles ffmpeg wheel).
+    Returns mono float32 @16 kHz.
     """
     from pydub import AudioSegment
     import numpy as np
 
     seg = AudioSegment.from_file(path)
     seg = seg.set_frame_rate(16000).set_channels(1)
-    sample_width = seg.sample_width            # bytes per sample
-    scale = float(1 << (8 * sample_width - 1)) # 32768 for 16-bit
-    samples = seg.get_array_of_samples()
-    audio = np.array(samples).astype("float32") / scale
-    return audio, 16000
+    scale = float(1 << (8 * seg.sample_width - 1))  # 32768 for 16-bit
+    samples = np.array(seg.get_array_of_samples()).astype("float32") / scale
+    return samples, 16000
 
 def pronounce(word: str, sec: float, wav_path: Optional[str]):
     """
-    Return dict {target, transcript, score, pass}
+    Score a recording.  wav_path must be provided in server mode.
     Accepts WAV or browser WebM/Opus.
     """
-    import sounddevice as sd
     import soundfile as sf
-    import librosa
     import numpy as np
     import phonetics
     from rapidfuzz.distance import Levenshtein
 
     proc, model = _WHIP
 
-    # record if called from CLI without file
-    wav = wav_path
-    if wav is None:
-        log.info("Recording %.1f s ...", sec)
-        audio = sd.rec(int(sec * 16000), 16000, 1, dtype="float32")
-        sd.wait()
-        wav = tempfile.NamedTemporaryFile(delete=False, suffix=".wav").name
-        sf.write(wav, audio, 16000)
+    if wav_path is None:
+        raise RuntimeError("Server mode: wav_path must be provided")
 
-    # 1) try soundfile
+    # 1) soundfile (fast, native formats)
     try:
-        audio, sr = sf.read(wav, dtype="float32")
+        audio, sr = sf.read(wav_path, dtype="float32")
     except Exception:
         audio = None
 
-    # 2) try librosa (needs external ffmpeg)
+    # 2) pydub fallback (handles everything ffmpeg can read)
     if audio is None:
-        try:
-            audio, sr = librosa.load(wav, sr=16000, mono=True)
-        except Exception:
-            audio = None
-
-    # 3) try pydub
-    if audio is None:
-        try:
-            audio, sr = _decode_with_pydub(wav)
-        except Exception as e:
-            raise RuntimeError(
-                "Could not decode audio. Install ffmpeg or record as WAV."
-            ) from e
+        audio, sr = _decode_with_pydub(wav_path)
 
     if audio.ndim > 1:
         audio = audio.mean(axis=1)
@@ -154,13 +125,14 @@ def pronounce(word: str, sec: float, wav_path: Optional[str]):
         "pass":       score >= 0.7,
     }
 
-# ---------- CLI ----------
+# ---------- CLI entry-point ---------- #
 def _cli():
     p   = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="cmd", required=True)
 
     q  = sub.add_parser("quiz")
-    q.add_argument("--cats", nargs="+", choices=["flags", "food", "fest"], default=["flags"])
+    q.add_argument("--cats", nargs="+", choices=["flags", "food", "fest"],
+                   default=["flags"])
     q.add_argument("--n", type=int, default=3)
 
     pr = sub.add_parser("pronounce")
