@@ -14,7 +14,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ---------- copy source ----------
-COPY backend/ /app/backend
+COPY / /app/backend
 
 # ---------- run ----------
 ENV PYTHONUNBUFFERED=1 \
