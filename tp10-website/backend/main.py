@@ -87,14 +87,21 @@ async def tts(word: str):
     os.makedirs(cache_dir, exist_ok=True)
     path = os.path.join(cache_dir, f"{word.lower()}.mp3")
 
-    if not os.path.exists(path):                      # generate once, then reuse
+    if not os.path.exists(path):  # generate once, then reuse
         gTTS(word, lang="en", slow=False).save(path)
 
+    stat = os.stat(path)
     return FileResponse(
         path,
         media_type="audio/mpeg",
         filename=f"{word}.mp3",
-        headers={"Cache-Control": "public, max-age=86400","Access-Control-Allow-Origin": "*"},
+        stat_result=stat,
+        conditional=True,
+        headers={
+            "Cache-Control": "public, max-age=86400",
+            "Accept-Ranges": "bytes",
+            "Access-Control-Allow-Origin": "*",
+        },
     )
 
 # --------------------------------------------------------------------------- #
