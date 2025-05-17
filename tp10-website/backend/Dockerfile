@@ -1,5 +1,5 @@
 # ---------- base image ----------
-FROM python:3.11-slim               # use 3.11 to match Torch + transformers wheels
+FROM python:3.11-slim               
 
 # ---------- system deps ----------
 RUN apt-get update && \
