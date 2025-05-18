@@ -14,6 +14,7 @@ soundfile              # reads WAV / WebM
 pydub                  # ffmpeg-backed fallback
 phonetics
 rapidfuzz
+python-multipart
 
 # text-to-speech cache
 gTTS
