@@ -8,4 +8,4 @@ const pool = mysql.createPool({
     database: "TP10",  // name of the DB
 });
 
-export default pool;
+export default pool; 
