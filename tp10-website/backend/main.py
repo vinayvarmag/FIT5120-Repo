@@ -16,7 +16,7 @@ from fastapi.responses import FileResponse          # <- NEW
 from pydantic import BaseModel
 from gtts import gTTS                               # <- NEW  (pip install gTTS)
 
-from .games_core import generate_quiz, pronounce, preload_whisper
+from games_core import generate_quiz, pronounce, preload_whisper
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
 log = logging.getLogger("culture-api")
