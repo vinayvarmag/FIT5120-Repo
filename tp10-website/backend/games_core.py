@@ -37,7 +37,7 @@ def preload_whisper() -> None:
         log.info("Loading faster-whisper tiny-int8 …")
         from faster_whisper import WhisperModel
         _WHIP = WhisperModel(
-            "openai/whisper-tiny.en",
+            "guillaumekln/faster-whisper-tiny.en",
             device="cpu",
             compute_type="int8"
         )
