@@ -85,7 +85,6 @@ async def tts(word: str):
         media_type="audio/mpeg",
         filename=f"{word}.mp3",
         stat_result=stat,
-        conditional=True,
         headers={
             "Cache-Control": "public, max-age=86400",
             "Accept-Ranges": "bytes",
