@@ -4,18 +4,17 @@ uvicorn[standard]
 python-socketio[asgi]
 pydantic
 
-# ML + Whisper
-torch                  # CPU wheel auto-picked by pip
-transformers
-accelerate             # tiny helper for transformers
+# speech-to-text (small, RAM-friendly)
+faster-whisper      # pulls in ctranslate2 + tokenizers
 
 # scoring utils
-soundfile              # reads WAV / WebM
-pydub                  # ffmpeg-backed fallback
+soundfile           # reads WAV / WebM
+pydub               # ffmpeg-backed fallback
 phonetics
 rapidfuzz
 python-multipart
 numpy<2.0
+
 # text-to-speech cache
 gTTS
 
