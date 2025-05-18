@@ -15,7 +15,7 @@ pydub                  # ffmpeg-backed fallback
 phonetics
 rapidfuzz
 python-multipart
-
+numpy
 # text-to-speech cache
 gTTS
 
