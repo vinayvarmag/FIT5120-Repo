@@ -5,10 +5,10 @@ FROM python:3.11-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ffmpeg \
-        libopenblas-base \   
-        libomp5 \            
-        libsndfile1 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+        libopenblas0-openmp \
+        libomp5 \
+        libsndfile1 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ---------- python deps ----------
 WORKDIR /app
