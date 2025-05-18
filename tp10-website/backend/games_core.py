@@ -90,7 +90,7 @@ def _decode_with_pydub(path: str):
 def pronounce(word: str, sec: float, wav_path: Optional[str]):
     """
     Score a recording. wav_path must be provided in server mode.
-    Accepts WAV or browser WebM/Opus.
+    Accepts WAV or browser WebM/Opus.  Uses faster-whisper (tiny-int8).
     """
     import soundfile as sf
     import numpy as np
@@ -100,27 +100,27 @@ def pronounce(word: str, sec: float, wav_path: Optional[str]):
     if wav_path is None:
         raise RuntimeError("Server mode: wav_path must be provided")
 
-    # 1) try soundfile (native formats)
+    # 1) try soundfile (fast, native formats)
     try:
         audio, sr = sf.read(wav_path, dtype="float32")
     except Exception:
         audio = None
+        sr    = None
 
-    # 2) pydub fallback
-    if audio is None:
-        audio, sr = _decode_with_pydub(wav_path)
+    # 2) pydub fallback or re-read if not 16 kHz
+    if audio is None or sr != 16000:
+        audio, sr = _decode_with_pydub(wav_path)   # always returns 16 kHz
 
     if audio.ndim > 1:
-        audio = audio.mean(axis=1)
+        audio = audio.mean(axis=1)                 # mono
 
     # ---------- STT ---------- #
-    model = _WHIP                                   # type: ignore
+    model = _WHIP                                  # type: ignore
     segments, _info = model.transcribe(
         audio,
-        sampling_rate=sr,
-        beam_size=1,        # tiny model – keep it light
+        beam_size=1,
         vad_filter=True,
-        language="en"
+        language="en",
     )
     hyp = " ".join(seg.text for seg in segments).lower().strip()
 
