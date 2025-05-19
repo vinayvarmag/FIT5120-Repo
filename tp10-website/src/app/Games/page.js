@@ -20,6 +20,7 @@ const CAT_OPTIONS = [
     "flags", "food", "festival", "music",
     "landmarks", "clothing", "language", "sports",
 ];
+const WORD_SUGGESTIONS = ["sushi", "samosa", "kimchi", "diwali", "taco"]; // NEW
 const TUT_KEY = "tutSeen-v2";
 
 const QRCode = lazy(() => import("react-qr-code"));
@@ -37,7 +38,7 @@ export default function Games() {
     const [idx, setIdx] = useState(0);
     const [deadline, setDeadline] = useState(null);
 
-    const [word, setWord] = useState("sushi");
+    const [word, setWord] = useState("");           // <- no default "sushi"
     const [recording, setRec] = useState(false);
     const [result, setRes] = useState(null);
     const [audioUrl, setAudio] = useState(null);
@@ -121,7 +122,7 @@ export default function Games() {
 
             const fd = new FormData();
             fd.append("word", word);
-            fd.append("wav", blob, "audio.webm");
+            fd.append("wav", blob, "audio/webm");
 
             const r = await fetch(`${API}/pronounce`, { method: "POST", body: fd });
             const d = await r.json();
@@ -197,7 +198,7 @@ export default function Games() {
 
                     <section className="flex flex-col items-center gap-6 p-6 bg-gray-50 flex-1">
                         <p className="bg-yellow-50 border border-yellow-300 p-3 rounded text-sm max-w-md text-center">
-                            Select categories and question count, then click&nbsp;<b>Create</b>. Each
+                            Select categories and question count, then click <b>Create</b>. Each
                             question gives {PER_Q_SEC}&nbsp;s.
                         </p>
 
@@ -362,14 +363,28 @@ export default function Games() {
                     <Hero
                         img="/assets/girl_tablet.jpg"
                         title="Pronunciation Challenge"
-                        blurb="Practice your pronunciation by recording your voice and receiving instant feedback on accuracy. Improve your speaking clarity and build confidence."
+                        blurb="Practice your pronunciation by typing any word, recording your voice, and receiving instant feedback on accuracy. Improve your speaking clarity and build confidence."
                     />
 
                     <section className="flex flex-col items-center gap-6 p-6 max-w-sm mx-auto text-center flex-1 bg-gray-50">
-                        <input value={word}
+                        <input
+                            value={word}
                             onChange={e => setWord(e.target.value)}
                             className="w-full border rounded p-2"
-                            placeholder="Type a word (e.g. samosa)" />
+                            placeholder="Enter a word (e.g. samosa)"
+                        />
+
+                        {/* suggestion pills */}
+                        <div className="flex flex-wrap justify-center gap-2">
+                            {WORD_SUGGESTIONS.map(w => (
+                                <button
+                                    key={w}
+                                    onClick={() => setWord(w)}
+                                    className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200">
+                                    {w}
+                                </button>
+                            ))}
+                        </div>
 
                         {countdown !== null && (
                             <p className="text-3xl font-bold">{countdown}</p>
@@ -377,7 +392,8 @@ export default function Games() {
 
                         <div className="flex gap-4">
                             <button onClick={() => setView("menu")}>Back</button>
-                            <button onClick={beginCountdown}
+                            <button
+                                onClick={beginCountdown}
                                 disabled={recording || word.trim() === ""}
                                 className="bg-purple-700 text-white px-4 py-2 rounded disabled:opacity-40">
                                 {recording ? "Recording..." : "Start"}
