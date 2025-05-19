@@ -1,22 +1,32 @@
 /* File: src/app/Games/page.js */
 "use client";
-export const dynamic = "force-dynamic";       // skip static optimisation
+export const dynamic = "force-dynamic";
 
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import Image from "next/image";
 import io from "socket.io-client";
-const QRCode = lazy(() => import("react-qr-code"));
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+    subsets: ["latin"],
+    weight: ["400", "600", "700"],
+    display: "swap",
+});
 
 /* ------------------------------------------------------------------ */
 const API = process.env.NEXT_PUBLIC_API_URL;
-const PER_Q_SEC = 10;
+const PER_Q_SEC = 20;
 const CAT_OPTIONS = [
     "flags", "food", "fest", "music",
     "landmarks", "clothing", "language", "sports",
 ];
 const TUT_KEY = "tutSeen-v2";
-/* ------------------------------------------------------------------ */
 
+const QRCode = lazy(() => import("react-qr-code"));
+
+/* ================================================================== */
 export default function Games() {
+    /* ---------- state ---------- */
     const [view, setView] = useState("menu");
     const [cats, setCats] = useState([]);
     const [n, setN] = useState(4);
@@ -38,6 +48,7 @@ export default function Games() {
 
     const sockRef = useRef(null);
 
+    /* ---------- socket wiring ---------- */
     useEffect(() => {
         sockRef.current = io(API, { transports: ["websocket"] });
         const s = sockRef.current;
@@ -54,29 +65,20 @@ export default function Games() {
 
         s.on("session_state", onState);
         s.on("error_msg", e => alert(e.msg));
-
-        return () => {
-            s.off("session_state", onState);
-            s.close();
-        };
+        return () => { s.off("session_state", onState); s.close(); };
     }, []);
 
     useEffect(() => {
         const s = sockRef.current;
         if (!s || !sid) return;
-
         const join = () => s.emit("join_session", { sessionId: sid, role: "host" });
-
         join();
         s.on("connect", join);
         s.on("reconnect", join);
-
-        return () => {
-            s.off("connect", join);
-            s.off("reconnect", join);
-        };
+        return () => { s.off("connect", join); s.off("reconnect", join); };
     }, [sid]);
 
+    /* ---------- tutorial flag ---------- */
     useEffect(() => {
         const seen = sessionStorage.getItem(TUT_KEY);
         setShowTut(!seen);
@@ -86,6 +88,7 @@ export default function Games() {
         setShowTut(false);
     };
 
+    /* ---------- helpers ---------- */
     const toggleCat = c =>
         setCats(p => (p.includes(c) ? p.filter(x => x !== c) : [...p, c]));
 
@@ -102,10 +105,10 @@ export default function Games() {
         sockRef.current.emit("join_session", { sessionId, role: "host" });
         setView("lobby");
     };
-
     const startQuiz = () =>
         sockRef.current.emit("start_quiz", { sessionId: sid });
 
+    /* ---- pronunciation recording ---- */
     const record = async () => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         const mr = new MediaRecorder(stream, { mimeType: "audio/webm" });
@@ -118,10 +121,10 @@ export default function Games() {
 
             const fd = new FormData();
             fd.append("word", word);
-            fd.append("wav", blob, "audio/webm");
+            fd.append("wav", blob, "audio.webm");
 
-            const resp = await fetch(`${API}/pronounce`, { method: "POST", body: fd });
-            const d = await resp.json();
+            const r = await fetch(`${API}/pronounce`, { method: "POST", body: fd });
+            const d = await r.json();
 
             setRes(d);
             setTts(new URL(d.tts, API).href);
@@ -153,76 +156,114 @@ export default function Games() {
 
     const Tut = showTut ? <TutorialOverlay dismiss={dismissTut} /> : null;
 
+    /* ================== VIEWS ================== */
+    /* ---------- menu / landing ---------- */
     if (view === "menu") {
         return (
             <>
                 {Tut}
-                <main className="min-h-screen bg-gray-50 grid place-items-center p-6">
-                    <div className="grid md:grid-cols-2 gap-8 w-full max-w-4xl">
-                        <Card img="/Games.png" title="Cultural Quiz"
-                            onClick={() => setView("quiz-setup")} />
-                        <Card img="/Awareness.png" title="Pronunciation"
-                            onClick={() => setView("pronounce-setup")} />
-                    </div>
+                <main className={`${poppins.className} min-h-screen flex flex-col`}>
+                    <section className="relative w-full h-[260px] md:h-[340px] lg:h-[420px]">
+                        <Image
+                            src="/assets/students_hallway.png"
+                            alt="Students walking through a modern school hallway"
+                            fill
+                            priority
+                            className="object-cover object-center"
+                        />
+                        <div className="absolute inset-0 bg-black/50" />
+                        <h1 className="absolute inset-0 flex items-center justify-center px-4 text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg">
+                            Games
+                        </h1>
+                    </section>
+
+                    <section className="bg-gray-50 flex flex-col items-center px-4 py-16 flex-1">
+                        <div className="grid md:grid-cols-2 gap-10 w-full max-w-4xl">
+                            <Card title="Cultural Quiz"
+                                onClick={() => setView("quiz-setup")} />
+                            <Card title="Pronunciation Challenge"
+                                onClick={() => setView("pronounce-setup")} />
+                        </div>
+                    </section>
                 </main>
             </>
         );
     }
 
+    /* ---------- quiz setup ---------- */
     if (view === "quiz-setup") {
         return (
             <>
                 {Tut}
-                <main className="min-h-screen flex flex-col items-center gap-6 p-6 bg-gray-50">
-                    <h2 className="text-2xl font-bold">Create Quiz</h2>
-                    <p className="bg-yellow-50 border border-yellow-300 p-3 rounded text-sm max-w-md text-center">
-                        Select one or more categories, choose the number of questions,
-                        then click <b>Create</b> to open a lobby for participants to join.
-                    </p>
+                <main className={`${poppins.className} min-h-screen flex flex-col`}>
+                    <section className="relative w-full h-[200px] md:h-[260px]">
+                        <Image
+                            src="/assets/boy_device.png"
+                            alt="Boy using a digital device in class"
+                            fill
+                            className="object-cover object-center"
+                        />
+                        <div className="absolute inset-0 bg-black/45" />
+                        <h2 className="absolute inset-0 flex items-center justify-center text-3xl md:text-4xl font-bold text-white">
+                            Cultural&nbsp;Quiz
+                        </h2>
+                    </section>
 
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
-                        {CAT_OPTIONS.map(c => (
-                            <button key={c} onClick={() => toggleCat(c)}
-                                className={"p-3 border rounded capitalize " +
-                                    (cats.includes(c) ? "bg-purple-700 text-white" : "")}>
-                                {c}
+                    <section className="flex flex-col items-center gap-6 p-6 bg-gray-50 flex-1">
+                        <p className="bg-yellow-50 border border-yellow-300 p-3 rounded text-sm max-w-md text-center">
+                            Select categories and question count, then click&nbsp;<b>Create</b>. Each
+                            question gives {PER_Q_SEC}&nbsp;s.
+                        </p>
+
+                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
+                            {CAT_OPTIONS.map(c => (
+                                <button key={c} onClick={() => toggleCat(c)}
+                                    className={"p-3 border rounded capitalize text-lg " +
+                                        (cats.includes(c)
+                                            ? "bg-purple-700 text-white"
+                                            : "bg-white hover:bg-purple-100")}>
+                                    {c}
+                                </button>
+                            ))}
+                        </div>
+
+                        <label className="flex items-center gap-3">
+                            Questions:
+                            <input type="number" min="1" max="10"
+                                value={n}
+                                onChange={e => setN(+e.target.value || 1)}
+                                className="w-20 border rounded p-1 text-center" />
+                        </label>
+
+                        <div className="flex gap-4">
+                            <button onClick={() => setView("menu")} className="underline">Back</button>
+                            <button onClick={createQuiz}
+                                disabled={!cats.length}
+                                className="bg-purple-700 text-white px-4 py-2 rounded disabled:opacity-40">
+                                Create
                             </button>
-                        ))}
-                    </div>
-
-                    <label className="flex items-center gap-3">
-                        Questions:
-                        <input type="number" min="1" max="10"
-                            value={n}
-                            onChange={e => setN(+e.target.value || 1)}
-                            className="w-20 border rounded p-1" />
-                    </label>
-
-                    <div className="flex gap-4">
-                        <button onClick={() => setView("menu")} className="underline">Back</button>
-                        <button onClick={createQuiz}
-                            disabled={!cats.length}
-                            className="bg-purple-700 text-white px-4 py-2 rounded disabled:opacity-40">
-                            Create
-                        </button>
-                    </div>
+                        </div>
+                    </section>
                 </main>
             </>
         );
     }
 
+    /* ---------- lobby (host QR) ---------- */
     if (view === "lobby") {
         const url = typeof window !== "undefined"
             ? `${window.location.origin}/Games/join?session=${sid}`
             : "";
-
         return (
             <>
                 {Tut}
-                <main className="min-h-screen flex flex-col items-center gap-6 p-6 bg-gray-50">
-                    <h2 className="text-xl font-semibold">Scan or open link</h2>
-                    <p className="text-sm text-gray-700 max-w-xs text-center">
-                        Participants can join your game using this QR code or the link below.
+                <main className={`${poppins.className} min-h-screen flex flex-col items-center gap-6 p-6 bg-gray-50`}>
+                    <h2 className="text-xl font-semibold">Host&nbsp;Lobby</h2>
+                    <p className="text-sm text-gray-700 max-w-sm text-center">
+                        Share this QR code or link with contestants to let them join. <br />
+                        <span className="font-medium">This screen is for the host only.</span>
+                        Contestants will play on their own devices; final scores and answers
+                        will appear here once the game ends.
                     </p>
 
                     <Suspense fallback={<div className="h-[200px]" />}>
@@ -235,7 +276,7 @@ export default function Games() {
                     )}
 
                     <div className="w-full max-w-xs">
-                        <h3 className="mt-4 mb-2 font-medium">Teams:</h3>
+                        <h3 className="mt-4 mb-2 font-medium">Teams joined:</h3>
                         {Object.keys(teams).length ? (
                             <ul>
                                 {Object.keys(teams).map(t => (
@@ -257,37 +298,41 @@ export default function Games() {
         );
     }
 
+    /* ---------- host play ---------- */
     if (view === "host-play") {
         return (
             <>
                 {Tut}
-                <main className="min-h-screen p-6 flex flex-col items-center bg-gray-50">
-                    <h2 className="text-2xl font-bold mb-4">
+                <main className={`${poppins.className} min-h-screen p-6 flex flex-col items-center bg-gray-50`}>
+                    <h2 className="text-2xl font-bold mb-6">
                         Question {idx + 1}/{qs.length}
                     </h2>
 
                     <p className="mb-6 text-gray-700">Waiting on participants...</p>
 
-                    <div className="w-full max-w-sm h-3 bg-gray-200 rounded">
-                        <div
-                            className="h-full bg-purple-700 rounded"
-                            style={{
-                                width: `${(secsLeft / 10) * 100}%`,
-                                transition: "width 1s linear",
-                            }}
-                        />
+                    <div className="w-full flex flex-col items-center">
+                        <div className="w-full max-w-sm h-3 bg-gray-200 rounded overflow-hidden">
+                            <div
+                                className="h-full bg-purple-700"
+                                style={{
+                                    width: `${(secsLeft / PER_Q_SEC) * 100}%`,
+                                    transition: "width 1s linear",
+                                }}
+                            />
+                        </div>
+                        <p className="mt-2 text-sm text-gray-600">{secsLeft}s&nbsp;left</p>
                     </div>
-                    <p className="mt-2 text-sm text-gray-500">{secsLeft}s left</p>
                 </main>
             </>
         );
     }
 
+    /* ---------- results ---------- */
     if (view === "host-end") {
         return (
             <>
                 {Tut}
-                <main className="min-h-screen p-6 bg-gray-50 flex flex-col items-center gap-6">
+                <main className={`${poppins.className} min-h-screen p-6 bg-gray-50 flex flex-col items-center gap-6`}>
                     <h2 className="text-3xl font-bold">Results</h2>
                     <table className="min-w-[260px] bg-white rounded shadow">
                         <tbody>
@@ -301,6 +346,7 @@ export default function Games() {
                                 ))}
                         </tbody>
                     </table>
+
                     <details className="w-full max-w-xl">
                         <summary className="cursor-pointer mb-2 font-medium">
                             Show correct answers
@@ -321,40 +367,55 @@ export default function Games() {
         );
     }
 
+    /* ---------- pronunciation setup ---------- */
     if (view === "pronounce-setup") {
         return (
             <>
                 {Tut}
-                <main className="flex flex-col items-center gap-6 p-6 max-w-sm mx-auto text-center">
-                    <h2 className="text-2xl font-bold">Pronunciation Challenge</h2>
+                <main className={`${poppins.className} min-h-screen flex flex-col`}>
+                    <section className="relative w-full h-[200px] md:h-[260px]">
+                        <Image
+                            src="/assets/girl_tablet.jpg"
+                            alt="Girl using a tablet device in class"
+                            fill
+                            className="object-cover object-center"
+                        />
+                        <div className="absolute inset-0 bg-black/45" />
+                        <h2 className="absolute inset-0 flex items-center justify-center text-3xl md:text-4xl font-bold text-white">
+                            Pronunciation&nbsp;Challenge
+                        </h2>
+                    </section>
 
-                    <input value={word}
-                        onChange={e => setWord(e.target.value)}
-                        className="w-full border rounded p-2"
-                        placeholder="Type a word (e.g. samosa)" />
+                    <section className="flex flex-col items-center gap-6 p-6 max-w-sm mx-auto text-center flex-1 bg-gray-50">
+                        <input value={word}
+                            onChange={e => setWord(e.target.value)}
+                            className="w-full border rounded p-2"
+                            placeholder="Type a word (e.g. samosa)" />
 
-                    {countdown !== null && (
-                        <p className="text-3xl font-bold">{countdown}</p>
-                    )}
+                        {countdown !== null && (
+                            <p className="text-3xl font-bold">{countdown}</p>
+                        )}
 
-                    <div className="flex gap-4">
-                        <button onClick={() => setView("menu")}>Back</button>
-                        <button onClick={beginCountdown}
-                            disabled={recording || word.trim() === ""}
-                            className="bg-purple-700 text-white px-4 py-2 rounded disabled:opacity-40">
-                            {recording ? "Recording..." : "Start"}
-                        </button>
-                    </div>
+                        <div className="flex gap-4">
+                            <button onClick={() => setView("menu")}>Back</button>
+                            <button onClick={beginCountdown}
+                                disabled={recording || word.trim() === ""}
+                                className="bg-purple-700 text-white px-4 py-2 rounded disabled:opacity-40">
+                                {recording ? "Recording..." : "Start"}
+                            </button>
+                        </div>
+                    </section>
                 </main>
             </>
         );
     }
 
+    /* ---------- pronunciation result ---------- */
     if (view === "pronounce-result" && result) {
         return (
             <>
                 {Tut}
-                <main className="flex flex-col items-center gap-6 p-6 text-center max-w-md mx-auto">
+                <main className={`${poppins.className} flex flex-col items-center gap-6 p-6 text-center max-w-md mx-auto`}>
                     <h2 className="text-2xl font-bold">Result</h2>
 
                     <p>You said: <code>{result.transcript}</code></p>
@@ -379,9 +440,7 @@ export default function Games() {
                     )}
 
                     <button onClick={() => {
-                        setRes(null);
-                        setAudio(null);
-                        setTts(null);
+                        setRes(null); setAudio(null); setTts(null);
                         setView("pronounce-setup");
                     }}
                         className="bg-purple-700 text-white px-4 py-2 rounded mt-4">
@@ -395,16 +454,15 @@ export default function Games() {
     return null;
 }
 
-/* ----------------- helper components ----------------------------- */
-function Card({ img, title, onClick }) {
+/* ---------------- helper components ---------------- */
+function Card({ title, onClick }) {
     return (
-        <div onClick={onClick}
-            className="cursor-pointer bg-white rounded-2xl shadow hover:shadow-lg overflow-hidden">
-            <img src={img} alt="" className="h-48 w-full object-cover" />
-            <div className="p-6">
-                <h3 className="font-bold text-xl">{title}</h3>
-            </div>
-        </div>
+        <button
+            onClick={onClick}
+            className="flex items-center justify-center h-40 bg-white rounded-2xl shadow hover:bg-purple-700 hover:text-white transition text-2xl font-semibold"
+        >
+            {title}
+        </button>
     );
 }
 
@@ -414,18 +472,9 @@ function TutorialOverlay({ dismiss }) {
             <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl text-left space-y-4">
                 <h2 className="text-xl font-bold">How the games work</h2>
                 <ol className="list-decimal pl-4 space-y-1 text-sm">
-                    <li>
-                        <b>Pronunciation Game:</b> press <kbd>Start</kbd>, speak when
-                        prompted, then compare your clip with the reference.
-                    </li>
-                    <li>
-                        <b>Quiz:</b> each question allows <b>{PER_Q_SEC} s</b>. Watch the
-                        purple bar on your device!
-                    </li>
-                    <li>
-                        <b>Scores:</b> instant feedback after every action; totals at
-                        the end.
-                    </li>
+                    <li><b>Pronunciation Game:</b> press <kbd>Start</kbd>, speak when prompted, then compare your clip with the reference.</li>
+                    <li><b>Quiz:</b> each question allows <b>{PER_Q_SEC} s</b>. Watch the purple bar on your device!</li>
+                    <li><b>Scores:</b> instant feedback after every action; totals at the end.</li>
                 </ol>
                 <button onClick={dismiss}
                     className="mt-2 bg-purple-700 text-white px-4 py-2 rounded w-full">
