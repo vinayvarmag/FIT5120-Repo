@@ -20,9 +20,7 @@ export default function LearningModulesPage() {
 
                 {/* description */}
                 <p className="mb-8 text-black">
-                    Explore a series of interactive modules designed to enhance your cultural awareness,
-                    provide hands-on data exploration, and test your understanding through quizzes.
-                    Each module dives into unique datasets and insights from around the world.
+                    Engaging, self-paced lessons to deepen your understanding of different cultures. Discover in-depth cultural knowledge with resources of each learning module through searching or selecting a row in "Data Preview" and test your knowledge with quiz.
                 </p>
 
                 {/* modules grid */}

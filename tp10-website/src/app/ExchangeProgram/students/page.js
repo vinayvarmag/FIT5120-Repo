@@ -98,6 +98,43 @@ export default function StudentExchangePage() {
                         </ul>
                     </div>
                 </a>
+                {/* Card 3 */}
+                <a
+                    href="https://afs.org.au/study-abroad/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex flex-col sm:flex-row overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-purple-100 hover:shadow-2xl transition"
+                >
+                    {/* image + copyright */}
+                    <div className="relative w-full sm:w-64 h-56 sm:h-auto flex-shrink-0">
+                        <Image
+                            src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80"
+                            alt="AFS Australia Study Abroad – student abroad"
+                            fill
+                            className="object-cover transform group-hover:scale-105 transition-transform duration-300"
+                            priority
+                        />
+                        <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1 rounded">
+      © AFS Australia
+    </span>
+                    </div>
+
+                    {/* text */}
+                    <div className="p-6 space-y-3">
+                        <h2 className="text-lg font-semibold text-purple-900 group-hover:underline">
+                            AFS Intercultural Programs Australia
+                        </h2>
+                        <p className="text-sm text-gray-700">
+                            Not-for-profit intercultural exchange organisation offering 4–12 month placements for secondary students, plus short-term volunteering and family programs.
+                        </p>
+                        <ul className="list-disc pl-5 text-sm text-gray-700 space-y-1">
+                            <li>Destinations in Europe, Asia, Americas, Africa & Pacific</li>
+                            <li>Live with a host family & attend local school</li>
+                            <li>Pre-departure training & 24/7 in-country support</li>
+                            <li>Scholarships available for eligible students</li>
+                        </ul>
+                    </div>
+                </a>
 
                 {/* ── disclaimer ────────────────────── */}
                 <p className="text-center text-xs italic text-gray-500">

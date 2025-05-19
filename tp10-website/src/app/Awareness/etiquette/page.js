@@ -40,7 +40,9 @@ export default function CulturalEtiquetteGuide() {
                         Victoria is home to hundreds of cultures, each with its own
                         traditions, greetings and social norms. This page gathers concise
                         etiquette tips so you can interact with respect and confidence.
-                        We’re expanding the guide module‑by‑module—check back regularly!
+                    </p>
+                    <p className="text-gray-700">
+                        Practical tips and guidelines for respectful cross-cultural interactions and discover more through further readings
                     </p>
                 </header>
 

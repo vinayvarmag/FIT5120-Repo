@@ -44,7 +44,7 @@ export default function EventsLanding() {
                 {/* title overlay */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center px-4 space-y-4">
                     <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg text-center mb-12">
-                        Events Hub
+                        Event Planner
                     </h1>
                     <p className="text-center max-w-3xl text-white text-xl font-semibold">
                         Welcome to the all-in-one cultural event planning space! Create events, set time, location, and budget, add agendas, participants, and logistics—and set reminders or sync with the calendar. With a built-in finance dashboard, track expenses and budget at a glance. Whether it's a small gathering or a large celebration, this planner helps keep everything organized.
@@ -55,7 +55,7 @@ export default function EventsLanding() {
             {/* ---------- introductory copy ---------- */}
             <section className="flex flex-col items-center px-4 py-12">
                 <p className="text-center max-w-3xl font-bold text-black text-xl mb-6">
-                    Choose an action to get started!
+                    Create and manage your own events. Set dates, upload descriptions, invite participants, and track RSVPs.
                 </p>
 
                 {/* ---------- action cards ---------- */}

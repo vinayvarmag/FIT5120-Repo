@@ -111,7 +111,10 @@ export default function HomePage() {
             <HeroSection onExplore={() => router.push('/EventCalendar')} />
 
             {/* discover section */}
-            <section className="py-16 bg-gray-100">
+            <section className="py-8 bg-gray-100">
+                <p className="text-center max-w-3xl mx-auto text-gray-700 mb-3">
+                    Explore key features of the website by reading the cards under "Discover Cultural Activities"
+                </p>
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl md:text-4xl font-bold text-center text-black mb-6">
                         Discover Cultural Activities

@@ -1,4 +1,3 @@
-// File: src/app/exchange-program/page.js
 "use client";
 
 import Image from "next/image";
@@ -20,7 +19,7 @@ export default function ExchangeProgramPage() {
                     </p>
                 </header>
 
-                {/* ── featured card ──────────────────── */}
+                {/* ── Global Work & Travel card ──── */}
                 <a
                     href="https://www.globalworkandtravel.com/teach-abroad"
                     target="_blank"
@@ -62,11 +61,49 @@ export default function ExchangeProgramPage() {
                     </div>
                 </a>
 
+                {/* ── Asialink Study Asia card ────── */}
+                <a
+                    href="https://asialink.unimelb.edu.au/education/program/study-asia/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex flex-col sm:flex-row overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-purple-100 hover:shadow-2xl transition"
+                >
+                    {/* image + overlay */}
+                    <div className="relative w-full sm:w-64 h-56 sm:h-auto flex-shrink-0">
+                        <Image
+                            src="https://assets.asialink.unimelb.edu.au/2024-08/22-study-tour-Korea-2017.jpg"
+                            alt="Study program to Asia by Asialink Education"
+                            fill
+                            className="object-cover transform group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <span className="absolute bottom-2 right-2 text-xs text-white bg-black bg-opacity-50 px-1 rounded">
+              © Asialink Education
+            </span>
+                    </div>
+
+                    {/* text */}
+                    <div className="p-6 space-y-3">
+                        <h2 className="text-lg font-semibold text-purple-900 group-hover:underline">
+                            Asialink Education – Study Program to Asia
+                        </h2>
+                        <p className="text-sm text-gray-700">
+                            Asialink Education offers customised professional learning
+                            opportunities in Asia for Australian primary and secondary school
+                            teachers and school leaders, aligned with the Australian Curriculum.
+                        </p>
+                        <ul className="list-disc pl-5 text-sm text-gray-700 space-y-1">
+                            <li>Direct in-country experience in multiple Asian destinations</li>
+                            <li>Customisable programs for various curriculum areas</li>
+                            <li>Partnerships with education jurisdictions and institutions</li>
+                            <li>Focused on meaningful cultural engagement</li>
+                        </ul>
+                    </div>
+                </a>
+
 
                 {/* ── disclaimer ────────────────────── */}
                 <p className="text-center text-xs italic text-gray-500">
-                    Info summarised from Global Work & Travel’s public materials; confirm
-                    details directly with them before booking.
+                    Info summarised from Global Work & Travel’s and Asialink Education’s public materials; confirm details directly with them before booking.
                 </p>
             </div>
         </main>

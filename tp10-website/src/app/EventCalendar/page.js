@@ -1,27 +1,46 @@
 "use client";
 
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-    FaFire,
-    FaCalendarAlt,
-    FaBookmark,
-    FaStar,
-} from "react-icons/fa";
+import { useAuth } from "@/context/AuthContext";
+import { FaFire, FaCalendarAlt, FaBookmark } from "react-icons/fa";
+import { RiBookmarkLine, RiStarLine } from "react-icons/ri";
 
 /* -------------------------------------------------------------------------- */
 /**
  * Event Calendar – landing hub
  *
- * Inspired by the "Culture Awareness" landing page design you shared: hero
- * banner with overlay + a grid of topic cards.  Four cards link to the major
- * subsections: Popular Events, full Event Calendar, My Saved Events, and
- * Favourites.
- *
- * File location:  src/app/introduction/page.js  (adjust route as desired)
+ * Requires authentication: if not logged in, redirects user to login prompt.
  */
 export default function EventCalendarLanding() {
-    /* --------- cards config --------- */
+    const { user } = useAuth();
+
+    // show loading while auth status is resolving
+    if (user === undefined) {
+        return (
+            <main className="min-h-screen bg-gray-50 text-black pt-24 flex items-center justify-center">
+                <p>Loading…</p>
+            </main>
+        );
+    }
+
+    // if not authenticated, prompt login
+    if (!user) {
+        return (
+            <main className="min-h-screen bg-gray-50 text-black pt-24 flex items-center justify-center">
+                <p>
+                    Please{' '}
+                    <Link href="/login" className="underline">
+                        log in
+                    </Link>{' '}
+                    to view the Event Calendar.
+                </p>
+            </main>
+        );
+    }
+
+    // authenticated: render landing content
     const sections = [
         {
             key: "popular",
@@ -49,12 +68,10 @@ export default function EventCalendarLanding() {
         },
     ];
 
-    /* ---------------------------------------------------------------------- */
     return (
         <main className="min-h-screen flex flex-col">
             {/* ---------- hero banner ---------- */}
             <section className="relative w-full h-[300px] md:h-[450px] lg:h-[550px]">
-                {/* background image — replace /events_banner.jpg in /public */}
                 <Image
                     src="/events_banner.jpg"
                     alt="Collage of festival lights and calendar pages"
@@ -62,9 +79,7 @@ export default function EventCalendarLanding() {
                     priority
                     className="object-cover object-center"
                 />
-                {/* dark overlay */}
                 <div className="absolute inset-0 bg-black/25" />
-                {/* title overlay */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center px-4 space-y-4">
                     <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg text-center mb-12">
                         Event Calendar
@@ -78,7 +93,10 @@ export default function EventCalendarLanding() {
             {/* ---------- introductory copy ---------- */}
             <section className="flex flex-col items-center px-4 py-12">
                 <p className="text-center max-w-3xl font-bold text-black text-xl mb-6">
-                    Explore events from the list of events and add to "My Event" by clicking on the "bookmark" icon. Add an event to the top of your list by selecting the "star" icon.
+                    Explore events from the list and add to <strong>My Events</strong> by clicking the{' '}
+                    <RiBookmarkLine className="inline align-middle mx-1" size={20} /> icon. Add an event
+                    to the top of your list by selecting the{' '}
+                    <RiStarLine className="inline align-middle mx-1" size={20} /> icon.
                 </p>
 
                 {/* ---------- section cards ---------- */}
@@ -89,13 +107,10 @@ export default function EventCalendarLanding() {
                             href={href}
                             className="flex items-start bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition"
                         >
-                            {/* icon + title */}
                             <div className="flex-none w-64 flex items-center space-x-4 mr-8">
                                 <Icon className="text-4xl text-purple-900" />
                                 <h3 className="text-xl font-semibold text-black">{title}</h3>
                             </div>
-
-                            {/* description */}
                             <div className="flex-1">
                                 <p className="text-black">{description}</p>
                             </div>

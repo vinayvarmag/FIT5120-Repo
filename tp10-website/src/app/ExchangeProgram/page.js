@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import Link  from "next/link";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaChalkboardTeacher, FaUserGraduate } from "react-icons/fa";
 
@@ -11,14 +11,14 @@ const cards = [
     {
         key: "teachers",
         title: "For Teachers",
-        icon:  FaChalkboardTeacher,
+        icon: FaChalkboardTeacher,
         description:
             "Resources, guidelines, and application steps for educators coordinating or leading exchange programs.",
     },
     {
         key: "students",
         title: "For Students",
-        icon:  FaUserGraduate,
+        icon: FaUserGraduate,
         description:
             "Everything students need to prepare, apply, and thrive in an international exchange experience.",
     },
@@ -26,14 +26,21 @@ const cards = [
 
 export default function ExchangeProgramsLanding() {
     /* ── converter state ── */
-    const [rates, setRates]           = useState({});
-    const [codes, setCodes]           = useState([]);
-    const [amountAUD, setAmountAUD]   = useState(1);
-    const [target, setTarget]         = useState("USD");
-    const [converted, setConverted]   = useState("");
-    const [loading, setLoading]       = useState(true);
+    const [rates, setRates] = useState({});
+    const [codes, setCodes] = useState([]);
+    const [amountAUD, setAmountAUD] = useState(1);
+    const [target, setTarget] = useState("USD");
+    const [converted, setConverted] = useState("");
+    const [loading, setLoading] = useState(true);
 
     const apiKey = process.env.NEXT_PUBLIC_FREE_CURRENCY_API_KEY;
+
+    // Use Intl.DisplayNames to get currency names in en-AU locale
+    const currencyNames =
+        typeof Intl !== 'undefined' &&
+        Intl.DisplayNames
+            ? new Intl.DisplayNames('en-AU', { type: 'currency' })
+            : null;
 
     /* ── single API call: latest rates with AUD base ── */
     useEffect(() => {
@@ -44,8 +51,8 @@ export default function ExchangeProgramsLanding() {
         }
         (async () => {
             try {
-                const res  = await fetch(
-                    //`https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}&base_currency=AUD`
+                const res = await fetch(
+                    `https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}&base_currency=AUD`
                 );
                 const json = await res.json();
                 const audRates = json.data || {};
@@ -55,6 +62,7 @@ export default function ExchangeProgramsLanding() {
 
                 setRates(audRates);
                 setCodes(Object.keys(audRates));
+
                 // Keep default target valid
                 if (!audRates[target]) setTarget("USD");
             } catch (err) {
@@ -107,7 +115,8 @@ export default function ExchangeProgramsLanding() {
 
             {/* ── Currency converter ── */}
             <section className="flex justify-center px-4 py-12">
-                <div className="w-full max-w-2xl rounded-xl shadow p-6">
+                {/* widened container to match cards width */}
+                <div className="w-full max-w-4xl rounded-xl shadow p-6">
                     <div className="flex space-x-4">
                         {/* AUD input */}
                         <div className="flex-1 bg-white rounded-lg border flex items-center p-3">
@@ -124,7 +133,11 @@ export default function ExchangeProgramsLanding() {
                                 disabled
                                 className="ml-2 bg-transparent outline-none cursor-not-allowed"
                             >
-                                <option>AUD</option>
+                                <option value="AUD">
+                                    {currencyNames
+                                        ? `AUD - ${currencyNames.of('AUD')}`
+                                        : 'AUD'}
+                                </option>
                             </select>
                         </div>
 
@@ -147,7 +160,11 @@ export default function ExchangeProgramsLanding() {
                                     <option>Loading currencies...</option>
                                 ) : (
                                     codes.sort().map(code => (
-                                        <option key={code} value={code}>{code}</option>
+                                        <option key={code} value={code}>
+                                            {currencyNames
+                                                ? `${code} - ${currencyNames.of(code)}`
+                                                : code}
+                                        </option>
                                     ))
                                 )}
                             </select>
