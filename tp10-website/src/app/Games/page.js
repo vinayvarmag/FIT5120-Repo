@@ -17,7 +17,7 @@ const poppins = Poppins({
 const API = process.env.NEXT_PUBLIC_API_URL;
 const PER_Q_SEC = 20;
 const CAT_OPTIONS = [
-    "flags", "food", "fest", "music",
+    "flags", "food", "festival", "music",
     "landmarks", "clothing", "language", "sports",
 ];
 const TUT_KEY = "tutSeen-v2";
@@ -157,25 +157,18 @@ export default function Games() {
     const Tut = showTut ? <TutorialOverlay dismiss={dismissTut} /> : null;
 
     /* ================== VIEWS ================== */
+
     /* ---------- menu / landing ---------- */
     if (view === "menu") {
         return (
             <>
                 {Tut}
                 <main className={`${poppins.className} min-h-screen flex flex-col`}>
-                    <section className="relative w-full h-[260px] md:h-[340px] lg:h-[420px]">
-                        <Image
-                            src="/assets/students_hallway.png"
-                            alt="Students walking through a modern school hallway"
-                            fill
-                            priority
-                            className="object-cover object-center"
-                        />
-                        <div className="absolute inset-0 bg-black/50" />
-                        <h1 className="absolute inset-0 flex items-center justify-center px-4 text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg">
-                            Games
-                        </h1>
-                    </section>
+                    <Hero
+                        img="/assets/students_hallway.png"
+                        title="Games"
+                        blurb="Discover the fun side of learning about cultures! These games are all about testing your instincts, picking up surprising facts, and enjoying every moment as you explore the amazing diversity of our world. Whether you're curious about everyday life in different countries or just want to challenge yourself in a playful way, these activities are a great way to learn something new without even realizing it. No pressure, just play-and let the world surprise you."
+                    />
 
                     <section className="bg-gray-50 flex flex-col items-center px-4 py-16 flex-1">
                         <div className="grid md:grid-cols-2 gap-10 w-full max-w-4xl">
@@ -196,18 +189,11 @@ export default function Games() {
             <>
                 {Tut}
                 <main className={`${poppins.className} min-h-screen flex flex-col`}>
-                    <section className="relative w-full h-[200px] md:h-[260px]">
-                        <Image
-                            src="/assets/boy_device.png"
-                            alt="Boy using a digital device in class"
-                            fill
-                            className="object-cover object-center"
-                        />
-                        <div className="absolute inset-0 bg-black/45" />
-                        <h2 className="absolute inset-0 flex items-center justify-center text-3xl md:text-4xl font-bold text-white">
-                            Cultural&nbsp;Quiz
-                        </h2>
-                    </section>
+                    <Hero
+                        img="/assets/boy_device.png"
+                        title="Cultural Quiz"
+                        blurb="Challenge your knowledge of global food, flags, and festivals with timed questions. Each quiz introduces you to unique cultural features from different countries, helping you expand your perspective while having fun."
+                    />
 
                     <section className="flex flex-col items-center gap-6 p-6 bg-gray-50 flex-1">
                         <p className="bg-yellow-50 border border-yellow-300 p-3 rounded text-sm max-w-md text-center">
@@ -258,7 +244,7 @@ export default function Games() {
             <>
                 {Tut}
                 <main className={`${poppins.className} min-h-screen flex flex-col items-center gap-6 p-6 bg-gray-50`}>
-                    <h2 className="text-xl font-semibold">Host&nbsp;Lobby</h2>
+                    <h2 className="text-2xl font-bold">Host&nbsp;Lobby</h2>
                     <p className="text-sm text-gray-700 max-w-sm text-center">
                         Share this QR code or link with contestants to let them join. <br />
                         <span className="font-medium">This screen is for the host only.</span>
@@ -373,18 +359,11 @@ export default function Games() {
             <>
                 {Tut}
                 <main className={`${poppins.className} min-h-screen flex flex-col`}>
-                    <section className="relative w-full h-[200px] md:h-[260px]">
-                        <Image
-                            src="/assets/girl_tablet.jpg"
-                            alt="Girl using a tablet device in class"
-                            fill
-                            className="object-cover object-center"
-                        />
-                        <div className="absolute inset-0 bg-black/45" />
-                        <h2 className="absolute inset-0 flex items-center justify-center text-3xl md:text-4xl font-bold text-white">
-                            Pronunciation&nbsp;Challenge
-                        </h2>
-                    </section>
+                    <Hero
+                        img="/assets/girl_tablet.jpg"
+                        title="Pronunciation Challenge"
+                        blurb="Practice your pronunciation by recording your voice and receiving instant feedback on accuracy. Improve your speaking clarity and build confidence."
+                    />
 
                     <section className="flex flex-col items-center gap-6 p-6 max-w-sm mx-auto text-center flex-1 bg-gray-50">
                         <input value={word}
@@ -452,6 +431,30 @@ export default function Games() {
     }
 
     return null;
+}
+
+/* --------------- Reusable hero banner ---------------------------- */
+function Hero({ img, title, blurb }) {
+    return (
+        <section className="relative w-full h-[300px] md:h-[450px] lg:h-[550px]">
+            <Image
+                src={img}
+                alt={title}
+                fill
+                priority
+                className="object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-4 space-y-4">
+                <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg text-center">
+                    {title}
+                </h1>
+                <p className="text-center max-w-3xl text-white text-xl font-semibold">
+                    {blurb}
+                </p>
+            </div>
+        </section>
+    );
 }
 
 /* ---------------- helper components ---------------- */
