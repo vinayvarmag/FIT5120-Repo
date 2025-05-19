@@ -1,3 +1,4 @@
+/* File: src/app/Games/join/page.js */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -5,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import io from "socket.io-client";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
-const PER_Q_SEC = 10;
+const PER_Q_SEC = 20;          // 
 
 export default function JoinClient() {
     const search = useSearchParams();
@@ -23,20 +24,24 @@ export default function JoinClient() {
     const [score, setScore] = useState(0);
     const [feedback, setFB] = useState(null);
 
+    /* keep ticking so our countdown is reactive */
     const [now, setNow] = useState(() => Date.now() / 1000);
     useEffect(() => {
         const id = setInterval(() => setNow(Date.now() / 1000), 1000);
         return () => clearInterval(id);
     }, []);
 
+    /* socket setup */
     const sockRef = useRef(null);
     useEffect(() => {
         sockRef.current = io(API, {
-            secure: true, transports: ["websocket"], path: "/socket.io",
+            secure: true,
+            transports: ["websocket"],
+            path: "/socket.io",
         });
         const s = sockRef.current;
 
-        s.on("session_state", (d) => {
+        s.on("session_state", d => {
             setStatus(d.status);
             setQs(d.questions);
             setIdx(d.idx);
@@ -45,15 +50,16 @@ export default function JoinClient() {
             setChoice(null);
         });
 
-        s.on("answer_result", (d) => {
+        s.on("answer_result", d => {
             setFB(d.correct);
             setScore(d.score);
         });
 
-        s.on("error_msg", (e) => alert(e.msg));
+        s.on("error_msg", e => alert(e.msg));
         return () => s.close();
     }, []);
 
+    /* actions */
     const join = () => {
         sockRef.current.emit("join_session", {
             sessionId: sid.trim(),
@@ -71,19 +77,21 @@ export default function JoinClient() {
         });
     };
 
+    /* derived */
     const secsLeft = deadline ? Math.max(0, Math.ceil(deadline - now)) : 0;
     const q = qs[idx] ?? { question: "", options: [] };
 
+    /* =================== VIEWS =================== */
     if (!joined) {
         return (
             <main className="min-h-screen flex flex-col items-center justify-center gap-4 p-6">
-                <h1 className="text-3xl font-bold">Join Quiz</h1>
+                <h1 className="text-3xl font-bold">Join&nbsp;Quiz</h1>
 
                 {!initialSid && (
                     <input
                         placeholder="Session ID"
                         value={sid}
-                        onChange={(e) => setSid(e.target.value)}
+                        onChange={e => setSid(e.target.value)}
                         className="border rounded px-3 py-2 w-64"
                     />
                 )}
@@ -91,7 +99,7 @@ export default function JoinClient() {
                 <input
                     placeholder="Team Name"
                     value={team}
-                    onChange={(e) => setTeam(e.target.value)}
+                    onChange={e => setTeam(e.target.value)}
                     className="border rounded px-3 py-2 w-64"
                 />
 
@@ -122,6 +130,7 @@ export default function JoinClient() {
         );
     }
 
+    /* ---------- ACTIVE QUESTION ---------- */
     return (
         <main className="min-h-screen p-6 flex flex-col items-center gap-6">
             <h2 className="text-xl font-semibold">
@@ -139,7 +148,7 @@ export default function JoinClient() {
                         disabled={choice != null}
                         onClick={() => setChoice(i)}
                         className={`w-full px-4 py-2 rounded-lg border text-lg md:text-xl font-normal
-                            ${choice === i
+              ${choice === i
                                 ? "bg-purple-700 text-white"
                                 : "bg-white text-gray-800 hover:bg-gray-100"}`}>
                         {opt}
@@ -163,6 +172,7 @@ export default function JoinClient() {
                 </p>
             )}
 
+            {/* progress bar + seconds left */}
             <div className="w-full max-w-md h-2 bg-gray-200 rounded mt-6">
                 <div
                     className="h-full bg-purple-700 rounded"
@@ -172,7 +182,7 @@ export default function JoinClient() {
                     }}
                 />
             </div>
-            <p className="text-sm text-gray-500">{secsLeft}s left</p>
+            <p className="text-sm text-gray-500">{secsLeft}s&nbsp;left</p>
         </main>
     );
 }
