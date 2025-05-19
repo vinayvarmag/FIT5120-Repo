@@ -363,7 +363,7 @@ export default function Games() {
                     <Hero
                         img="/assets/girl_tablet.jpg"
                         title="Pronunciation Challenge"
-                        blurb="Practice your pronunciation by typing any word, recording your voice, and receiving instant feedback on accuracy. Improve your speaking clarity and build confidence."
+                        blurb="Practice your pronunciation by typing any word or phrase, recording your voice, and receiving instant feedback on accuracy. Improve your speaking clarity and build confidence."
                     />
 
                     <section className="flex flex-col items-center gap-6 p-6 max-w-sm mx-auto text-center flex-1 bg-gray-50">
