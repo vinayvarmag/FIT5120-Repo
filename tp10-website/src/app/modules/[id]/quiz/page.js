@@ -209,7 +209,7 @@ export default function QuizPage() {
                             <ul className="space-y-4">
                                 {q.options.map(opt => {
                                     const base    = "w-full rounded-xl px-4 py-3 text-left transition";
-                                    const idle    = "bg-white/80 hover:bg-orange-50 border border-gray-300";
+                                    const idle    = "bg-white/80 hover:bg-purple-50 border border-gray-300";
                                     const correct = "bg-green-100 border-green-600";
                                     const wrong   = "bg-red-100 border-red-600";
 
@@ -240,7 +240,7 @@ export default function QuizPage() {
                                 <motion.button
                                     whileTap={{ scale: 0.95 }}
                                     onClick={next}
-                                    className="mt-8 w-full rounded-full bg-orange-600 py-3 text-white shadow hover:bg-orange-700"
+                                    className="mt-8 w-full rounded-full bg-purple-900 py-3 text-white shadow hover:bg-purple-700"
                                 >
                                     {idx + 1 < quiz.length ? "Next question" : "Show result"}
                                 </motion.button>

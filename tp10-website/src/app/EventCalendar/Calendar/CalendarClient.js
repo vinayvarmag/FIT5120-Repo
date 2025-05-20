@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Calendar as BigCalendar, dateFnsLocalizer, Views } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay, addMinutes } from "date-fns";
+import { format, parse, startOfWeek, getDay } from "date-fns";
 import enAU from "date-fns/locale/en-AU";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
@@ -21,17 +21,19 @@ const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales
 export default function CalendarClient({ userId }) {
     const router = useRouter();
     const isAuthenticated = Boolean(userId);
+    const googleKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 
     // ── Data ───────────────────────────────────────────────────────
-    const [allEvents, setAllEvents]   = useState([]);
+    const [allEvents, setAllEvents] = useState([]);
     const [userEvents, setUserEvents] = useState([]);
 
     // ── UI state ───────────────────────────────────────────────────
     const [viewMode, setViewMode] = useState("all"); // "all" | "mine" | "locked"
-    const [loading, setLoading]   = useState(false);
+    const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState(null);
-    const [saved, setSaved]       = useState(false);
-    const [saving, setSaving]     = useState(false);
+    const [loginPrompt, setLoginPrompt] = useState(false);
+    const [saved, setSaved] = useState(false);
+    const [saving, setSaving] = useState(false);
 
     // ── Load ALL events once ───────────────────────────────────────
     useEffect(() => {
@@ -41,12 +43,12 @@ export default function CalendarClient({ userId }) {
                 const res = await fetch("/api/event/all");
                 const raw = await res.json();
                 setAllEvents(
-                    raw.map(ev => ({
-                        id:       ev.event_id,
-                        title:    ev.event_title,
-                        start:    new Date(ev.event_startdatetime),
-                        end:      new Date(ev.event_enddatetime || ev.event_startdatetime),
-                        resource: ev,
+                    raw.map((ev) => ({
+                        id: ev.event_id,
+                        title: ev.event_title,
+                        start: new Date(ev.event_startdatetime),
+                        end: new Date(ev.event_enddatetime || ev.event_startdatetime),
+                        resource: { ...ev, calendarType: "all" },
                     }))
                 );
             } catch (e) {
@@ -57,7 +59,7 @@ export default function CalendarClient({ userId }) {
         })();
     }, []);
 
-    // ── Load MY events lazily, only if authenticated ───────────────
+    // ── Load MY events when requested ──────────────────────────────
     useEffect(() => {
         if (viewMode === "mine" && isAuthenticated) {
             (async () => {
@@ -66,12 +68,12 @@ export default function CalendarClient({ userId }) {
                     const res = await fetch("/api/event");
                     const raw = await res.json();
                     setUserEvents(
-                        raw.map(ev => ({
-                            id:       ev.event_id,
-                            title:    ev.event_title,
-                            start:    new Date(ev.event_startdatetime),
-                            end:      new Date(ev.event_enddatetime || ev.event_startdatetime),
-                            resource: ev,
+                        raw.map((ev) => ({
+                            id: ev.event_id,
+                            title: ev.event_title,
+                            start: new Date(ev.event_startdatetime),
+                            end: new Date(ev.event_enddatetime || ev.event_startdatetime),
+                            resource: { ...ev, calendarType: "mine" },
                         }))
                     );
                 } catch (e) {
@@ -83,7 +85,7 @@ export default function CalendarClient({ userId }) {
         }
     }, [viewMode, isAuthenticated]);
 
-    // ── Toolbar ────────────────────────────────────────────────────
+    // ── Custom toolbar ────────────────────────────────────────────
     function CalendarToolbar({ label, onNavigate, onView, view, views }) {
         return (
             <div className="flex items-center justify-between mb-4">
@@ -97,13 +99,13 @@ export default function CalendarClient({ userId }) {
                     </button>
                 </div>
                 <div className="flex space-x-1">
-                    {views.map(v => (
+                    {views.map((v) => (
                         <button
                             key={v}
                             onClick={() => onView(v)}
                             className={`px-3 py-1 rounded-md text-sm capitalize ${
                                 view === v
-                                    ? "bg-purple-600 text-white"
+                                    ? "bg-purple-900 text-white"
                                     : "bg-gray-100 hover:bg-gray-200 text-gray-800"
                             }`}
                         >
@@ -115,27 +117,27 @@ export default function CalendarClient({ userId }) {
         );
     }
 
-    // ── Handlers ───────────────────────────────────────────────────
+    // ── View toggle handlers ──────────────────────────────────────
     const handleViewAll = () => setViewMode("all");
     const handleViewMine = () => {
         if (isAuthenticated) setViewMode("mine");
         else setViewMode("locked");
     };
 
-    const handleSelectSlot = useCallback(
-        slot => {
-            const start = slot.start.toISOString();
-            const end   = (slot.end || addMinutes(slot.start, 30)).toISOString();
-            router.push(`/events/create?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+    // ── When an event is clicked ───────────────────────────────────
+    const handleSelectEvent = useCallback(
+        (ev) => {
+            if (!isAuthenticated) {
+                setLoginPrompt(true);
+                return;
+            }
+            setSelected(ev.resource);
+            setSaved(false);
         },
-        [router]
+        [isAuthenticated]
     );
 
-    const handleSelectEvent = useCallback(ev => {
-        setSelected(ev.resource);
-        setSaved(false);
-    }, []);
-
+    // ── Save / Unsave an event ────────────────────────────────────
     const toggleSave = useCallback(async () => {
         if (!selected || saving) return;
         setSaving(true);
@@ -148,12 +150,12 @@ export default function CalendarClient({ userId }) {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        event_id:       selected.event_id,
-                        event_name:     selected.event_title,
-                        event_url:      selected.event_url,
-                        thumbnail_url:  selected.thumbnail_url,
+                        event_id: selected.event_id,
+                        event_name: selected.event_title,
+                        event_url: selected.event_url,
+                        thumbnail_url: selected.thumbnail_url,
                         datetime_start: selected.event_startdatetime,
-                        datetime_end:   selected.event_enddatetime,
+                        datetime_end: selected.event_enddatetime,
                     }),
                 });
                 setSaved(true);
@@ -165,7 +167,19 @@ export default function CalendarClient({ userId }) {
         }
     }, [selected, saved, saving]);
 
-    // ── Render ─────────────────────────────────────────────────────
+    // ── Style each event by its calendarType ─────────────────────
+    const eventPropGetter = (event) => {
+        const bg = event.resource.calendarType === "mine" ? "#DDC5E3" : "#DDC5E3";
+        return {
+            style: {
+                backgroundColor: bg,
+                color: "#000000",
+                borderRadius: "4px",
+                border: "none",
+            },
+        };
+    };
+
     return (
         <main className="min-h-screen p-4">
             <h1 className="text-3xl font-bold text-center mb-6">Event Calendar</h1>
@@ -194,7 +208,11 @@ export default function CalendarClient({ userId }) {
             {viewMode === "locked" && !isAuthenticated ? (
                 <div className="text-center p-6">
                     <p className="text-lg">
-                        You must <a href="/login" className="underline text-purple-700">log in</a> to see your events.
+                        You must{" "}
+                        <a href="/login" className="underline text-purple-700">
+                            log in
+                        </a>{" "}
+                        to see your events.
                     </p>
                 </div>
             ) : (
@@ -206,30 +224,21 @@ export default function CalendarClient({ userId }) {
                     defaultView={Views.MONTH}
                     views={["month", "week", "day", "agenda"]}
                     style={{ height: "80vh" }}
-                    selectable
-                    onSelectSlot={handleSelectSlot}
                     onSelectEvent={handleSelectEvent}
                     components={{ toolbar: CalendarToolbar }}
+                    eventPropGetter={eventPropGetter}
                 />
             )}
 
             {/* Event Details Modal */}
             {selected && (
-                <Modal
-                    isOpen
-                    onClose={() => setSelected(null)}
-                    title={selected.event_title}
-                >
+                <Modal isOpen onClose={() => setSelected(null)} title={selected.event_title}>
                     <div className="space-y-2 text-black">
                         <p className="font-semibold">
                             {new Date(selected.event_startdatetime).toLocaleString()} –{" "}
-                            {new Date(
-                                selected.event_enddatetime ?? selected.event_startdatetime
-                            ).toLocaleString()}
+                            {new Date(selected.event_enddatetime ?? selected.event_startdatetime).toLocaleString()}
                         </p>
-
                         <p>{selected.event_description ?? "No description"}</p>
-
                         {selected.venue_name && (
                             <p className="text-sm text-gray-600">
                                 <strong>Venue:</strong> {selected.venue_name}
@@ -240,7 +249,6 @@ export default function CalendarClient({ userId }) {
                                 <strong>Address:</strong> {selected.venue_address}
                             </p>
                         )}
-
                         {googleKey &&
                             (selected.venue_place_id || selected.venue_address) && (
                                 <div className="w-full aspect-video mt-2 rounded-lg overflow-hidden shadow">
@@ -252,9 +260,7 @@ export default function CalendarClient({ userId }) {
                                         loading="lazy"
                                         allowFullScreen
                                         src={(() => {
-                                            const url = new URL(
-                                                "https://www.google.com/maps/embed/v1/place"
-                                            );
+                                            const url = new URL("https://www.google.com/maps/embed/v1/place");
                                             url.searchParams.set("key", googleKey);
                                             url.searchParams.set(
                                                 "q",
@@ -267,15 +273,28 @@ export default function CalendarClient({ userId }) {
                                     />
                                 </div>
                             )}
-
                         <button
                             onClick={toggleSave}
                             disabled={saving}
-                            className="flex items-center gap-2 bg-purple-900 hover:bg-purple-700
-                         text-white font-medium px-4 py-2 rounded-lg"
+                            className="flex items-center gap-2 bg-purple-900 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-lg"
                         >
                             {saved ? <RiBookmarkFill /> : <RiBookmarkLine />}
                             {saved ? "Un-save event" : "Save event"}
+                        </button>
+                    </div>
+                </Modal>
+            )}
+
+            {/* Login Prompt Modal */}
+            {loginPrompt && (
+                <Modal isOpen onClose={() => setLoginPrompt(false)} title="Login Required">
+                    <div className="space-y-4 text-black text-center">
+                        <p>You must be logged in to view event details.</p>
+                        <button
+                            onClick={() => router.push("/login")}
+                            className="bg-purple-900 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-lg"
+                        >
+                            Go to Login
                         </button>
                     </div>
                 </Modal>
