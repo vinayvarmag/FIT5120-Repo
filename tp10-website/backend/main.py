@@ -44,7 +44,7 @@ class QuizCreate(BaseModel):
 # ------------------------------ in-memory state ----------------------------- #
 SESSIONS: Dict[str, Dict[str, Any]] = {}
 TEAM_BY_SID: Dict[str, tuple[str, str]] = {}
-PER_Q_SEC = 10
+PER_Q_SEC = 20
 
 # -------------------------------- endpoints -------------------------------- #
 @api.post("/quiz")
