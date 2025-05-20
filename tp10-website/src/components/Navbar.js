@@ -71,7 +71,6 @@ export default function Navbar({ version }) {
     })();
     const vPrefix = currentVer ? `/${currentVer}` : "";
 
-    // active link detection
     const isActive = (href) => {
         if (href === "/") return pathname === "/";
         return pathname === href || pathname.startsWith(`${href}/`);
@@ -110,7 +109,7 @@ export default function Navbar({ version }) {
             }`}
         >
             <div className="w-full px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
+                <div className="flex items-center h-16">
                     {/* logo */}
                     <Link href={vPrefix || "/"} className="flex items-center gap-2">
                         <Image
@@ -129,12 +128,9 @@ export default function Navbar({ version }) {
                         />
                     </Link>
 
-                    {/* desktop nav */}
-                    <div className="hidden sm:flex items-center gap-8 ml-auto text-2xl px-8">
-                        <Link href={vPrefix || "/"} className={linkCls(vPrefix || "/")}>
-                            Home
-                        </Link>
-
+                    {/* main nav */}
+                    <div className="hidden sm:flex items-center gap-8 text-2xl px-8">
+                        <Link href={vPrefix || "/"} className={linkCls(vPrefix || "/")}>Home</Link>
                         <div
                             className="relative"
                             onMouseEnter={openAwareness}
@@ -146,13 +142,8 @@ export default function Navbar({ version }) {
                             >
                                 Culture Awareness ▾
                             </Link>
-
                             {awarenessOpen && (
-                                <div
-                                    className="absolute left-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black/5"
-                                    onMouseEnter={openAwareness}
-                                    onMouseLeave={scheduleClose}
-                                >
+                                <div className="absolute left-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black/5">
                                     <div className="py-1">
                                         <Link
                                             href={`${vPrefix}/Awareness/precinct`}
@@ -176,35 +167,27 @@ export default function Navbar({ version }) {
                                 </div>
                             )}
                         </div>
-                        <Link href={`${vPrefix}/Games`} className={linkCls(`${vPrefix}/Games`)}>
-                            Games
-                        </Link>
-                        <Link href={`${vPrefix}/EventCalendar`} className={linkCls(`${vPrefix}/EventCalendar`)}>
-                            Event Calendar
-                        </Link>
-                        <Link href={`${vPrefix}/events`} className={linkCls(`${vPrefix}/events`)}>
-                            Event Planner
-                        </Link>
-                        <Link href={`${vPrefix}/ExchangeProgram`} className={linkCls(`${vPrefix}/ExchangeProgram`)}>
-                            Exchange Program
-                        </Link>
+                        <Link href={`${vPrefix}/Games`} className={linkCls(`${vPrefix}/Games`)}>Games</Link>
+                        <Link href={`${vPrefix}/EventCalendar`} className={linkCls(`${vPrefix}/EventCalendar`)}>Event Calendar</Link>
+                        <Link href={`${vPrefix}/events`} className={linkCls(`${vPrefix}/events`)}>Event Planner</Link>
+                        <Link href={`${vPrefix}/ExchangeProgram`} className={linkCls(`${vPrefix}/ExchangeProgram`)}>Exchange Program</Link>
+                    </div>
+
+                    {/* auth buttons */}
+                    <div className="hidden sm:flex items-center gap-4 ml-auto">
                         {!user ? (
-                            <>
-                                <Link href={`${vPrefix}/login`} className={linkCls(`${vPrefix}/login`)}>
-                                    Login
-                                </Link>
-                                <Link href={`${vPrefix}/register`} className={linkCls(`${vPrefix}/signup`)}>
-                                    Register
-                                </Link>
-                            </>
+                            <Link
+                                href={`${vPrefix}/login`}
+                                className="bg-purple-900 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded"
+                            >
+                                Login
+                            </Link>
                         ) : (
                             <>
-                <span className="inline-flex items-center px-1 pt-1 text-lg font-semibold text-black">
-                  {user.id}
-                </span>
+                                <span className="text-lg font-semibold text-black">{user.id}</span>
                                 <button
                                     onClick={handleSignOut}
-                                    className="inline-flex items-center px-1 pt-1 text-lg font-semibold text-black hover:text-gray-700"
+                                    className="bg-purple-900 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded"
                                 >
                                     Sign Out
                                 </button>
@@ -215,7 +198,7 @@ export default function Navbar({ version }) {
                     {/* mobile burger */}
                     <button
                         onClick={() => setBurgerOpen(!burgerOpen)}
-                        className="sm:hidden p-2 rounded-md"
+                        className="sm:hidden p-2 rounded-md ml-auto"
                     >
                         <span className="sr-only">Open main menu</span>
                         {burgerOpen ? (
@@ -244,13 +227,9 @@ export default function Navbar({ version }) {
             {/* mobile panel */}
             {burgerOpen && (
                 <div className="sm:hidden">
-                    <Link href={vPrefix || "/"} className={mobLinkCls(vPrefix || "/")}>
-                        Home
-                    </Link>
+                    <Link href={vPrefix || "/"} className={mobLinkCls(vPrefix || "/")}>Home</Link>
                     <details open className="border-t border-gray-200">
-                        <summary className="pl-3 pr-4 py-2 text-lg font-bold">
-                            Culture Awareness
-                        </summary>
+                        <summary className="pl-3 pr-4 py-2 text-lg font-bold">Culture Awareness</summary>
                         <div className="space-y-1 bg-gray-50">
                             <Link
                                 href={`${vPrefix}/Awareness/precinct`}
@@ -272,44 +251,22 @@ export default function Navbar({ version }) {
                             </Link>
                         </div>
                     </details>
-                    <Link href={`${vPrefix}/Games`} className={mobLinkCls(`${vPrefix}/Games`)}>
-                        Games
-                    </Link>
-                    <Link href={`${vPrefix}/EventCalendar`} className={linkCls(`${vPrefix}/EventCalendar`)}>
-                        Event Calendar
-                    </Link>
-                    <Link href={`${vPrefix}/events`} className={mobLinkCls(`${vPrefix}/events`)}>
-                        Event Planner
-                    </Link>
-                    <Link href={`${vPrefix}/ExchangeProgram`} className={linkCls(`${vPrefix}/ExchangeProgram`)}>
-                        Exchange Program
-                    </Link>
+                    <Link href={`${vPrefix}/Games`} className={mobLinkCls(`${vPrefix}/Games`)}>Games</Link>
+                    <Link href={`${vPrefix}/EventCalendar`} className={mobLinkCls(`${vPrefix}/EventCalendar`)}>Event Calendar</Link>
+                    <Link href={`${vPrefix}/events`} className={mobLinkCls(`${vPrefix}/events`)}>Event Planner</Link>
+                    <Link href={`${vPrefix}/ExchangeProgram`} className={mobLinkCls(`${vPrefix}/ExchangeProgram`)}>Exchange Program</Link>
                     {!user ? (
-                        <>
-                            <Link
-                                href={`${vPrefix}/login`}
-                                className={mobLinkCls(`${vPrefix}/login`)}
-                            >
-                                Login
-                            </Link>
-                            <Link
-                                href={`${vPrefix}/register`}
-                                className={mobLinkCls(`${vPrefix}/signup`)}
-                            >
-                                Sign Up
-                            </Link>
-                        </>
+                        <Link
+                            href={`${vPrefix}/login`}
+                            className="block w-full text-center font-semibold py-2 bg-purple-900 hover:bg-purple-700 text-white rounded"
+                        >Login</Link>
                     ) : (
                         <>
-              <span className="block pl-3 pr-4 py-2 text-lg font-bold">
-                {user.id}
-              </span>
+                            <span className="block pl-3 pr-4 py-2 text-lg font-bold">{user.id}</span>
                             <button
                                 onClick={handleSignOut}
-                                className="block w-full text-left pl-3 pr-4 py-2 text-lg font-bold hover:bg-gray-100"
-                            >
-                                Sign Out
-                            </button>
+                                className="block w-full text-center font-semibold py-2 bg-purple-600 hover:bg-purple-700 text-white rounded"
+                            >Sign Out</button>
                         </>
                     )}
                 </div>

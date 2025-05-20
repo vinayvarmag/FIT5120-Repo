@@ -14,31 +14,7 @@ import { RiBookmarkLine, RiStarLine } from "react-icons/ri";
  * Requires authentication: if not logged in, redirects user to login prompt.
  */
 export default function EventCalendarLanding() {
-    const { user } = useAuth();
 
-    // show loading while auth status is resolving
-    if (user === undefined) {
-        return (
-            <main className="min-h-screen bg-gray-50 text-black pt-24 flex items-center justify-center">
-                <p>Loading…</p>
-            </main>
-        );
-    }
-
-    // if not authenticated, prompt login
-    if (!user) {
-        return (
-            <main className="min-h-screen bg-gray-50 text-black pt-24 flex items-center justify-center">
-                <p>
-                    Please{' '}
-                    <Link href="/login" className="underline">
-                        log in
-                    </Link>{' '}
-                    to view the Event Calendar.
-                </p>
-            </main>
-        );
-    }
 
     // authenticated: render landing content
     const sections = [

@@ -201,6 +201,10 @@ export default function ExchangeProgramsLanding() {
                     ))}
                 </div>
             </section>
+            <p className="text-center text-black mb-6">
+                <strong>Disclaimer:</strong> The country data shown is for informational purposes only. The cultural information presented does not imply any ranking, preference, or relative importance between countries or cultures. The selection and ordering of content do not reflect geographical significance or cultural weight.
+
+            </p>
         </main>
     );
 }

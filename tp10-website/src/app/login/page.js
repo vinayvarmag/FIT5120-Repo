@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
@@ -14,16 +15,16 @@ export default function LoginPage() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        if (busy) return;           // guard‑rail
+        if (busy) return;           // guard-rail
         setBusy(true);
         setError("");
 
         /* 1. POST /api/auth/login  – sets the cookie */
         const res = await fetch("/api/auth/login", {
-            method : "POST",
-            headers: { "Content-Type": "application/json" },
-            body   : JSON.stringify(form),
-            credentials: "include",     // important
+            method      : "POST",
+            headers     : { "Content-Type": "application/json" },
+            body        : JSON.stringify(form),
+            credentials : "include",     // important
         });
 
         if (!res.ok) {
@@ -68,15 +69,27 @@ export default function LoginPage() {
                 {error && <p className="text-red-600">{error}</p>}
 
                 <button
+                    type="submit"
                     disabled={busy}
                     className={`w-full py-2 rounded-lg text-white
-                               ${busy
+                        ${busy
                         ? "bg-purple-400 cursor-not-allowed"
                         : "bg-purple-900 hover:bg-purple-700"}`}
                 >
-                    {busy ? "Signing in…" : "Sign In"}
+                    {busy ? "Signing in…" : "Sign In"}
                 </button>
             </form>
+
+            <div className="mt-4">
+                <Link
+                    href="/register"
+                    className="w-full block text-center py-2 rounded-lg
+                               bg-purple-900 text-white
+                               hover:bg-purple-700"
+                >
+                    Register
+                </Link>
+            </div>
         </main>
     );
 }

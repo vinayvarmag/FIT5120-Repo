@@ -702,20 +702,41 @@ export default function EditEventPage({ params }) {
                     <section className="bg-white shadow rounded-lg p-6">
                         <h2 className="text-xl font-semibold mb-4">Budget</h2>
                         <div className="space-y-4">
+                            {/* Total Budget */}
                             <div className="bg-gray-50 p-4 rounded-lg">
                                 <h3 className="text-sm font-medium">Total Budget</h3>
-                                <p className="text-2xl font-bold">${eventBudget.toLocaleString()}</p>
+                                <p className="text-2xl font-bold">
+                                    ${eventBudget.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })}
+                                </p>
                             </div>
+
+                            {/* Current Expenses */}
                             <div className="bg-gray-50 p-4 rounded-lg">
                                 <h3 className="text-sm font-medium">Current Expenses</h3>
-                                <p className="text-2xl font-bold">${currentExpenses.toLocaleString()}</p>
+                                <p className="text-2xl font-bold">
+                                    ${currentExpenses.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                    useGrouping: false,
+                                })}
+                                </p>
                             </div>
+
+                            {/* Remaining */}
                             <div className="bg-gray-50 p-4 rounded-lg">
                                 <h3 className="text-sm font-medium">Remaining</h3>
                                 <p className="text-2xl font-bold">
-                                    ${(eventBudget - currentExpenses).toLocaleString()}
+                                    ${(eventBudget - currentExpenses).toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                    useGrouping: false,
+                                })}
                                 </p>
                             </div>
+
                             <button
                                 onClick={() => router.push(`/finance?event_id=${id}`)}
                                 className="w-full bg-purple-900 text-white py-2 rounded-lg"

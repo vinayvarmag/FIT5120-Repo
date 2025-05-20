@@ -82,7 +82,7 @@ export default function AwarenessLanding() {
 
                             {/* title and description on right */}
                             <div className="p-6 flex flex-col justify-center">
-                                <h3 className="text-xl md:text-2xl font-semibold text-gray-900 transition-colors group-hover:text-indigo-600">
+                                <h3 className="text-xl md:text-2xl font-semibold text-purple-900 transition-colors ">
                                     {title}
                                 </h3>
                                 <p className="mt-2 text-gray-600">{description}</p>

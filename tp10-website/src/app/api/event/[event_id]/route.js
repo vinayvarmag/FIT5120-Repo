@@ -27,7 +27,7 @@ async function fetchEvent(user_id, event_id) {
 /* ─── GET  /api/event/[id] ─── */
 export async function GET(_, { params }) {
     const user_id = await requireUserId();
-    const { event_id } = params;
+    const { event_id } = await params;
     const event = await fetchEvent(user_id, event_id);
 
     if (!event) {
