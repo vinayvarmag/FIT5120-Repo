@@ -210,7 +210,7 @@ export default function CalendarClient({ userId }) {
     const eventPropGetter = event => {
         const type = event.calendarType ?? event.resource?.calendarType;
         let bg = "#DDC5E3";          // default “all” + “mine”
-        if (type === "saved") bg = "#C8E6C9";
+        if (type === "saved") bg = "#DDC5E3";
         return {
             style: {
                 backgroundColor: bg,
