@@ -20,6 +20,7 @@ export async function GET(request) {
                     c.category            AS category,
                     e.title               AS title,
                     e.expense_amount      AS amount,
+                    e.expense_date        AS date,
                     e.expense_description AS description
                 FROM EXPENSE e
                          JOIN event_budget_categories c
@@ -43,7 +44,7 @@ export async function GET(request) {
  */
 export async function POST(request) {
     try {
-        const { event_id, categoryId, title, amount, description } = await request.json();
+        const { event_id, categoryId, title, amount, description, date } = await request.json();
         if (!event_id || !categoryId || amount == null) {
             return NextResponse.json(
                 { error: "Missing required fields: event_id, categoryId, amount" },
@@ -54,10 +55,11 @@ export async function POST(request) {
         // 1) Insert into EXPENSE
         const [expenseResult] = await pool.query(
             `
-                INSERT INTO EXPENSE (expense_category_id, title, expense_amount, expense_description)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO EXPENSE (expense_category_id, title, expense_amount,
+                                       expense_description, expense_date)
+                VALUES (?, ?, ?, ?, ?)
             `,
-            [categoryId, title || "", amount, description || ""]
+            [categoryId, title || "", amount, description || "", date || new Date()]
         );
         const expense_id = expenseResult.insertId;
 
@@ -103,17 +105,18 @@ export async function PUT(request) {
             return NextResponse.json({ error: "Missing expense_id" }, { status: 400 });
         }
 
-        const { categoryId, title, amount, description } = await request.json();
+        const { categoryId, title, amount, description, date } = await request.json();
         await pool.query(
             `
         UPDATE EXPENSE
         SET expense_category_id  = ?,
             title                = ?,
             expense_amount       = ?,
-            expense_description  = ?
+            expense_description  = ?,
+            expense_date         = ?
         WHERE expense_id = ?
       `,
-            [categoryId, title || "", amount, description || "", expense_id]
+            [categoryId, title || "", amount, description || "", date || new Date(), expense_id]
         );
 
         // ▽ Find the linked event_id

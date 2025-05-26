@@ -1,24 +1,51 @@
+/* File: src/app/…/PopularClient.js */
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
+import Image       from "next/image";
+import Link        from "next/link";
+import dayjs       from "dayjs";
 import { RiAddLine, RiCheckFill } from "react-icons/ri";
-import Modal from "@/components/Modal";
+import Modal       from "@/components/Modal";
 
+/* ── Eventfinda paging settings ─────────────────────────── */
+const ROWS_PER_PAGE = 100;   // Eventfinda maximum
+const MAX_PAGES     = 30;    // failsafe hard stop
+
+/* ── pick a sensible image from nested transforms ───────── */
+function getImageUrl(ev) {
+    if (ev.image_url) return ev.image_url;
+
+    const imgObj     = ev.images?.images?.[0];
+    const transforms = imgObj?.transforms?.transforms ?? [];
+    const preferred  = transforms.find(t => t.width >= 350) ?? transforms[0];
+
+    return preferred?.url || imgObj?.original_url || "/placeholder.jpg";
+}
+
+/* ───────────────────────────────────────────────────────── */
 export default function MelbourneEventsClient({ userId }) {
-    const router = useRouter();
+    const router          = useRouter();
     const isAuthenticated = Boolean(userId);
 
-    const [categories, setCategories]       = useState([]);
-    const [catId, setCatId]                 = useState("");
-    const [events, setEvents]               = useState([]);
-    const [saved, setSaved]                 = useState(new Set());
-    const [loading, setLoading]             = useState(true);
-    const [loginModalOpen, setLoginModalOpen] = useState(false);
+    /* STATE ------------------------------------------------ */
+    const [categories, setCategories] = useState([]);
+    const [catId,      setCatId]      = useState("");
+    const [events,     setEvents]     = useState([]);
+    const [saved,      setSaved]      = useState(new Set());
+    const [loading,    setLoading]    = useState(true);
+    const [loginOpen,  setLoginOpen]  = useState(false);
 
-    // Load categories
+    /* our own grid paging */
+    const pageSize  = 9;
+    const [page, setPage] = useState(1);
+    const pageCount = useMemo(
+        () => Math.max(1, Math.ceil(events.length / pageSize)),
+        [events.length],
+    );
+
+    /* ── fetch category list once ────────────────────────── */
     useEffect(() => {
         fetch("/api/eventfinda/categories")
             .then(r => r.json())
@@ -26,20 +53,45 @@ export default function MelbourneEventsClient({ userId }) {
             .catch(console.error);
     }, []);
 
-    // Load events on category change
+    /* ── fetch *all* events for current filter ───────────── */
     useEffect(() => {
-        setLoading(true);
-        const url = catId
-            ? `/api/eventfinda/melbourne?category=${catId}`
-            : "/api/eventfinda/melbourne";
+        let abort = false;
+        (async () => {
+            setLoading(true);
+            setPage(1);
 
-        fetch(url)
-            .then(r => r.json())
-            .then(setEvents)
-            .finally(() => setLoading(false));
+            const base = "/api/eventfinda/melbourne";
+            const all  = [];
+
+            for (let apiPage = 1; apiPage <= MAX_PAGES; apiPage++) {
+                if (abort) break;
+
+                const qs = new URLSearchParams({
+                    page: String(apiPage),
+                    rows: String(ROWS_PER_PAGE),
+                });
+                if (catId) qs.set("category", catId);
+
+                const res = await fetch(`${base}?${qs}`);
+                if (!res.ok) break;
+
+                const chunk = await res.json();
+                const list  = Array.isArray(chunk) ? chunk : [];
+
+                if (!list.length) break;           // no more data
+                all.push(...list);
+
+                if (list.length < ROWS_PER_PAGE) break; // last page reached
+            }
+
+            if (!abort) setEvents(all);
+            setLoading(false);
+        })();
+
+        return () => { abort = true; };
     }, [catId]);
 
-    // Load already-saved events (only works if logged in)
+    /* ── fetch IDs already saved by the user ─────────────── */
     useEffect(() => {
         fetch("/api/saved-event")
             .then(r => r.json())
@@ -47,8 +99,14 @@ export default function MelbourneEventsClient({ userId }) {
             .catch(() => setSaved(new Set()));
     }, []);
 
-    // Save handler
+    /* ── save handler (stores full session list) ─────────── */
     const saveEvent = useCallback(async ev => {
+        const sessions = ev.sessions?.sessions ?? [];
+        const sessionTimes = sessions.map(s => ({
+            start: s.datetime_start,
+            end:   s.datetime_end,
+        }));
+
         try {
             await fetch("/api/saved-event", {
                 method:  "POST",
@@ -57,9 +115,10 @@ export default function MelbourneEventsClient({ userId }) {
                     event_id:       ev.id,
                     event_name:     ev.name,
                     event_url:      ev.url,
-                    thumbnail_url:  ev.image_url || null,
+                    thumbnail_url:  getImageUrl(ev),
                     datetime_start: ev.datetime_start,
                     datetime_end:   ev.datetime_end,
+                    session_times:  sessionTimes,
                 }),
             });
             setSaved(prev => new Set(prev).add(ev.id));
@@ -69,9 +128,19 @@ export default function MelbourneEventsClient({ userId }) {
         }
     }, []);
 
+    /* slice data for current grid page */
+    const pagedEvents = useMemo(() => {
+        const start = (page - 1) * pageSize;
+        return events.slice(start, start + pageSize);
+    }, [events, page]);
+
+    /* ────────────────────────────────────────────────────── */
+    /*  RENDER                                               */
+    /* ────────────────────────────────────────────────────── */
     return (
         <main className="flex flex-col min-h-screen">
-            {/* Hero */}
+
+            {/* Hero banner */}
             <section className="relative w-full h-[300px] md:h-[450px] lg:h-[550px]">
                 <Image
                     src="/melbourne.jpg"
@@ -86,13 +155,15 @@ export default function MelbourneEventsClient({ userId }) {
                         Popular Events
                     </h1>
                     <p className="max-w-3xl text-white text-lg font-semibold text-center">
-                        Discover what’s on around the city right now. Filter by category and jump straight to the experiences that excite you.
+                        Discover what’s on around the city right now. Filter by category and browse every session.
                     </p>
                 </div>
             </section>
 
-            {/* Category filter */}
+            {/* Filter + card grid */}
             <section className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-12 pb-24">
+
+                {/* Category filter */}
                 <label className="block mb-8">
                     <span className="mr-2 font-medium">Filter by category:</span>
                     <select
@@ -115,81 +186,123 @@ export default function MelbourneEventsClient({ userId }) {
                     </select>
                 </label>
 
+                {/* Loader / empty states */}
                 {loading && <p className="text-center p-8">Loading…</p>}
                 {!loading && !events.length && (
                     <p className="text-center p-8 text-zinc-500">No events found.</p>
                 )}
 
-                {/* Event cards */}
+                {/* Card grid */}
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {events.map(ev => (
-                        <article key={ev.id} className="relative">
-                            <button
-                                aria-label={saved.has(ev.id) ? "Saved" : "Save event"}
-                                onClick={e => {
-                                    e.preventDefault();
-                                    if (!isAuthenticated) {
-                                        setLoginModalOpen(true);
-                                    } else if (!saved.has(ev.id)) {
-                                        saveEvent(ev);
-                                    }
-                                }}
-                                className="absolute top-2 right-2 z-20 p-2 rounded-full bg-white/80 backdrop-blur hover:bg-white shadow"
-                            >
-                                {saved.has(ev.id) ? (
-                                    <RiCheckFill className="text-green-600 text-lg" />
-                                ) : (
-                                    <RiAddLine className="text-indigo-600 text-lg" />
-                                )}
-                            </button>
+                    {pagedEvents.map(ev => {
+                        const sessions = ev.sessions?.sessions ?? [];
+                        return (
+                            <article key={ev.id} className="relative">
+                                {/* Save button */}
+                                <button
+                                    aria-label={saved.has(ev.id) ? "Saved" : "Save event"}
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        if (!isAuthenticated) {
+                                            setLoginOpen(true);
+                                        } else if (!saved.has(ev.id)) {
+                                            saveEvent(ev);
+                                        }
+                                    }}
+                                    className="absolute top-2 right-2 z-20 p-2 rounded-full bg-white/80 backdrop-blur hover:bg-white shadow"
+                                >
+                                    {saved.has(ev.id) ? (
+                                        <RiCheckFill className="text-green-600 text-lg" />
+                                    ) : (
+                                        <RiAddLine className="text-indigo-600 text-lg" />
+                                    )}
+                                </button>
 
-                            <Link
-                                href={ev.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block rounded-xl overflow-hidden shadow hover:shadow-lg transition bg-white"
-                            >
-                                {ev.image_url && (
+                                {/* Card link */}
+                                <Link
+                                    href={ev.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block rounded-xl overflow-hidden shadow hover:shadow-lg transition bg-white"
+                                >
+                                    {/* Image */}
                                     <div className="relative w-full h-48">
                                         <Image
-                                            src={ev.image_url}
+                                            src={getImageUrl(ev)}
                                             alt={ev.name}
                                             fill
                                             className="object-cover"
                                         />
                                     </div>
-                                )}
-                                <div className="p-4">
-                                    <h3 className="font-semibold mb-1 line-clamp-2">{ev.name}</h3>
-                                    <p className="text-sm text-zinc-500 line-clamp-3">
-                                        {ev.summary ?? (ev.description || "").slice(0, 120)}
-                                    </p>
-                                    <p className="mt-3 text-sm font-medium text-indigo-600">
-                                        View on Eventfinda
-                                    </p>
-                                </div>
-                            </Link>
-                        </article>
 
-                    ))}
+                                    {/* Copy */}
+                                    <div className="p-4 space-y-3">
+                                        <h3 className="font-semibold line-clamp-2">{ev.name}</h3>
 
+                                        {/* Session list */}
+                                        {sessions.length ? (
+                                            <ul className="text-sm text-zinc-700 space-y-1 max-h-28 overflow-y-auto pr-1">
+                                                {sessions.map(s => (
+                                                    <li key={s.id}>
+                                                        {dayjs(s.datetime_start).format("ddd D MMM, h:mma")}{" "}
+                                                        – {dayjs(s.datetime_end).format("h:mma")}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <p className="text-sm text-zinc-500">No sessions listed.</p>
+                                        )}
+
+                                        <p className="text-sm font-medium text-indigo-600">
+                                            View on Eventfinda
+                                        </p>
+                                    </div>
+                                </Link>
+                            </article>
+                        );
+                    })}
                 </div>
-                <p className= "text-center text-sm ">
-                    <strong>Disclaimer:</strong> The platform provides third-party event and program information for informational purposes only. Users are encouraged to consult the official sources for the most accurate and current details.
+
+                {/* Grid pagination controls */}
+                {pageCount > 1 && (
+                    <div className="flex justify-center items-center gap-4 mt-12">
+                        <button
+                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                            className="px-4 py-2 rounded-lg bg-purple-900 text-white disabled:opacity-50"
+                        >
+                            Previous
+                        </button>
+                        <span className="font-medium">
+                            Page {page} of {pageCount}
+                        </span>
+                        <button
+                            onClick={() => setPage(p => Math.min(pageCount, p + 1))}
+                            disabled={page === pageCount}
+                            className="px-4 py-2 rounded-lg bg-purple-900 text-white disabled:opacity-50"
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
+
+                <p className="mt-16 text-center text-sm">
+                    <strong>Disclaimer:</strong> The platform provides third-party event information for
+                    reference only. Always confirm details with official sources.
                 </p>
             </section>
 
-            {/* Login-required Modal */}
+            {/* Login-required modal */}
             <Modal
-                isOpen={loginModalOpen}
-                onClose={() => setLoginModalOpen(false)}
+                isOpen={loginOpen}
+                onClose={() => setLoginOpen(false)}
                 title="Login Required"
             >
                 <div className="space-y-4 text-black">
                     <p>You need to log in to save events.</p>
                     <div className="flex justify-end gap-3">
                         <button
-                            onClick={() => setLoginModalOpen(false)}
+                            onClick={() => setLoginOpen(false)}
                             className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
                         >
                             Cancel

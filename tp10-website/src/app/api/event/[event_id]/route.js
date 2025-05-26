@@ -14,6 +14,7 @@ async function fetchEvent(user_id, event_id) {
         event_startdatetime,
         event_enddatetime,
         event_budget,
+        current_expenses,
         venue_place_id,
         venue_name,
         venue_address
