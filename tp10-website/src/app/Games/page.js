@@ -20,14 +20,14 @@ const CAT_OPTIONS = [
     "flags", "food", "festival", "music",
     "landmarks", "clothing", "language", "sports",
 ];
-const WORD_SUGGESTIONS = ["sushi", "samosa", "kimchi", "diwali", "taco"]; // NEW
+const WORD_SUGGESTIONS = ["sushi", "samosa", "kimchi", "diwali", "taco"];
 const TUT_KEY = "tutSeen-v2";
 
 const QRCode = lazy(() => import("react-qr-code"));
 
 /* ================================================================== */
 export default function Games() {
-    /* ---------- state ---------- */
+    /* ---------------- state ---------------- */
     const [view, setView] = useState("menu");
     const [cats, setCats] = useState([]);
     const [n, setN] = useState(4);
@@ -38,7 +38,7 @@ export default function Games() {
     const [idx, setIdx] = useState(0);
     const [deadline, setDeadline] = useState(null);
 
-    const [word, setWord] = useState("");           // <- no default "sushi"
+    const [word, setWord] = useState("");
     const [recording, setRec] = useState(false);
     const [result, setRes] = useState(null);
     const [audioUrl, setAudio] = useState(null);
@@ -49,7 +49,7 @@ export default function Games() {
 
     const sockRef = useRef(null);
 
-    /* ---------- socket wiring ---------- */
+    /* ---------------- socket wiring ---------------- */
     useEffect(() => {
         sockRef.current = io(API, { transports: ["websocket"] });
         const s = sockRef.current;
@@ -66,6 +66,7 @@ export default function Games() {
 
         s.on("session_state", onState);
         s.on("error_msg", e => alert(e.msg));
+
         return () => { s.off("session_state", onState); s.close(); };
     }, []);
 
@@ -76,10 +77,11 @@ export default function Games() {
         join();
         s.on("connect", join);
         s.on("reconnect", join);
+
         return () => { s.off("connect", join); s.off("reconnect", join); };
     }, [sid]);
 
-    /* ---------- tutorial flag ---------- */
+    /* ---------------- tutorial flag ---------------- */
     useEffect(() => {
         const seen = sessionStorage.getItem(TUT_KEY);
         setShowTut(!seen);
@@ -89,7 +91,7 @@ export default function Games() {
         setShowTut(false);
     };
 
-    /* ---------- helpers ---------- */
+    /* ---------------- helpers ---------------- */
     const toggleCat = c =>
         setCats(p => (p.includes(c) ? p.filter(x => x !== c) : [...p, c]));
 
@@ -122,7 +124,7 @@ export default function Games() {
 
             const fd = new FormData();
             fd.append("word", word);
-            fd.append("wav", blob, "audio/webm");
+            fd.append("wav", blob, "audio.webm");
 
             const r = await fetch(`${API}/pronounce`, { method: "POST", body: fd });
             const d = await r.json();
@@ -151,6 +153,7 @@ export default function Games() {
         }, 1000);
     };
 
+    /* secsLeft still needed for contestant page */
     const secsLeft = deadline
         ? Math.max(0, Math.round(deadline - Date.now() / 1000))
         : 0;
@@ -161,6 +164,9 @@ export default function Games() {
 
     /* ---------- menu / landing ---------- */
     if (view === "menu") {
+        const mainBlurb =
+            `Discover the fun side of learning about cultures! These games are all about testing your instincts, picking up surprising facts, and enjoying every moment as you explore the amazing diversity of our world.\n\nWhether you're curious about everyday life in different countries or just want to challenge yourself in a playful way, these activities are a great way to learn something new without even realizing it. No pressure, just play-and let the world surprise you.`;
+
         return (
             <>
                 {Tut}
@@ -168,15 +174,13 @@ export default function Games() {
                     <Hero
                         img="/assets/students_hallway.png"
                         title="Games"
-                        blurb="Discover the fun side of learning about cultures! These games are all about testing your instincts, picking up surprising facts, and enjoying every moment as you explore the amazing diversity of our world. Whether you're curious about everyday life in different countries or just want to challenge yourself in a playful way, these activities are a great way to learn something new without even realizing it. No pressure, just play-and let the world surprise you."
+                        blurb={mainBlurb}
                     />
 
                     <section className="bg-gray-50 flex flex-col items-center px-4 py-16 flex-1">
                         <div className="grid md:grid-cols-2 gap-10 w-full max-w-4xl">
-                            <Card title="Cultural Quiz"
-                                onClick={() => setView("quiz-setup")} />
-                            <Card title="Pronunciation Challenge"
-                                onClick={() => setView("pronounce-setup")} />
+                            <Card title="Cultural Quiz" onClick={() => setView("quiz-setup")} />
+                            <Card title="Pronunciation Challenge" onClick={() => setView("pronounce-setup")} />
                         </div>
                     </section>
                 </main>
@@ -204,11 +208,16 @@ export default function Games() {
 
                         <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
                             {CAT_OPTIONS.map(c => (
-                                <button key={c} onClick={() => toggleCat(c)}
-                                    className={"p-3 border rounded capitalize text-lg " +
+                                <button
+                                    key={c}
+                                    onClick={() => toggleCat(c)}
+                                    className={
+                                        "p-3 border rounded capitalize text-lg " +
                                         (cats.includes(c)
                                             ? "bg-purple-700 text-white"
-                                            : "bg-white hover:bg-purple-100")}>
+                                            : "bg-white hover:bg-purple-100")
+                                    }
+                                >
                                     {c}
                                 </button>
                             ))}
@@ -216,17 +225,25 @@ export default function Games() {
 
                         <label className="flex items-center gap-3">
                             Questions:
-                            <input type="number" min="1" max="10"
+                            <input
+                                type="number"
+                                min="1"
+                                max="10"
                                 value={n}
                                 onChange={e => setN(+e.target.value || 1)}
-                                className="w-20 border rounded p-1 text-center" />
+                                className="w-20 border rounded p-1 text-center"
+                            />
                         </label>
 
                         <div className="flex gap-4">
-                            <button onClick={() => setView("menu")} className="underline">Back</button>
-                            <button onClick={createQuiz}
+                            <button onClick={() => setView("menu")} className="underline">
+                                Back
+                            </button>
+                            <button
+                                onClick={createQuiz}
                                 disabled={!cats.length}
-                                className="bg-purple-700 text-white px-4 py-2 rounded disabled:opacity-40">
+                                className="bg-purple-700 text-white px-4 py-2 rounded disabled:opacity-40"
+                            >
                                 Create
                             </button>
                         </div>
@@ -238,13 +255,16 @@ export default function Games() {
 
     /* ---------- lobby (host QR) ---------- */
     if (view === "lobby") {
-        const url = typeof window !== "undefined"
-            ? `${window.location.origin}/Games/join?session=${sid}`
-            : "";
+        const url =
+            typeof window !== "undefined"
+                ? `${window.location.origin}/Games/join?session=${sid}`
+                : "";
         return (
             <>
                 {Tut}
-                <main className={`${poppins.className} min-h-screen flex flex-col items-center gap-6 p-6 bg-gray-50`}>
+                <main
+                    className={`${poppins.className} min-h-screen flex flex-col items-center gap-6 p-6 bg-gray-50`}
+                >
                     <h2 className="text-2xl font-bold">Host&nbsp;Lobby</h2>
                     <p className="text-sm text-gray-700 max-w-sm text-center">
                         Share this QR code or link with contestants to let them join. <br />
@@ -258,8 +278,13 @@ export default function Games() {
                     </Suspense>
 
                     {url && (
-                        <a href={url} target="_blank"
-                            className="text-blue-600 underline break-all">{url}</a>
+                        <a
+                            href={url}
+                            target="_blank"
+                            className="text-blue-600 underline break-all"
+                        >
+                            {url}
+                        </a>
                     )}
 
                     <div className="w-full max-w-xs">
@@ -267,7 +292,9 @@ export default function Games() {
                         {Object.keys(teams).length ? (
                             <ul>
                                 {Object.keys(teams).map(t => (
-                                    <li key={t} className="bg-white p-2 mb-1 rounded">{t}</li>
+                                    <li key={t} className="bg-white p-2 mb-1 rounded">
+                                        {t}
+                                    </li>
                                 ))}
                             </ul>
                         ) : (
@@ -275,9 +302,11 @@ export default function Games() {
                         )}
                     </div>
 
-                    <button onClick={startQuiz}
+                    <button
+                        onClick={startQuiz}
                         disabled={!Object.keys(teams).length}
-                        className="bg-purple-700 text-white px-6 py-2 rounded disabled:opacity-40">
+                        className="bg-purple-700 text-white px-6 py-2 rounded disabled:opacity-40"
+                    >
                         Start Quiz
                     </button>
                 </main>
@@ -285,30 +314,20 @@ export default function Games() {
         );
     }
 
-    /* ---------- host play ---------- */
+    /* ---------- host play (timer removed) ---------- */
     if (view === "host-play") {
         return (
             <>
                 {Tut}
-                <main className={`${poppins.className} min-h-screen p-6 flex flex-col items-center bg-gray-50`}>
-                    <h2 className="text-2xl font-bold mb-6">
+                <main
+                    className={`${poppins.className} min-h-screen p-6 flex flex-col items-center justify-center bg-gray-50`}
+                >
+                    <h2 className="text-2xl font-bold mb-4">
                         Question {idx + 1}/{qs.length}
                     </h2>
-
-                    <p className="mb-6 text-gray-700">Waiting on participants...</p>
-
-                    <div className="w-full flex flex-col items-center">
-                        <div className="w-full max-w-sm h-3 bg-gray-200 rounded overflow-hidden">
-                            <div
-                                className="h-full bg-purple-700"
-                                style={{
-                                    width: `${(secsLeft / PER_Q_SEC) * 100}%`,
-                                    transition: "width 1s linear",
-                                }}
-                            />
-                        </div>
-                        <p className="mt-2 text-sm text-gray-600">{secsLeft}s&nbsp;left</p>
-                    </div>
+                    <p className="text-lg text-gray-700">
+                        Waiting for contestants to finish...
+                    </p>
                 </main>
             </>
         );
@@ -319,7 +338,9 @@ export default function Games() {
         return (
             <>
                 {Tut}
-                <main className={`${poppins.className} min-h-screen p-6 bg-gray-50 flex flex-col items-center gap-6`}>
+                <main
+                    className={`${poppins.className} min-h-screen p-6 bg-gray-50 flex flex-col items-center gap-6`}
+                >
                     <h2 className="text-3xl font-bold">Results</h2>
                     <table className="min-w-[260px] bg-white rounded shadow">
                         <tbody>
@@ -363,7 +384,7 @@ export default function Games() {
                     <Hero
                         img="/assets/girl_tablet.jpg"
                         title="Pronunciation Challenge"
-                        blurb="Practice your pronunciation by typing any word or phrase, recording your voice, and receiving instant feedback on accuracy. Improve your speaking clarity and build confidence."
+                        blurb="Practice your pronunciation by typing any word, recording your voice, and receiving instant feedback on accuracy. Improve your speaking clarity and build confidence."
                     />
 
                     <section className="flex flex-col items-center gap-6 p-6 max-w-sm mx-auto text-center flex-1 bg-gray-50">
@@ -380,7 +401,8 @@ export default function Games() {
                                 <button
                                     key={w}
                                     onClick={() => setWord(w)}
-                                    className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200">
+                                    className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200"
+                                >
                                     {w}
                                 </button>
                             ))}
@@ -395,7 +417,8 @@ export default function Games() {
                             <button
                                 onClick={beginCountdown}
                                 disabled={recording || word.trim() === ""}
-                                className="bg-purple-700 text-white px-4 py-2 rounded disabled:opacity-40">
+                                className="bg-purple-700 text-white px-4 py-2 rounded disabled:opacity-40"
+                            >
                                 {recording ? "Recording..." : "Start"}
                             </button>
                         </div>
@@ -410,13 +433,23 @@ export default function Games() {
         return (
             <>
                 {Tut}
-                <main className={`${poppins.className} flex flex-col items-center gap-6 p-6 text-center max-w-md mx-auto`}>
+                <main
+                    className={`${poppins.className} flex flex-col items-center gap-6 p-6 text-center max-w-md mx-auto`}
+                >
                     <h2 className="text-2xl font-bold">Result</h2>
 
-                    <p>You said: <code>{result.transcript}</code></p>
-                    <p>Accuracy: <b>{result.score}</b></p>
+                    <p>
+                        You said: <code>{result.transcript}</code>
+                    </p>
+                    <p>
+                        Accuracy: <b>{result.score}</b>
+                    </p>
 
-                    <p className={result.pass ? "text-green-600" : "text-red-600"}>
+                    <p
+                        className={
+                            result.pass ? "text-green-600" : "text-red-600"
+                        }
+                    >
                         {result.pass ? "Great job!" : "Try again!"}
                     </p>
 
@@ -434,11 +467,15 @@ export default function Games() {
                         </>
                     )}
 
-                    <button onClick={() => {
-                        setRes(null); setAudio(null); setTts(null);
-                        setView("pronounce-setup");
-                    }}
-                        className="bg-purple-700 text-white px-4 py-2 rounded mt-4">
+                    <button
+                        onClick={() => {
+                            setRes(null);
+                            setAudio(null);
+                            setTts(null);
+                            setView("pronounce-setup");
+                        }}
+                        className="bg-purple-700 text-white px-4 py-2 rounded mt-4"
+                    >
                         Play again
                     </button>
                 </main>
@@ -451,6 +488,7 @@ export default function Games() {
 
 /* --------------- Reusable hero banner ---------------------------- */
 function Hero({ img, title, blurb }) {
+    const paragraphs = blurb.split(/\n\s*\n/);
     return (
         <section className="relative w-full h-[300px] md:h-[450px] lg:h-[550px]">
             <Image
@@ -465,9 +503,14 @@ function Hero({ img, title, blurb }) {
                 <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg text-center">
                     {title}
                 </h1>
-                <p className="text-center max-w-3xl text-white text-xl font-semibold">
-                    {blurb}
-                </p>
+                {paragraphs.map((p, i) => (
+                    <p
+                        key={i}
+                        className="text-center max-w-3xl text-white text-xl font-semibold"
+                    >
+                        {p}
+                    </p>
+                ))}
             </div>
         </section>
     );
@@ -487,16 +530,35 @@ function Card({ title, onClick }) {
 
 function TutorialOverlay({ dismiss }) {
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl text-left space-y-4">
+        /* click anywhere on the dark backdrop closes the dialog */
+        <div
+            onClick={dismiss}
+            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+        >
+            {/* clicking inside the white box should NOT close it until the button is pressed */}
+            <div
+                onClick={e => e.stopPropagation()}
+                className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl text-left space-y-4"
+            >
                 <h2 className="text-xl font-bold">How the games work</h2>
                 <ol className="list-decimal pl-4 space-y-1 text-sm">
-                    <li><b>Pronunciation Game:</b> press <kbd>Start</kbd>, speak when prompted, then compare your clip with the reference.</li>
-                    <li><b>Quiz:</b> each question allows <b>{PER_Q_SEC} s</b>. Watch the purple bar on your device!</li>
-                    <li><b>Scores:</b> instant feedback after every action; totals at the end.</li>
+                    <li>
+                        <b>Pronunciation Game:</b> press <kbd>Start</kbd>, speak when
+                        prompted, then compare your clip with the reference.
+                    </li>
+                    <li>
+                        <b>Quiz:</b> each question allows <b>{PER_Q_SEC} s</b>. Watch the
+                        purple bar on your device!
+                    </li>
+                    <li>
+                        <b>Scores:</b> instant feedback after every action; totals at the
+                        end.
+                    </li>
                 </ol>
-                <button onClick={dismiss}
-                    className="mt-2 bg-purple-700 text-white px-4 py-2 rounded w-full">
+                <button
+                    onClick={dismiss}
+                    className="mt-2 bg-purple-700 text-white px-4 py-2 rounded w-full"
+                >
                     Got it - let's play!
                 </button>
             </div>
